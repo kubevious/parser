@@ -9,18 +9,25 @@ class DebugObjectLogger
 
     dump(name, iteration, obj)
     {
-        if (!process.env.LOG_TO_FILE) {
-            return;
+        try
+        {
+            if (!process.env.LOG_TO_FILE) {
+                return;
+            }
+    
+            if (!obj) {
+                return;
+            }
+    
+            var writer = this._logger.outputStream(name + iteration + ".json");
+            if (writer) {
+                writer.write(_.cloneDeep(obj));
+                writer.close();
+            }
         }
-
-        if (!obj) {
-            return;
-        }
-
-        var writer = this._logger.outputStream(name + iteration + ".json");
-        if (writer) {
-            writer.write(_.cloneDeep(obj));
-            writer.close();
+        catch(reason)
+        {
+            this._logger.error("[DebugObjectLogger::dump] ", reason);
         }
     }
 }

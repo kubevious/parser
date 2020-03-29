@@ -1,5 +1,6 @@
 const Promise = require('the-promise');
 const _ = require('lodash');
+const JobDampener = require('../utils/job-dampener');
 
 class FacadeRegistry
 {
@@ -7,11 +8,7 @@ class FacadeRegistry
     {
         this._context = context;
         this._logger = context.logger.sublogger("FacadeRegistry");
-
-        this._itemsMap = {};
-
-        this._logicTree = {};
-        this._configMap = {};
+        this._jobDampener = new JobDampener(this._logger.sublogger("FacadeDampener"), this._processItems.bind(this));
 
         this._context.concreteRegistry.onChanged(this._handleConcreteRegistryChange.bind(this));
     }
@@ -20,87 +17,16 @@ class FacadeRegistry
         return this._logger;
     }
 
-    get logicTree() {
-        return this._logicTree;
-    }
-
-    get configTree() {
-        return this._configMap;
-    }
-
-    updateLogicTree(value)
-    {
-        this._logger.info("[updateLogicTree] ...");
-        this._logicTree = value;
-    }
-    
-    updateConfigTree(value)
-    {
-        this._logger.info("[updateConfigTree] ...");
-        this._configMap = value;
-    }
-
     acceptItems(value)
     {
-        this._logger.info("[acceptItems] ...");
-        this._itemsMap = value;
-
-        // this._context.historyProcessor.acceptSnapshot(value);
-
-        // this._context.searchEngine.reset();
-        // for(var item of _.values(this._itemsMap))
-        // {
-        //     this._context.searchEngine.addToIndex(item);
-        // }
+        this._logger.info("[acceptItems] item count: %s", _.keys(value).length);
+        this._jobDampener.acceptJob(new Date(), value);
     }
 
-    getConfig(dn) {
-        var value = this._configMap[dn];
-        if (!value) {
-            return {};
-        }
-        return value;
-    }
+    _processItems(date, value)
+    {
+        this._logger.info("[_processItems] Date: %s. item count: %s", date.toISOString(), _.keys(value).length);
 
-    getItemList() {
-        return _.keys(this._itemsMap);
-    }
-
-    getItem(dn) {
-        var value = this._itemsMap[dn];
-        if (!value) {
-            return {};
-        }
-        return {
-            dn: value.dn
-        };
-    }
-    
-    getItemChildren(dn) {
-        var value = this._itemsMap[dn];
-        if (!value) {
-            return [];
-        }
-        return value.getChildren().map(x => ({
-            dn: x.dn,
-            order: x.order
-        }));
-    }
-
-    getItemProperties(dn) {
-        var value = this._itemsMap[dn];
-        if (!value) {
-            return [];
-        }
-        return value.extractProperties();
-    }
-
-    getItemAlerts(dn) {
-        var value = this._itemsMap[dn];
-        if (!value) {
-            return [];
-        }
-        return value.extractAlerts();
     }
 
     _handleConcreteRegistryChange()
