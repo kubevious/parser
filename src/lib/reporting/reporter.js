@@ -8,7 +8,7 @@ class SnapshotReporter
     constructor(context)
     {
         this._context = context;
-        this._logger = context.logger.sublogger("SnapshotReporter");
+        this._logger = context.logger.sublogger("Reporter");
         this._determineCollectors();
 
         for(var collector of this._collectors)
@@ -33,7 +33,7 @@ class SnapshotReporter
                 })
             }
         }
-        this.logger.info("[SnapshotReporter] Collectors: ", this._collectors);
+        this.logger.info("[_determineCollectors] Collectors: ", this._collectors);
     }
 
     acceptLogicItems(date, items)
@@ -42,7 +42,7 @@ class SnapshotReporter
         var snapshot = this._transforItems(date, items);
         for(var key of snapshot.keys)
         {
-            this._logger.info("[acceptLogicItems] hashe: %s", key);
+            this._logger.silly("[acceptLogicItems] hash: %s", key);
         }
         this._logger.info("[acceptLogicItems] obj count: %s", snapshot.count);
 

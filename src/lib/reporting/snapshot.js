@@ -21,6 +21,25 @@ class Snapshot
         return _.keys(this._items);
     }
 
+    get items() {
+        return _.values(this._items);
+    }
+
+    hasKey(id) {
+        if (this._items[id]) {
+            return true;
+        }
+        return false;
+    }
+
+    getById(id) {
+        var item = this._items[id];
+        if (item) {
+            return item;
+        }
+        return null;
+    }
+
     setDate(date) {
         this._date = date;
     }
@@ -29,6 +48,44 @@ class Snapshot
     {
         var hash = this._makeHash(item);
         this._items[hash] = item;
+    }
+
+    extractSnapshot()
+    {
+        return this.keys.map(x => ({
+            hash: x,
+            data: this._items[x]
+        }))
+    }
+
+    extractDiff(snapshot)
+    {
+        var result = [];
+
+        for(var newKey of this.keys)
+        {
+            if (!snapshot.hasKey(newKey))
+            {
+                result.push({
+                    hash: newKey,
+                    present: true,
+                    data: this.getById(newKey)
+                });
+            }
+        }
+
+        for(var oldKey of snapshot.keys)
+        {
+            if (!this.hasKey(newKey))
+            {
+                result.push({
+                    hash: newKey,
+                    present: false
+                });
+            }
+        }
+
+        return result;
     }
 
     _makeHash(item)

@@ -26,7 +26,7 @@ class FacadeRegistry
     _processItems(date, items)
     {
         this._logger.info("[_processItems] Date: %s. item count: %s", date.toISOString(), items.length);
-        this._context.snapshotReporter.acceptLogicItems(date, items);
+        this._context.reporter.acceptLogicItems(date, items);
     }
 
     _handleConcreteRegistryChange()
