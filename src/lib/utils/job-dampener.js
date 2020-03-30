@@ -22,9 +22,8 @@ class JobDampener
 
     acceptJob(date, data)
     {
-        this._logger.info("[acceptJob] ...");
         this._jobQueue.push({ date: date, data: data});
-        this._logger.info("[acceptJob] jobs in queue: %s", this._jobQueue.length);
+        this._logger.info("[acceptJob] job date: %s. queue size: %s", date.toISOString(), this._jobQueue.length);
 
         this._filterJobs();
 
@@ -87,12 +86,12 @@ class JobDampener
 
         var job = _.head(this._jobQueue);
         this._isProcessing = true;
-        return this._processJob(job)
+        this._processJob(job)
             .then(() => {
                 this._logger.info("[_tryProcessJob] END");
                 this._jobQueue.shift();
                 this._isProcessing = false;
-                return this._tryProcessJob();
+                this._tryProcessJob();
             })
             .catch(reason => {
                 this._logger.error("[_tryProcessJob] ", reason);

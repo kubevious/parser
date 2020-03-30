@@ -44,7 +44,7 @@ class LogicScope
     }
 
     extractItems() {
-        return this._itemMap;
+        return _.values(this._itemMap);
     }
 
     findItem(dn)

@@ -8,4 +8,5 @@ export NODE_ENV=development
 # export DEBUG=express:*
 export MYSQL_HOST=localhost
 export MYSQL_PORT=3306
+export KUBEVIOUS_COLLECTOR=http://localhost:3000
 node src/mock/index-mock

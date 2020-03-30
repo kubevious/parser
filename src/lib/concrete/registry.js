@@ -107,13 +107,12 @@ class ConcreteRegistry
 
     debugOutputToFile()
     {
-        this.logger.info("[debugOutputToFile] BEGIN");
-
         var writer = this.logger.outputStream("dump-concrete-registry");
         if (!writer) {
-            this.logger.info("[debugOutputToFile] skipped");
             return Promise.resolve();
         }
+
+        this.logger.info("[debugOutputToFile] BEGIN");
 
         var ids = _.keys(this._items);
         ids.sort();

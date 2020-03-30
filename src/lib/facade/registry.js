@@ -17,16 +17,16 @@ class FacadeRegistry
         return this._logger;
     }
 
-    acceptItems(value)
+    acceptLogicItems(items)
     {
-        this._logger.info("[acceptItems] item count: %s", _.keys(value).length);
-        this._jobDampener.acceptJob(new Date(), value);
+        this._logger.info("[acceptLogicItems] item count: %s", items.length);
+        this._jobDampener.acceptJob(new Date(), items);
     }
 
-    _processItems(date, value)
+    _processItems(date, items)
     {
-        this._logger.info("[_processItems] Date: %s. item count: %s", date.toISOString(), _.keys(value).length);
-
+        this._logger.info("[_processItems] Date: %s. item count: %s", date.toISOString(), items.length);
+        this._context.snapshotReporter.acceptLogicItems(date, items);
     }
 
     _handleConcreteRegistryChange()

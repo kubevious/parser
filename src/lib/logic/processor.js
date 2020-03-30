@@ -149,7 +149,7 @@ class LogicProcessor
     
             this._logger.info("[process] READY");
     
-            this._context.facadeRegistry.acceptItems(scope.extractItems());
+            this._context.facadeRegistry.acceptLogicItems(scope.extractItems());
     
             this._logger.info("[process] END");
     
