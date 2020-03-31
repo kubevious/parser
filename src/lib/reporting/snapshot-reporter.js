@@ -72,7 +72,7 @@ class SnapshotReporter
         var body = {
             date: this._snapshot.date.toISOString()
         }
-        return this._request('/collect/snapshot', body)
+        return this._request('/snapshot', body)
             .then(result => {
                 this._snapshotId = result.id;
                 this.logger.info("[_createSnapshot] id: %s", this._snapshotId);
@@ -102,7 +102,7 @@ class SnapshotReporter
             snapshot_id: this._snapshotId,
             items: [item]
         }
-        return this._request('/collect/snapshot/items', data)
+        return this._request('/snapshot/items', data)
             .then(result => {
                 this.logger.silly("[_publishSnapshotItem] result: ", result);
 
@@ -124,7 +124,7 @@ class SnapshotReporter
         var data = {
             snapshot_id: this._snapshotId
         }
-        return this._request('/collect/snapshot/activate', data)
+        return this._request('/snapshot/activate', data)
             .then(result => {
                 this.logger.info("[_activateSnapshot] result: ", result);
 
@@ -159,7 +159,7 @@ class SnapshotReporter
             date: this._snapshot.date.toISOString(),
             snapshot_id: this._snapshotId
         }
-        return this._request('/collect/diff', body)
+        return this._request('/diff', body)
             .then(result => {
                 this.logger.info("[_createDiff] result: ", result);
 
@@ -203,7 +203,7 @@ class SnapshotReporter
             diff_id: this._diffId,
             items: [item]
         }
-        return this._request('/collect/diff/items', data)
+        return this._request('/diff/items', data)
             .then(result => {
                 this.logger.silly("[_publishDiffItem] result: ", result);
 
@@ -228,7 +228,7 @@ class SnapshotReporter
         var data = {
             diff_id: this._diffId
         }
-        return this._request('/collect/diff/activate', data)
+        return this._request('/diff/activate', data)
             .then(result => {
                 this.logger.info("[_activateDiff] result: ", result);
 
@@ -248,46 +248,7 @@ class SnapshotReporter
     {
         this.logger.verbose("[_request] url: %s", url);
         this.logger.silly("[_request] url: %s, data: ", url, data);
-
-        return Promise.resolve()
-            .then(() => {
-                if (url == '/collect/snapshot') {
-                    return {
-                        id: 'snapshot-1234'
-                    }
-                }
-
-                if (url == '/collect/snapshot/items') {
-                    return {
-                        new_snapshot: false
-                    }
-                }
-                
-                if (url == '/collect/snapshot/activate') {
-                    return {
-                        new_snapshot: false
-                    }
-                }
-
-                if (url == '/collect/diff') {
-                    return {
-                        id: 'diff-1234'
-                    }
-                }
-                
-                if (url == '/collect/diff/items') {
-                    return {
-                        new_snapshot: false
-                    }
-                }
-                
-                if (url == '/collect/diff/activate') {
-                    return {
-                        new_snapshot: false,
-                        id: 'snapshot-6789'
-                    }
-                }
-            })
+        return this._reporterTarget.request(url, data);
     }
 }
 

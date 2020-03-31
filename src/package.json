@@ -20,6 +20,7 @@
   },
   "homepage": "https://github.com/kubevious/parser#readme",
   "dependencies": {
+    "axios": "^0.19.2",
     "express": "^4.17.1",
     "express-promise-router": "^3.0.3",
     "flexsearch": "^0.6.32",

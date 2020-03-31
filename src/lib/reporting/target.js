@@ -2,6 +2,7 @@ const Promise = require('the-promise');
 const _ = require('lodash');
 const JobDampener = require('../utils/job-dampener');
 const SnapshotReporter = require('./snapshot-reporter');
+const axios = require('axios');
 
 class ReporterTarget
 {
@@ -10,7 +11,12 @@ class ReporterTarget
         this._logger = logger.sublogger("ReporterTarget");
         this._snapshotLogger = logger.sublogger("SnapshotReporter");
 
-        this._url = collector.url;
+        this._baseUrl = collector.url;
+        this._axios = axios.create({
+            baseURL: this._baseUrl,
+            timeout: 1000,
+        });
+
         this._jobDampener = new JobDampener(this._logger.sublogger("ReporterDampener"), this._processSnapshot.bind(this));
 
         this._latestSnapshot = null;
@@ -51,19 +57,31 @@ class ReporterTarget
                     this._latestSnapshot = null;
                     this._latestSnapshotId = null;
 
+                    this._logger.warn("[_reportSnapshot] Failed to report. Will retry.");
+
                     return this._retrySnapshotReport(snapshot);
                 }
             })
-            .catch(reason => {
-                this._logger.info("[_reportSnapshot] ERROR: ", reason);
-                return this._retrySnapshotReport(snapshot);
-            });
     }
 
     _retrySnapshotReport(snapshot)
     {
         return Promise.timeout(3000)
             .then(() => this._reportSnapshot(snapshot));
+    }
+
+    request(url, data)
+    {
+        this.logger.info("[request] url: %s%s", this._baseUrl, url);
+        this.logger.silly("[request] url: %s%s, data: ", this._baseUrl, url, data);
+        return this._axios.post(url, data)
+            .then(res => {
+                return res.data;
+            })
+            .catch(reason => {
+                this.logger.error('[request] ', reason)
+                throw reason;
+            });
     }
 
 }

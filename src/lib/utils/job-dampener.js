@@ -67,9 +67,15 @@ class JobDampener
             })
             .then(() => {
                 this.logger.info("[_processJob] END");
+                return {
+                    success: true
+                };
             })
             .catch(reason => {
-                this.logger.error(reason);
+                this.logger.error('[_processJob] ', reason);
+                return {
+                    success: false
+                };
             });
     }
 
@@ -87,11 +93,19 @@ class JobDampener
         var job = _.head(this._jobQueue);
         this._isProcessing = true;
         this._processJob(job)
-            .then(() => {
-                this._logger.info("[_tryProcessJob] END");
-                this._jobQueue.shift();
+            .then(result => {
                 this._isProcessing = false;
-                this._tryProcessJob();
+                if (result.success)
+                {
+                    this._logger.info("[_tryProcessJob] END");
+                    this._jobQueue.shift();
+                    this._tryProcessJob();
+                }
+                else
+                {
+                    this._logger.warn("[_tryProcessJob] last job failed");
+                    this._rescheduleProcess();
+                }
             })
             .catch(reason => {
                 this._logger.error("[_tryProcessJob] ", reason);
