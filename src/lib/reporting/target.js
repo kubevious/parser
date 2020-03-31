@@ -72,7 +72,7 @@ class ReporterTarget
 
     request(url, data)
     {
-        this.logger.info("[request] url: %s%s", this._baseUrl, url);
+        this.logger.verbose("[request] url: %s%s", this._baseUrl, url);
         this.logger.silly("[request] url: %s%s, data: ", this._baseUrl, url, data);
         return this._axios.post(url, data)
             .then(res => {

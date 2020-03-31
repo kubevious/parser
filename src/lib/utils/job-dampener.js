@@ -106,12 +106,15 @@ class JobDampener
                     this._logger.warn("[_tryProcessJob] last job failed");
                     this._rescheduleProcess();
                 }
+                return null;
             })
             .catch(reason => {
                 this._logger.error("[_tryProcessJob] ", reason);
                 this._isProcessing = false;
                 this._rescheduleProcess();
             })
+
+        return null;
     }
 
     _rescheduleProcess()

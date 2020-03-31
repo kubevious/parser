@@ -46,10 +46,7 @@ class SnapshotReporter
         }
         this._logger.info("[acceptLogicItems] obj count: %s", snapshot.count);
 
-        for(var collector of this._collectors)
-        {
-            collector.target.report(snapshot);
-        }
+        return Promise.serial(this._collectors, x => x.target.report(snapshot));
     }
 
     _transforItems(date, items)
