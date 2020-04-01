@@ -76,10 +76,10 @@ class Snapshot
 
         for(var oldKey of snapshot.keys)
         {
-            if (!this.hasKey(newKey))
+            if (!this.hasKey(oldKey))
             {
                 result.push({
-                    hash: newKey,
+                    hash: oldKey,
                     present: false
                 });
             }
