@@ -1,8 +1,6 @@
 const _ = require('lodash');
 const resourcesHelper = require("./helpers/resources");
-
-const KIND_TO_USER_MAPPING = require('./docs/kind-labels');
-const PROPERTY_GROUP_TOOLTIPS = require('./docs/property-group-tooltips');
+const DocsHelper = require("kubevious-helpers").Docs;
 
 class LogicItem
 {
@@ -44,11 +42,7 @@ class LogicItem
     }
 
     get prettyKind() {
-        var kind = KIND_TO_USER_MAPPING[this.kind];
-        if (!kind) {
-            kind = _.upperFirst(this.kind);
-        }
-        return kind;
+        return DocsHelper.prettyKind(this.kind);
     }
 
     get naming() {
@@ -230,7 +224,7 @@ class LogicItem
             var props = myProps[i];
             props = _.clone(props);
 
-            var tooltip = PROPERTY_GROUP_TOOLTIPS[props.id];
+            var tooltip = DocsHelper.propertyGroupTooltip(props.id);
             if (tooltip) {
                 if (_.isObject(tooltip)) {
                     var str = _.get(tooltip, 'owner.' + this.kind);
