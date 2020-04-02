@@ -11,17 +11,21 @@ module.exports = {
 
     kind: 'hpa',
 
-    handler: ({logger, scope, item, context, createK8sItem, createAlert, hasCreatedItems}) =>
-    {
+    needAppScope: true,
+    appNameCb: (item) => {
         var scaleTargetRef = _.get(item.config, 'spec.scaleTargetRef');
-            if (!scaleTargetRef) {
-                return null;
-            }
+        if (!scaleTargetRef) {
+            return null;
+        }
+        return scaleTargetRef.name;
+    },
 
-        var appInfo = scope.getAppAndScope(
-            item.config.metadata.namespace, 
-            scaleTargetRef.name,
-            false);
+
+    handler: ({logger, scope, item, context, createK8sItem, createAlert, hasCreatedItems, appName, appInfo, app, appScope}) =>
+    {
+        if (!appName) {
+            return null;
+        }
 
         if (!appInfo) {
             var rawContainer = scope.fetchRawContainer(item, "Autoscalers");
@@ -34,9 +38,9 @@ module.exports = {
         var max = item.config.spec.maxReplicas;
         var replicasInfo = "[" + min + ", " + max + "]";
 
-        createK8sItem(appInfo.app);
+        createK8sItem(app);
 
-        var appProps = appInfo.appScope.properties;
+        var appProps = appScope.properties;
         if (_.isNotNullOrUndefined(appProps['Replicas']))
         {
             appProps['Replicas'] += " " + replicasInfo;
@@ -45,13 +49,7 @@ module.exports = {
         {
             appProps['Replicas'] = replicasInfo;
         }
-
-        /*** HELPERS ***/
-
-        function getAppInfo()
-        {
-            
-        }
+        
     }
 }
 

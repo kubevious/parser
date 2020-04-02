@@ -8,9 +8,10 @@ module.exports = {
 
     order: 20,
 
-    handler: ({scope, item }) =>
+    needNamespaceScope: true,
+
+    handler: ({scope, item, namespaceScope }) =>
     {
-        var namespaceScope = scope.getNamespaceScope(item.config.metadata.namespace);
         namespaceScope.configMaps[item.config.metadata.name] = {
             used: false,
             usedBy: {},

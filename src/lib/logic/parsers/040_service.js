@@ -10,10 +10,10 @@ module.exports = {
 
     order: 40,
 
-    handler: ({scope, item, createK8sItem, createAlert, hasCreatedItems}) =>
-    {
-        var namespaceScope = scope.getNamespaceScope(item.config.metadata.namespace);
+    needNamespaceScope: true,
 
+    handler: ({scope, item, createK8sItem, createAlert, hasCreatedItems, namespaceScope}) =>
+    {
         var serviceScope = {
             name: item.config.metadata.name,
             items: [],

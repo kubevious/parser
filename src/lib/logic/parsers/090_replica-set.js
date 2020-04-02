@@ -10,15 +10,15 @@ module.exports = {
 
     order: 90,
 
-    handler: ({scope, item, createK8sItem, createAlert, hasCreatedItems}) =>
-    {
-        var namespaceScope = scope.getNamespaceScope(item.config.metadata.namespace);
+    needNamespaceScope: true,
 
+    handler: ({scope, item, createK8sItem, createAlert, hasCreatedItems, namespaceScope}) =>
+    {
         if (item.config.metadata.ownerReferences)
         {
             for(var ref of item.config.metadata.ownerReferences)
             {
-                var ownerItems =  namespaceScope.getAppOwners(ref.kind, ref.name);
+                var ownerItems = namespaceScope.getAppOwners(ref.kind, ref.name);
                 for(var ownerItem of ownerItems) 
                 {
                     var shortName = NameHelpers.makeRelativeName(ownerItem.config.metadata.name, item.config.metadata.name);

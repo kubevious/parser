@@ -10,9 +10,10 @@ module.exports = {
 
     order: 110,
 
-    handler: ({logger, scope, item, createK8sItem, createAlert}) =>
+    needNamespaceScope: true,
+
+    handler: ({logger, scope, item, createK8sItem, createAlert, namespaceScope}) =>
     {
-        var namespaceScope = scope.getNamespaceScope(item.config.metadata.namespace);
         var configMapScope = namespaceScope.configMaps[item.config.metadata.name];
 
         if (_.keys(configMapScope.usedBy).length > 0) 

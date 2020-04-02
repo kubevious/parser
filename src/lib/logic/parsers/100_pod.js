@@ -11,7 +11,9 @@ module.exports = {
 
     order: 100,
 
-    handler: ({scope, item, createK8sItem, createAlert, hasCreatedItems}) =>
+    needNamespaceScope: true,
+
+    handler: ({scope, item, createK8sItem, createAlert, hasCreatedItems, namespaceScope}) =>
     {
         var conditions = _.get(item.config, 'status.conditions');
         if (conditions) {
@@ -26,7 +28,6 @@ module.exports = {
             }
         }
 
-        var namespaceScope = scope.getNamespaceScope(item.config.metadata.namespace);
         if (item.config.metadata.ownerReferences)
         {
             for(var ref of item.config.metadata.ownerReferences)

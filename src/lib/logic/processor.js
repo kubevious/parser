@@ -49,32 +49,25 @@ class LogicProcessor
     _loadParser(name)
     {
         this.logger.info('[_loadParser] %s...', name);
-        const handler = require('./parsers/' + name);
+        const parserModule = require('./parsers/' + name);
 
         var targets = null;
-        if (handler.target) {
-            targets = [handler.target];
-        } else if (handler.targets) {
-            targets = handler.targets;
-        }
-
-        var order = 0;
-        if (handler.order) {
-            order = handler.order;
+        if (parserModule.target) {
+            targets = [parserModule.target];
+        } else if (parserModule.targets) {
+            targets = parserModule.targets;
         }
 
         for(var target of targets)
         {
             this.logger.info('[_loadParser] Adding %s...', name, target);
 
-            var info = {
-                name: name,
-                kind: handler.kind,
-                order: order,
-                target: target,
-                handler: handler.handler
+            var parser = _.clone(parserModule);
+            if (_.isNullOrUndefined(parser.order)) {
+                parser.order = 0;
             }
-            this._parsers.push(info);
+            parser.target = target;
+            this._parsers.push(parser);
         }
     }
 
@@ -106,32 +99,26 @@ class LogicProcessor
     _loadPolisher(name)
     {
         this.logger.info('[_loadPolisher] %s...', name);
-        const handler = require('./polishers/' + name);
+        const polisherModule = require('./polishers/' + name);
 
         var targets = null;
-        if (handler.target) {
-            targets = [handler.target];
-        } else if (handler.targets) {
-            targets = handler.targets;
-        }
-
-        var order = 0;
-        if (handler.order) {
-            order = handler.order;
+        if (polisherModule.target) {
+            targets = [polisherModule.target];
+        } else if (polisherModule.targets) {
+            targets = polisherModule.targets;
         }
 
         for(var target of targets)
         {
             this.logger.info('[_loadPolisher] Adding %s...', name, target);
 
-            var info = {
-                name: name,
-                kind: handler.kind,
-                order: order,
-                target: target,
-                handler: handler.handler
+            var polisher = _.clone(polisherModule);
+            if (_.isNullOrUndefined(polisher.order)) {
+                polisher.order = 0;
             }
-            this._polishers.push(info);
+            polisher.target = target;
+
+            this._polishers.push(polisher);
         }
     }
 
@@ -233,6 +220,8 @@ class LogicProcessor
             });
         }
 
+        this._preprocessHandler(handlerInfo, handlerArgs);
+
         try
         {
             handlerInfo.handler(handlerArgs);
@@ -251,6 +240,44 @@ class LogicProcessor
                     alertInfo.severity, 
                     alertInfo.date, 
                     alertInfo.msg);
+            }
+        }
+    }
+
+    _preprocessHandler(handlerInfo, handlerArgs)
+    {
+        handlerArgs.namespaceName = null;
+        if (handlerInfo.needNamespaceScope || handlerInfo.needAppScope)
+        {
+            if (handlerInfo.namespaceNameCb) {
+                handlerArgs.namespaceName = handlerInfo.namespaceNameCb(handlerArgs.item);
+            } else {
+                handlerArgs.namespaceName = handlerArgs.item.config.metadata.namespace;
+            }
+            if (handlerArgs.namespaceName)
+            {
+                handlerArgs.namespaceScope = handlerArgs.scope.getNamespaceScope(handlerArgs.namespaceName);
+            }
+        }
+
+        handlerArgs.appName = null;
+        if (handlerArgs.namespaceName)
+        {
+            if (handlerInfo.needAppScope)
+            {
+                if (handlerInfo.appNameCb) {
+                    handlerArgs.appName = handlerInfo.appNameCb(handlerArgs.item);
+                }
+                handlerArgs.appInfo = handlerArgs.scope.getAppAndScope(
+                    handlerArgs.namespaceName, 
+                    handlerArgs.appName,
+                    handlerInfo.canCreateAppIfMissing);
+
+                if (handlerArgs.appInfo) {
+                    handlerArgs.appScope = handlerArgs.appInfo.appScope;
+                    handlerArgs.app = handlerArgs.appInfo.app;
+                }
+        
             }
         }
     }

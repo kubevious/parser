@@ -18,20 +18,17 @@ module.exports = {
 
     order: 30,
 
-    handler: ({logger, scope, item, context, createK8sItem, createAlert, hasCreatedItems}) =>
+    needAppScope: true,
+    canCreateAppIfMissing: true,
+    appNameCb: (item) => {
+        return item.config.metadata.name; 
+    },
+
+    handler: ({logger, scope, item, app, appScope, namespaceScope}) =>
     {
-        var appInfo = scope.getAppAndScope(
-            item.config.metadata.namespace, 
-            item.config.metadata.name,
-            true);
-
-        var namespaceScope = appInfo.namespaceScope;
-        var appScope = appInfo.appScope;
-        var app = appInfo.app;
-
         var labelsMap = _.get(item.config, 'spec.template.metadata.labels');
         if (labelsMap) {
-            appInfo.namespaceScope.appLabels.push({
+            namespaceScope.appLabels.push({
                 labels: labelsMap,
                 name: item.config.metadata.name,
                 appItem: app
