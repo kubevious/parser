@@ -14,7 +14,7 @@ class ReporterTarget
         this._baseUrl = collector.url;
         this._axios = axios.create({
             baseURL: this._baseUrl,
-            timeout: 1000,
+            timeout: 10 * 1000,
         });
 
         this._jobDampener = new JobDampener(this._logger.sublogger("ReporterDampener"), this._processSnapshot.bind(this));
