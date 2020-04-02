@@ -6,10 +6,12 @@ const yaml = require('js-yaml');
 
 class K8sMockLoader 
 {
-    constructor(context)
+    constructor(context, name)
     {
         this._context = context;
         this._logger = context.logger.sublogger("K8sMockLoader");
+
+        this._name = name;
         this.logger.info("Constructed");
         this._isReady = false;
     }
@@ -28,7 +30,7 @@ class K8sMockLoader
 
     run()
     {
-        var dirName = Path.resolve(__dirname, '..', '..', 'mock', 'data');
+        var dirName = Path.resolve(__dirname, '..', '..', 'mock', this._name);
         for(var name of fs.readdirSync(dirName))
         {
             var fname = Path.join(dirName, name);
@@ -52,9 +54,18 @@ class K8sMockLoader
 
     _handle(isPresent, obj)
     {
-        this._logger.info("Handle: %s, present: %s", obj.kind, isPresent);
-
-        this._context.k8sParser.parse(isPresent, obj);
+        if (obj.kind == 'List')
+        {
+            for(var item of obj.items)
+            {
+                this._handle(isPresent, item);
+            }
+        }
+        else
+        {
+            this._logger.info("Handle: %s, present: %s", obj.kind, isPresent);
+            this._context.k8sParser.parse(isPresent, obj);
+        }
     }
 
 }
