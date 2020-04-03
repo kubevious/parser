@@ -73,6 +73,10 @@ class LogicItem
         return this._dn;
     }
 
+    get id() {
+        return this.dn;
+    }
+
     get order() {
         return this._order;
     }

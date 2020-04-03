@@ -10,46 +10,51 @@ class LogicProcessor
         this._context = context;
         this._logger = context.logger.sublogger("LogicProcessor");
 
-        this._parsers = [];
-        this._extractParsers();
-
-        this._polishers = [];
-        this._extractPolishers();
+        this._processors = [];
+        this._extractProcessors('parsers', 'concrete');
+        this._extractProcessors('polishers', 'logic');
     }
 
     get logger() {
         return this._logger;
     }
 
-    _extractParsers()
+    _extractProcessors(location, targetKind)
     {
-        this.logger.info('[_extractParsers] ...');
-        var files = fs.readdirSync(path.join(__dirname, "parsers"));
+        this.logger.info('[_extractProcessors] location: %s, targetKind: %s', location, targetKind);
+        var files = fs.readdirSync(path.join(__dirname, location));
         files = _.filter(files, x => x.endsWith('.js'));
+
+        var processors = []
         for(var x of files)
         {
-            this.logger.info('[_extractParsers] %s', x);
-            this._loadParser(x);
+            this.logger.info('[_extractProcessors] %s', x);
+            this._loadProcessor(x, location, targetKind, processors);
         }
 
-        this._parsers = _.orderBy(this._parsers, [
+        processors = _.orderBy(processors, [
             x => x.order,
             x => _.stableStringify(x.target)
         ]);
 
-        for(var handlerInfo of this._parsers)
+        for(var x of processors)
         {
-            this._logger.info("[_extractParsers] HANDLER: %s -> %s, target:", 
+            this._processors.push(x);
+        }
+
+        for(var handlerInfo of processors)
+        {
+            this._logger.info("[_extractProcessors] HANDLER: %s -> %s, target:", 
                 handlerInfo.order, 
                 handlerInfo.name, 
                 handlerInfo.target)
         }
     }
 
-    _loadParser(name)
+    _loadProcessor(name, location, targetKind, list)
     {
-        this.logger.info('[_loadParser] %s...', name);
-        const parserModule = require('./parsers/' + name);
+        this.logger.info('[_loadProcessor] %s...', name);
+        const parserModule = require('./' + location + '/' + name);
 
         var targets = null;
         if (parserModule.target) {
@@ -60,65 +65,17 @@ class LogicProcessor
 
         for(var target of targets)
         {
-            this.logger.info('[_loadParser] Adding %s...', name, target);
+            this.logger.info('[_loadProcessor] Adding %s...', name, target);
 
             var parser = _.clone(parserModule);
             if (_.isNullOrUndefined(parser.order)) {
                 parser.order = 0;
             }
-            parser.target = target;
-            this._parsers.push(parser);
-        }
-    }
-
-    _extractPolishers()
-    {
-        this.logger.info('[_extractPolishers] ...');
-        var files = fs.readdirSync(path.join(__dirname, "polishers"));
-        files = _.filter(files, x => x.endsWith('.js'));
-        for(var x of files)
-        {
-            this.logger.info('[_extractPolishers] %s', x);
-            this._loadPolisher(x);
-        }
-
-        this._parsers = _.orderBy(this._parsers, [
-            x => x.order,
-            x => _.stableStringify(x.target)
-        ]);
-
-        for(var handlerInfo of this._parsers)
-        {
-            this._logger.info("[_extractPolishers] HANDLER: %s -> %s, target:", 
-                handlerInfo.order, 
-                handlerInfo.name, 
-                handlerInfo.target)
-        }
-    }
-
-    _loadPolisher(name)
-    {
-        this.logger.info('[_loadPolisher] %s...', name);
-        const polisherModule = require('./polishers/' + name);
-
-        var targets = null;
-        if (polisherModule.target) {
-            targets = [polisherModule.target];
-        } else if (polisherModule.targets) {
-            targets = polisherModule.targets;
-        }
-
-        for(var target of targets)
-        {
-            this.logger.info('[_loadPolisher] Adding %s...', name, target);
-
-            var polisher = _.clone(polisherModule);
-            if (_.isNullOrUndefined(polisher.order)) {
-                polisher.order = 0;
+            if (!parser.targetKind) {
+                parser.targetKind = targetKind;
             }
-            polisher.target = target;
-
-            this._polishers.push(polisher);
+            parser.target = target;
+            list.push(parser);
         }
     }
 
@@ -131,7 +88,6 @@ class LogicProcessor
             var scope = new Scope(this._context);
     
             this._processParsers(scope);
-            this._processPolishers(scope);
             this._propagete(scope);
     
             this._logger.info("[process] READY");
@@ -150,7 +106,7 @@ class LogicProcessor
 
     _processParsers(scope)
     {
-        for(var handlerInfo of this._parsers)
+        for(var handlerInfo of this._processors)
         {
             this._processParser(scope, handlerInfo);
         }
@@ -158,23 +114,34 @@ class LogicProcessor
 
     _processParser(scope, handlerInfo)
     {
-        this._logger.debug("[_processParser] Handler: %s -> %s, target:", 
+        this._logger.debug("[_processParser] Handler: %s -> %s, target: %s :: ", 
             handlerInfo.order, 
             handlerInfo.name, 
+            handlerInfo.targetKind,
             handlerInfo.target);
 
-        var items = this._context.concreteRegistry.filterItems(handlerInfo.target);
-        for(var item of items)
+        var items = [];
+        if (handlerInfo.targetKind == 'concrete') {
+            items = this._context.concreteRegistry.filterItems(handlerInfo.target);
+        } else if (handlerInfo.targetKind == 'logic') {
+            var path = _.clone(handlerInfo.target.path);
+            items = this._extractTreeItems(scope, path);
+        }
+
+        if (items)
         {
-            this._processHandler(scope, handlerInfo, item.id, item);
+            for(var item of items)
+            {
+                this._processHandler(scope, handlerInfo, item);
+            }
         }
     }
 
-    _processHandler(scope, handlerInfo, id, item)
+    _processHandler(scope, handlerInfo, item)
     {
         this._logger.silly("[_processHandler] Handler: %s, Item: %s", 
             handlerInfo.name, 
-            id);
+            item.id);
 
         var handlerArgs = {
             scope: scope,
@@ -282,26 +249,13 @@ class LogicProcessor
         }
     }
 
-    _processPolishers(scope)
+    _extractTreeItems(scope, path)
     {
-        for(var handlerInfo of this._polishers)
-        {
-            this._processPolisher(scope, handlerInfo);
-        }
-    }
-
-    _processPolisher(scope, handlerInfo)
-    {
-        this._logger.silly("[_processPolisher] Handler: %s -> %s, target:", 
-            handlerInfo.order, 
-            handlerInfo.name, 
-            handlerInfo.target);
-
-        var path = _.clone(handlerInfo.target.path);
+        var items = [];
         this._visitTree(scope.root, 0, path, item => {
-            this._logger.silly("[_processPolisher] Visited: %s", item.dn);
-            this._processHandler(scope, handlerInfo, item.dn, item);
+            items.push(item);
         });
+        return items;
     }
 
     _visitTree(item, index, path, cb)
