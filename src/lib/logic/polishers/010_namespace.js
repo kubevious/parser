@@ -12,9 +12,9 @@ module.exports = {
         var namespaceScope = scope.getNamespaceScope(item.naming);
 
         var properties = {
-            "Applications": _.keys(namespaceScope.apps).length,
-            "Ingresses": _.keys(namespaceScope.ingresses).length,
-            "Secrets": _.keys(namespaceScope.secrets).length
+            "Applications": namespaceScope.appCount,
+            "Ingresses": namespaceScope.items.countItems('Ingress'),
+            "Secrets": namespaceScope.items.countItems('Secret')
         }
 
         item.addProperties({

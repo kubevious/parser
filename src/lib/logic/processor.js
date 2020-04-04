@@ -230,21 +230,20 @@ class LogicProcessor
         }
 
         handlerArgs.appName = null;
-        if (handlerArgs.namespaceName)
+        if (handlerInfo.appNameCb) {
+            handlerArgs.appName = handlerInfo.appNameCb(handlerArgs.item);
+        }
+        if (handlerArgs.namespaceName && handlerArgs.namespaceScope)
         {
             if (handlerInfo.needAppScope)
             {
-                if (handlerInfo.appNameCb) {
-                    handlerArgs.appName = handlerInfo.appNameCb(handlerArgs.item);
-                }
-                handlerArgs.appInfo = handlerArgs.scope.getAppAndScope(
-                    handlerArgs.namespaceName, 
+                handlerArgs.appInfo = handlerArgs.namespaceScope.getAppAndScope(
                     handlerArgs.appName,
                     handlerInfo.canCreateAppIfMissing);
 
                 if (handlerArgs.appInfo) {
-                    handlerArgs.appScope = handlerArgs.appInfo.appScope;
-                    handlerArgs.app = handlerArgs.appInfo.app;
+                    handlerArgs.appScope = handlerArgs.appInfo;
+                    handlerArgs.app = handlerArgs.appInfo.item;
                 }
         
             }

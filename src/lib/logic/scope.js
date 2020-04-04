@@ -56,44 +56,15 @@ class LogicScope
         return item;
     }
     
+    getInfraScope() {
+        return this._infraScope;
+    }
+
     getNamespaceScope(name) {
         if (!this._namespaceScopes[name]) {
             this._namespaceScopes[name] = new NamespaceScope(this, name);
         }
         return this._namespaceScopes[name];
-    }
-
-    getAppAndScope(ns, name, createIfMissing) {
-        var namespace = this.root.fetchByNaming("ns", ns);
-        var namespaceScope = this.getNamespaceScope(ns);
-
-        var app = namespace.fetchByNaming("app", name, !createIfMissing);
-        if (!app) {
-            return null; 
-        }
-
-        var appScope = namespaceScope.apps[name];
-        if (!appScope) {
-            appScope = {
-                name: name,
-                ports: {},
-                properties: {
-                    'Exposed': 'No'
-                }
-            };
-            namespaceScope.apps[name] = appScope;
-        }
-
-        return {
-            namespace: namespace,
-            app: app,
-            namespaceScope: namespaceScope,
-            appScope: appScope
-        }
-    }
-
-    getInfraScope() {
-        return this._infraScope;
     }
 
     setK8sConfig(logicItem, config)
@@ -210,14 +181,15 @@ class NamespaceScope
         this._logger = parent.logger;
         this._name = name;
 
+        this._item = this._parent.root.fetchByNaming("ns", name);
+
+        this._appScopes = {};
+
         this._items = new ItemsScope(this);
 
         this.appLabels = [];
-        this.apps = {};
         this.appControllers = {};
         this.appOwners = {};
-        this.ingresses = {};
-        this.secrets = {};
     }
 
     get logger() {
@@ -228,8 +200,36 @@ class NamespaceScope
         return this._name;
     }
 
+    get item() {
+        return this._item;
+    }
+
     get items() {
         return this._items;
+    }
+
+    get appScopes() {
+        return _.values(this._appScopes);
+    }
+
+    get appCount() {
+        return this.appScopes.length;
+    }
+
+    getAppAndScope(name, createIfMissing)
+    {
+        var appScope = this._appScopes[name];
+        if (!appScope)
+        {
+            if (!createIfMissing)
+            {
+                return null;
+            }
+        }
+
+        var appScope = new AppScope(this, name);
+        this._appScopes[name] = appScope;
+        return appScope;
     }
 
     registerAppOwner(owner)
@@ -254,38 +254,62 @@ class NamespaceScope
         return this.appOwners[kind][name];
     }
 
-    getSecret(name)
-    {
-        if (!this.secrets[name]) {
-            this.secrets[name] = {
-                usedBy: {}
-            }
-        }
-        return this.secrets[name];
-    }
-
-    findAppsByLabels(selector)
+    findAppScopesByLabels(selector)
     {
         var result = [];
         for(var appLabelInfo of this.appLabels)
         {
             if (labelsMatch(appLabelInfo.labels, selector))
             {
-                result.push(appLabelInfo.appItem);
+                result.push(appLabelInfo.appScope);
             }
         }
         return result;
     }
+}
 
-    findAppScopesByLabels(selector)
+class AppScope
+{
+    constructor(parent, name)
     {
-        var appItems = this.findAppsByLabels(selector);
-        var result = appItems.map(x => {
-            var appScope = this.apps[x.naming];
-            return appScope;
-        });
-        result = result.filter(x => x);
-        return result;
+        this._parent = parent; 
+
+        this._name = name;
+
+        this._item = this.namespaceScope.item.fetchByNaming("app", name);
+
+        this._ports = {};
+        this._properties = {
+            'Exposed': 'No'
+        }
+    }
+
+    get parent() {
+        return this._parent;
+    }
+
+    get namespaceScope() {
+        return this.parent;
+    }
+
+    get namespace() {
+        return this.namespaceScope.item;
+    }
+
+    get name() {
+        return this._name;
+    }
+
+    get item() {
+        return this._item;
+    }
+
+    get ports() {
+        return this._ports;
+    }
+
+    get properties() {
+        return this._properties;
     }
 }
 
@@ -318,6 +342,15 @@ class ItemsScope
         this._itemsDict[kind][name] = item;
         return item;
     }
+    
+    fetchItem(kind, name, config)
+    {
+        var item = this._getItem(kind, name);
+        if (!item) {
+            item = this._registerItem(kind, name, config);
+        }
+        return item;
+    }
 
     getItem(kind, name)
     {
@@ -329,6 +362,20 @@ class ItemsScope
         {
             return this._getItem(kind, name);
         }
+    }
+
+    getItems(kind)
+    {
+        if (this._itemsDict[kind])
+        {
+            return _.values(this._itemsDict[kind]);
+        }
+        return [];
+    }
+
+    countItems(kind)
+    {
+        return this.getItems(kind).length;
     }
 
     _getItem(kind, name)
@@ -353,7 +400,7 @@ class ItemScope
         this._usedBy = {};
         this._config = config;
         this._items = [];
-        this._appsItems = {};
+        this._appScopes = {};
     }
 
     get config() {
@@ -385,15 +432,11 @@ class ItemScope
     }
 
     get appItems() {
-        return _.values(this._appsItems);
+        return this.appScopes.map(x => x.item);
     }
 
     get appScopes() {
-        var names = _.keys(this._appsItems);
-        return names.map(x => {
-                return this._parent.apps[x];
-            })
-            .filter(x => x);
+        return _.values(this._appScopes);
     }
 
     markUsedBy(dn)
@@ -406,9 +449,9 @@ class ItemScope
         this._items.push(item);
     }
 
-    associateApp(item)
+    associateAppScope(appScope)
     {
-        this._appsItems[item.naming] = item;
+        this._appScopes[appScope.name] = appScope;
     }
 }
 

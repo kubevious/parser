@@ -30,8 +30,7 @@ module.exports = {
         if (labelsMap) {
             namespaceScope.appLabels.push({
                 labels: labelsMap,
-                name: item.config.metadata.name,
-                appItem: app
+                appScope: appScope
             });
         }
 
@@ -283,8 +282,8 @@ module.exports = {
         {
             var secret = parent.fetchByNaming("secret", name);
             if (markUsedBy) {
-                var secretScope = namespaceScope.getSecret(name);
-                secretScope.usedBy[secret.dn] = true;
+                var secretScope = namespaceScope.items.fetchItem('Secret', name);
+                secretScope.markUsedBy(secret.dn);
             }
         }
     }

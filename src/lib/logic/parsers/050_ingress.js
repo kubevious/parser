@@ -14,7 +14,7 @@ module.exports = {
 
     handler: ({scope, item, createK8sItem, createAlert, hasCreatedItems, namespaceScope}) =>
     {
-        namespaceScope.ingresses[item.config.metadata.name] = true;
+        namespaceScope.items.registerItem(item.config);
 
         var defaultBackend = _.get(item.config, "spec.backend");
         if (defaultBackend) {
@@ -66,11 +66,6 @@ module.exports = {
                 {
                     createIngress(appItem, { order: 250 });
                 }
-
-                // if (serviceScopeInfo.microserviceName) {
-                //     var svcItem = scope.findAppItem(item.config.metadata.namespace, serviceScopeInfo.microserviceName);
-                //     createIngress(svcItem, { order: 250 });
-                // }
             }
             else
             {

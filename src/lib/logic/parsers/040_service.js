@@ -19,16 +19,15 @@ module.exports = {
         var appSelector = _.get(item.config, 'spec.selector');
         if (appSelector)
         {
-            var appItems = namespaceScope.findAppsByLabels(appSelector);
-            for(var appItem of appItems)
+            var appScopes = namespaceScope.findAppScopesByLabels(appSelector);
+            for(var appScope of appScopes)
             {
-                serviceScope.associateApp(appItem);
-
-                var appScope = namespaceScope.apps[appItem.naming];
+                serviceScope.associateAppScope(appScope);
 
                 appScope.properties['Exposed'] = 'With Service';
 
-                serviceScope.microserviceName = appItem.naming;
+                var appItem = appScope.item;
+
                 var serviceItemName = item.config.spec.type;
                 var serviceCount = appItem.getChildrenByKind('service')
                     .filter(x => x.config.spec.type == serviceItemName)
@@ -52,9 +51,9 @@ module.exports = {
                 }
             }
 
-            if (appItems.length == 0) {
+            if (appScopes.length == 0) {
                 createAlert('MissingApp', 'error', null, 'Could not find apps matching selector.');
-            } else if (appItems.length > 1) {
+            } else if (appScopes.length > 1) {
                 createAlert('MultipleApps', 'warn', null, 'More than one apps matched selector.');
             }
         }
