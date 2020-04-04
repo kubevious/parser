@@ -158,11 +158,12 @@ class LogicProcessor
         }
 
         handlerArgs.createItem = (parent, name, params) => {
-            if (!handlerInfo.kind) {
-                throw new Error("Missing handler kind.")
-            }
             params = params || {};
-            var newObj = parent.fetchByNaming(handlerInfo.kind, name);
+            params.kind = params.kind || handlerInfo.kind;
+            if (!params.kind) {
+                throw new Error("Missing handler or params kind.")
+            }
+            var newObj = parent.fetchByNaming(params.kind, name);
             if (params.order) {
                 newObj.order = params.order;
             }

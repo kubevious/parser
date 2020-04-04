@@ -4,9 +4,10 @@ const DocsHelper = require("kubevious-helpers").Docs;
 
 class LogicItem
 {
-    constructor(scope, parent, kind, naming)
+    constructor(logicScope, parent, kind, naming)
     {
-        this._scope = scope;
+        this._logicScope = logicScope;
+        this._scope = null;
         this._kind = kind;
         this._naming = naming;
         this._rn = LogicItem._makeRn(kind, naming);
@@ -34,7 +35,7 @@ class LogicItem
             this._namingArray = [this.naming];
         }
  
-        this._scope._acceptItem(this);
+        this._logicScope._acceptItem(this);
     }
 
     get kind() {
@@ -85,6 +86,14 @@ class LogicItem
         this._order = value;
     }
 
+    get scope() {
+        return this._scope;
+    }
+
+    associateScope(scope) {
+        this._scope = scope;
+    }
+
     setFlag(name)
     {
         this._flags[name] = true;
@@ -119,7 +128,7 @@ class LogicItem
         if (!this._parent) {
             return;
         }
-        this._scope._dropItem(this);
+        this._logicScope._dropItem(this);
         delete this._parent._children[this.rn];
         this._parent = null;
     }
@@ -149,7 +158,7 @@ class LogicItem
         if (skipCreateMissing) {
             return null;
         }
-        child = new LogicItem(this._scope, this, kind, naming);
+        child = new LogicItem(this._logicScope, this, kind, naming);
         return child;
     }
 

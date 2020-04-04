@@ -43,6 +43,18 @@ class AppScope
     get properties() {
         return this._properties;
     }
+
+    get containerItems() {
+        return this.item.getChildrenByKind('cont');
+    }
+
+    get initContainerItems() {
+        return this.item.getChildrenByKind('initcont');
+    }
+
+    get allContainerItems() {
+        return _.union(this.initContainerItems, this.containerItems);
+    }
 }
 
 module.exports = AppScope;

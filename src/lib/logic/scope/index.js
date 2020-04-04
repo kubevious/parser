@@ -12,9 +12,7 @@ class LogicScope
 
         this._itemMap = {}
         this._root = LogicItem.constructTop(this);
-        this._acceptItem(this._root);
 
-        this._configMap = {};
         this._namespaceScopes = {};
         this._infraScope = new InfraScope(this);
     }
@@ -29,10 +27,6 @@ class LogicScope
 
     get root() {
         return this._root;
-    }
-
-    get configMap() {
-        return this._configMap;
     }
 
     _acceptItem(item) 
@@ -72,7 +66,6 @@ class LogicScope
     setK8sConfig(logicItem, config)
     {
         logicItem.setConfig(config);
-        this.configMap[logicItem.dn] = config;
 
         logicItem.addProperties({
             kind: "yaml",
