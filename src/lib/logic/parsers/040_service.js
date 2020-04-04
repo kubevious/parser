@@ -14,21 +14,17 @@ module.exports = {
 
     handler: ({scope, item, createK8sItem, createAlert, hasCreatedItems, namespaceScope}) =>
     {
-        var serviceScope = {
-            name: item.config.metadata.name,
-            items: [],
-            apps: {}
-        };
-        namespaceScope.services[serviceScope.name] = serviceScope;
+        var serviceScope = namespaceScope.items.registerItem(item.config);
 
         var appSelector = _.get(item.config, 'spec.selector');
         if (appSelector)
         {
-            var appItems = scope.findAppsByLabels(item.config.metadata.namespace, appSelector);
+            var appItems = namespaceScope.findAppsByLabels(appSelector);
             for(var appItem of appItems)
             {
+                serviceScope.associateApp(appItem);
+
                 var appScope = namespaceScope.apps[appItem.naming];
-                serviceScope.apps[appItem.naming] = true;
 
                 appScope.properties['Exposed'] = 'With Service';
 
@@ -76,7 +72,7 @@ module.exports = {
         function createService(parent, params)
         {
             var k8sService = createK8sItem(parent, params);
-            serviceScope.items.push(k8sService);
+            serviceScope.registerItem(k8sService);
             return k8sService;
         }
 

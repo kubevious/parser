@@ -12,10 +12,6 @@ module.exports = {
 
     handler: ({scope, item, namespaceScope }) =>
     {
-        namespaceScope.configMaps[item.config.metadata.name] = {
-            used: false,
-            usedBy: {},
-            config: item.config
-        }
+        namespaceScope.items.registerItem(item.config);
     }
 }

@@ -14,29 +14,26 @@ module.exports = {
 
     handler: ({logger, scope, item, createK8sItem, createAlert, namespaceScope}) =>
     {
-        var configMapScope = namespaceScope.configMaps[item.config.metadata.name];
+        var configMapScope = namespaceScope.items.getItem(item.config);
 
-        if (_.keys(configMapScope.usedBy).length > 0) 
+        if (configMapScope.isUsedByMany)
         {
-            if (_.keys(configMapScope.usedBy).length > 1)
+            for(var userDn of configMapScope.usedBy)
             {
-                for(var userDn of _.keys(configMapScope.usedBy))
+                var user = scope.findItem(userDn);
+                if (!user) {
+                    logger.error("Missing DN: %s", dn);
+                }
+                user.setFlag("shared");
+                for(var dn of configMapScope.usedBy)
                 {
-                    var user = scope.findItem(userDn);
-                    if (!user) {
-                        logger.error("Missing DN: %s", dn);
-                    }
-                    user.setFlag("shared");
-                    for(var dn of _.keys(configMapScope.usedBy))
-                    {
-                        if (dn != userDn) {
-                            user.setUsedBy(dn);
-                        }
+                    if (dn != userDn) {
+                        user.setUsedBy(dn);
                     }
                 }
-            } 
-        }
-        else
+            }
+        } 
+        else if (configMapScope.isNotUsed)
         {
             var rawContainer = scope.fetchRawContainer(item, "ConfigMaps");
             createK8sItem(rawContainer);

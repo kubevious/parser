@@ -50,12 +50,11 @@ module.exports = {
                 return;
             }
 
-            var serviceScopeInfo = namespaceScope.services[backendConfig.serviceName];
+            var serviceScopeInfo = namespaceScope.items.getItem('Service', backendConfig.serviceName);
             if (serviceScopeInfo) {
 
-                for(var appName of _.keys(serviceScopeInfo.apps))
+                for(var appScope of serviceScopeInfo.appScopes)
                 {
-                    var appScope = namespaceScope.apps[appName];
                     appScope.properties['Exposed'] = 'With Ingress';
                 }
 
@@ -63,10 +62,15 @@ module.exports = {
                     createIngress(serviceItem);
                 }
 
-                if (serviceScopeInfo.microserviceName) {
-                    var svcItem = scope.findAppItem(item.config.metadata.namespace, serviceScopeInfo.microserviceName);
-                    createIngress(svcItem, { order: 250 });
+                for(var appItem of serviceScopeInfo.appItems)
+                {
+                    createIngress(appItem, { order: 250 });
                 }
+
+                // if (serviceScopeInfo.microserviceName) {
+                //     var svcItem = scope.findAppItem(item.config.metadata.namespace, serviceScopeInfo.microserviceName);
+                //     createIngress(svcItem, { order: 250 });
+                // }
             }
             else
             {

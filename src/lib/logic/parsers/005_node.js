@@ -11,9 +11,9 @@ module.exports = {
 
     order: 10,
 
-    handler: ({scope, item, createK8sItem}) =>
+    handler: ({scope, item, createK8sItem, infraScope}) =>
     {
-        scope.getInfraScope().increaseNodeCount();
+        infraScope.increaseNodeCount();
         
         var infra = scope.fetchInfraRawContainer();
 

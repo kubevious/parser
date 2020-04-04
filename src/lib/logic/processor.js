@@ -213,6 +213,8 @@ class LogicProcessor
 
     _preprocessHandler(handlerInfo, handlerArgs)
     {
+        handlerArgs.infraScope = handlerArgs.scope.getInfraScope();
+
         handlerArgs.namespaceName = null;
         if (handlerInfo.needNamespaceScope || handlerInfo.needAppScope)
         {

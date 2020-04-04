@@ -8,7 +8,7 @@ module.exports = {
 
     order: 20,
 
-    handler: ({scope, item, logger}) =>
+    handler: ({item, logger, infraScope}) =>
     {
         var nodesResourcesProps = {
         }
@@ -59,7 +59,7 @@ module.exports = {
             }
         }
 
-        scope.getInfraScope().setNodeResources(perNodeResources);
+        infraScope.setNodeResources(perNodeResources);
 
         item.addProperties({
             kind: "resources",
@@ -83,6 +83,6 @@ module.exports = {
         {
             clusterAllocatableResources[metric] = nodesResourcesProps[metric].allocatable;
         }
-        scope.getInfraScope().setClusterResources(clusterAllocatableResources);
+        infraScope.setClusterResources(clusterAllocatableResources);
     }
 }

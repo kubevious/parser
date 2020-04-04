@@ -8,7 +8,7 @@ module.exports = {
 
     order: 31,
 
-    handler: ({scope, item, logger, context}) =>
+    handler: ({item, logger, context, infraScope}) =>
     {
         var perPodResourcesProps = {
         }
@@ -53,7 +53,7 @@ module.exports = {
             }
             else if (launcher.config.kind == 'DaemonSet')
             {
-                multiplier = scope.getInfraScope().nodeCount;
+                multiplier = infraScope.nodeCount;
             }
         }
         
@@ -86,7 +86,7 @@ module.exports = {
                 {
                     myUsedResources[metric] = usedResourcesProps[metric].request;
                 }
-                availableResources = scope.getInfraScope().clusterResources;
+                availableResources = infraScope.clusterResources;
             }
             else if (launcher.config.kind == 'DaemonSet')
             {
@@ -94,7 +94,7 @@ module.exports = {
                 {
                     myUsedResources[metric] = perPodResourcesProps[metric].request;
                 }
-                availableResources = scope.getInfraScope().nodeResources;
+                availableResources = infraScope.nodeResources;
             }
         }
 

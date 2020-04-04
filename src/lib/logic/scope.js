@@ -124,30 +124,6 @@ class LogicScope
         var container = rawContainer.fetchByNaming("raw", name);
         return container;
     }
-
-    findAppsByLabels(namespace, selector)
-    {
-        var result = [];
-        var namespaceScope = this.getNamespaceScope(namespace);
-        for(var appLabelInfo of namespaceScope.appLabels)
-        {
-            if (this._labelsMatch(appLabelInfo.labels, selector))
-            {
-                result.push(appLabelInfo.appItem);
-            }
-        }
-        return result;
-    }
-
-    _labelsMatch(labels, selector)
-    {
-        for(var key of _.keys(selector)) {
-            if (selector[key] != labels[key]) {
-                return false;
-            }
-        }
-        return true;
-    }
     
     findAppItem(namespace, name)
     {
@@ -186,6 +162,8 @@ class InfraScope
         this._nodeCount = 0
         this._nodeResources = {};
         this._clusterResources = {};
+
+        this._items = new ItemsScope(this);
     }
 
     get logger() {
@@ -202,6 +180,10 @@ class InfraScope
 
     get nodeResources() {
         return this._nodeResources;
+    }
+
+    get items() {
+        return this._items;
     }
 
     increaseNodeCount()
@@ -228,12 +210,12 @@ class NamespaceScope
         this._logger = parent.logger;
         this._name = name;
 
+        this._items = new ItemsScope(this);
+
         this.appLabels = [];
         this.apps = {};
-        this.services = {};
         this.appControllers = {};
         this.appOwners = {};
-        this.configMaps = {};
         this.ingresses = {};
         this.secrets = {};
     }
@@ -244,6 +226,10 @@ class NamespaceScope
 
     get name() {
         return this._name;
+    }
+
+    get items() {
+        return this._items;
     }
 
     registerAppOwner(owner)
@@ -277,6 +263,164 @@ class NamespaceScope
         }
         return this.secrets[name];
     }
+
+    findAppsByLabels(selector)
+    {
+        var result = [];
+        for(var appLabelInfo of this.appLabels)
+        {
+            if (labelsMatch(appLabelInfo.labels, selector))
+            {
+                result.push(appLabelInfo.appItem);
+            }
+        }
+        return result;
+    }
+
+    findAppScopesByLabels(selector)
+    {
+        var appItems = this.findAppsByLabels(selector);
+        var result = appItems.map(x => {
+            var appScope = this.apps[x.naming];
+            return appScope;
+        });
+        result = result.filter(x => x);
+        return result;
+    }
+}
+
+class ItemsScope
+{
+    constructor(parent)
+    {
+        this._parent = parent;
+        this._logger = parent.logger;
+
+        this._itemsDict = {}
+    }
+
+    get logger() {
+        return this._logger;
+    }
+    
+    registerItem(config)
+    {
+        return this._registerItem(config.kind, config.metadata.name, config);
+    }
+
+    _registerItem(kind, name, config)
+    {
+        if (!this._itemsDict[kind])
+        {
+            this._itemsDict[kind] = {};
+        }
+        var item = new ItemScope(this._parent, config);
+        this._itemsDict[kind][name] = item;
+        return item;
+    }
+
+    getItem(kind, name)
+    {
+        if (_.isPlainObject(kind))
+        {
+            return this._getItem(kind.kind, kind.metadata.name);
+        }
+        else
+        {
+            return this._getItem(kind, name);
+        }
+    }
+
+    _getItem(kind, name)
+    {
+        if (this._itemsDict[kind])
+        {
+            var value = this._itemsDict[kind][name];
+            if (value)
+            {
+                return value;
+            }
+        }
+        return null;
+    }
+}
+
+class ItemScope
+{
+    constructor(parent, config)
+    {
+        this._parent = parent;
+        this._usedBy = {};
+        this._config = config;
+        this._items = [];
+        this._appsItems = {};
+    }
+
+    get config() {
+        return this._config;
+    }
+
+    get usedBy() {
+        return _.keys(this._usedBy);
+    }
+
+    get usedByCount() {
+        return this.usedBy.length;
+    }
+
+    get isNotUsed() {
+        return this.usedByCount == 0;
+    }
+
+    get isUsedByOne() {
+        return this.usedByCount == 1;
+    }
+
+    get isUsedByMany() {
+        return this.usedByCount > 1;
+    }
+
+    get items() {
+        return this._items;
+    }
+
+    get appItems() {
+        return _.values(this._appsItems);
+    }
+
+    get appScopes() {
+        var names = _.keys(this._appsItems);
+        return names.map(x => {
+                return this._parent.apps[x];
+            })
+            .filter(x => x);
+    }
+
+    markUsedBy(dn)
+    {
+        this._usedBy[dn] = true;
+    }
+    
+    registerItem(item)
+    {
+        this._items.push(item);
+    }
+
+    associateApp(item)
+    {
+        this._appsItems[item.naming] = item;
+    }
+}
+
+
+function labelsMatch(labels, selector)
+{
+    for(var key of _.keys(selector)) {
+        if (selector[key] != labels[key]) {
+            return false;
+        }
+    }
+    return true;
 }
 
 module.exports = LogicScope;
