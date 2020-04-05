@@ -8,7 +8,8 @@ module.exports = {
 
     needNamespaceScope: true,
 
-    handler: ({item, namespaceScope }) =>
+    handler: ({ item, namespaceScope }) =>
     {
+        namespaceScope.items.register(item.config);
     }
 }

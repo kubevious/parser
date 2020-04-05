@@ -101,13 +101,13 @@ module.exports = {
         
         function findAndProcessConfigMap(parent, name, markUsedBy, isOptional)
         {
-            var configMapScope = namespaceScope.items.getItem('ConfigMap', name);
+            var configMapScope = namespaceScope.items.get('ConfigMap', name);
             if (configMapScope)
             {
                 var configmap = parent.fetchByNaming("configmap", name);
                 scope.setK8sConfig(configmap, configMapScope.config);
                 if (markUsedBy) {
-                    configMapScope.markUsedBy(configmap.dn);
+                    configMapScope.markUsedBy(configmap);
                 }
             }
             else
@@ -123,8 +123,8 @@ module.exports = {
         {
             var secret = parent.fetchByNaming("secret", name);
             if (markUsedBy) {
-                var secretScope = namespaceScope.items.fetchItem('Secret', name);
-                secretScope.markUsedBy(secret.dn);
+                var secretScope = namespaceScope.items.fetch('Secret', name);
+                secretScope.markUsedBy(secret);
             }
         }
     }

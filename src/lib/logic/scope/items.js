@@ -15,12 +15,12 @@ class ItemsScope
         return this._logger;
     }
     
-    registerItem(config)
+    register(config)
     {
-        return this._registerItem(config.kind, config.metadata.name, config);
+        return this._register(config.kind, config.metadata.name, config);
     }
 
-    _registerItem(kind, name, config)
+    _register(kind, name, config)
     {
         if (!this._itemsDict[kind])
         {
@@ -31,28 +31,28 @@ class ItemsScope
         return item;
     }
     
-    fetchItem(kind, name, config)
+    fetch(kind, name, config)
     {
-        var item = this._getItem(kind, name);
+        var item = this._get(kind, name);
         if (!item) {
-            item = this._registerItem(kind, name, config);
+            item = this._register(kind, name, config);
         }
         return item;
     }
 
-    getItem(kind, name)
+    get(kind, name)
     {
         if (_.isPlainObject(kind))
         {
-            return this._getItem(kind.kind, kind.metadata.name);
+            return this._get(kind.kind, kind.metadata.name);
         }
         else
         {
-            return this._getItem(kind, name);
+            return this._get(kind, name);
         }
     }
 
-    getItems(kind)
+    getAll(kind)
     {
         if (this._itemsDict[kind])
         {
@@ -61,12 +61,12 @@ class ItemsScope
         return [];
     }
 
-    countItems(kind)
+    count(kind)
     {
-        return this.getItems(kind).length;
+        return this.getAll(kind).length;
     }
 
-    _getItem(kind, name)
+    _get(kind, name)
     {
         if (this._itemsDict[kind])
         {

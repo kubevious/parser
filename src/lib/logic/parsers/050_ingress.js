@@ -14,7 +14,7 @@ module.exports = {
 
     handler: ({scope, item, createK8sItem, createAlert, hasCreatedItems, namespaceScope}) =>
     {
-        namespaceScope.items.registerItem(item.config);
+        namespaceScope.items.register(item.config);
 
         var defaultBackend = _.get(item.config, "spec.backend");
         if (defaultBackend) {
@@ -50,7 +50,7 @@ module.exports = {
                 return;
             }
 
-            var serviceScopeInfo = namespaceScope.items.getItem('Service', backendConfig.serviceName);
+            var serviceScopeInfo = namespaceScope.items.get('Service', backendConfig.serviceName);
             if (serviceScopeInfo) {
 
                 for(var appScope of serviceScopeInfo.appScopes)

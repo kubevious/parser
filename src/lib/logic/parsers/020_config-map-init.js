@@ -4,14 +4,12 @@ module.exports = {
         kind: "ConfigMap"
     },
 
-    kind: 'configmap',
-
     order: 20,
 
     needNamespaceScope: true,
 
-    handler: ({scope, item, namespaceScope }) =>
+    handler: ({ item, namespaceScope }) =>
     {
-        namespaceScope.items.registerItem(item.config);
+        namespaceScope.items.register(item.config);
     }
 }

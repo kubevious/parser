@@ -1,7 +1,7 @@
 const _ = require("the-lodash");
 
 module.exports = {
-    targets: [{
+    target: [{
         api: "apps",
         kind: "Deployment"
     }, {

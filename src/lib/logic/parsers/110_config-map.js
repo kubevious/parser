@@ -12,28 +12,13 @@ module.exports = {
 
     needNamespaceScope: true,
 
-    handler: ({logger, scope, item, createK8sItem, createAlert, namespaceScope}) =>
+    handler: ({logger, scope, item, createK8sItem, createAlert, namespaceScope, determineSharedFlag}) =>
     {
-        var configMapScope = namespaceScope.items.getItem(item.config);
+        var configMapScope = namespaceScope.items.get(item.config);
 
-        if (configMapScope.isUsedByMany)
-        {
-            for(var userDn of configMapScope.usedBy)
-            {
-                var user = scope.findItem(userDn);
-                if (!user) {
-                    logger.error("Missing DN: %s", dn);
-                }
-                user.setFlag("shared");
-                for(var dn of configMapScope.usedBy)
-                {
-                    if (dn != userDn) {
-                        user.setUsedBy(dn);
-                    }
-                }
-            }
-        } 
-        else if (configMapScope.isNotUsed)
+        determineSharedFlag(configMapScope);
+
+        if (configMapScope.isNotUsed)
         {
             var rawContainer = scope.fetchRawContainer(item, "ConfigMaps");
             createK8sItem(rawContainer);

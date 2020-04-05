@@ -56,11 +56,13 @@ class LogicProcessor
         this.logger.info('[_loadProcessor] %s...', name);
         const parserModule = require('./' + location + '/' + name);
 
-        var targets = null;
+        var targets = [];
         if (parserModule.target) {
-            targets = [parserModule.target];
-        } else if (parserModule.targets) {
-            targets = parserModule.targets;
+            if (_.isArray(parserModule.target)) {
+                targets = parserModule.target;
+            } else {
+                targets = [parserModule.target];
+            }
         }
 
         for(var target of targets)
@@ -186,6 +188,22 @@ class LogicProcessor
                 date,
                 msg
             });
+        }
+
+        handlerArgs.determineSharedFlag = (itemScope) => {
+            if (itemScope.isUsedByMany)
+            {
+                for(var xItem of itemScope.usedBy)
+                {
+                    xItem.setFlag("shared");
+                    for(var otherItem of itemScope.usedBy)
+                    {
+                        if (otherItem.dn != xItem.dn) {
+                            xItem.setUsedBy(otherItem.dn);
+                        }
+                    }
+                }
+            } 
         }
 
         this._preprocessHandler(handlerInfo, handlerArgs);

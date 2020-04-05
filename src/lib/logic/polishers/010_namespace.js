@@ -13,8 +13,8 @@ module.exports = {
 
         var properties = {
             "Applications": namespaceScope.appCount,
-            "Ingresses": namespaceScope.items.countItems('Ingress'),
-            "Secrets": namespaceScope.items.countItems('Secret')
+            "Ingresses": namespaceScope.items.count('Ingress'),
+            "Secrets": namespaceScope.items.count('Secret')
         }
 
         item.addProperties({

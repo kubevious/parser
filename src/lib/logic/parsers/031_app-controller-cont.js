@@ -159,13 +159,13 @@ module.exports = {
         
         function findAndProcessConfigMap(parent, name, markUsedBy, isOptional)
         {
-            var configMapScope = namespaceScope.items.getItem('ConfigMap', name);
+            var configMapScope = namespaceScope.items.get('ConfigMap', name);
             if (configMapScope)
             {
                 var configmap = parent.fetchByNaming("configmap", name);
                 scope.setK8sConfig(configmap, configMapScope.config);
                 if (markUsedBy) {
-                    configMapScope.markUsedBy(configmap.dn);
+                    configMapScope.markUsedBy(configmap);
                 }
             }
             else

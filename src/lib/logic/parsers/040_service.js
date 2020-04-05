@@ -14,7 +14,7 @@ module.exports = {
 
     handler: ({scope, item, createK8sItem, createAlert, hasCreatedItems, namespaceScope}) =>
     {
-        var serviceScope = namespaceScope.items.registerItem(item.config);
+        var serviceScope = namespaceScope.items.register(item.config);
 
         var appSelector = _.get(item.config, 'spec.selector');
         if (appSelector)
