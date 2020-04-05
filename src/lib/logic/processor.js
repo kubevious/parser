@@ -70,6 +70,8 @@ class LogicProcessor
             this.logger.info('[_loadProcessor] Adding %s...', name, target);
 
             var parser = _.clone(parserModule);
+            parser.name = location + '/' + name;
+            
             if (_.isNullOrUndefined(parser.order)) {
                 parser.order = 0;
             }

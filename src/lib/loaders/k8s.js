@@ -58,7 +58,8 @@ class K8sLoader
             this._client.Ingress,
             this._client.ConfigMap,
             this._client.ReplicaSet,
-            this._client.Pod
+            this._client.Pod,
+            this._client.ServiceAccount
         ];
     }
 
