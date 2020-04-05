@@ -21,8 +21,12 @@ module.exports = {
         if (serviceAccountScope.hasNoOwner)
         {
             var rawContainer = scope.fetchRawContainer(item, "ServiceAccounts");
-            createK8sItem(rawContainer);
-            createAlert('Unused', 'warn', null, 'ServiceAccount not used.');
+            var logicItem = createK8sItem(rawContainer);
+
+            if (logicItem.naming != 'default')
+            {
+                createAlert('Unused', 'warn', null, 'ServiceAccount not used.');
+            }
         } 
         else 
         {
