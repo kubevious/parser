@@ -1,6 +1,7 @@
 const Promise = require('the-promise');
 const _ = require('the-lodash');
 const DateUtils = require("kubevious-helpers").DateUtils;
+const HandledError = require('kubevious-helpers').HandledError;
 
 class JobDampener
 {
@@ -72,7 +73,11 @@ class JobDampener
                 };
             })
             .catch(reason => {
-                this.logger.error('[_processJob] ', reason);
+                if (reason instanceof HandledError) {
+                    this.logger.error('[_processJob] ERROR: %s', reason.message);
+                } else {
+                    this.logger.error('[_processJob] ERROR: ', reason);
+                }
                 return {
                     success: false
                 };

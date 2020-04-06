@@ -1,8 +1,9 @@
 const Promise = require('the-promise');
 const _ = require('lodash');
+const axios = require('axios');
 const JobDampener = require('../utils/job-dampener');
 const SnapshotReporter = require('./snapshot-reporter');
-const axios = require('axios');
+const HandledError = require('kubevious-helpers').HandledError;
 
 class ReporterTarget
 {
@@ -79,8 +80,23 @@ class ReporterTarget
                 return res.data;
             })
             .catch(reason => {
-                this.logger.error('[request] ', reason)
-                throw reason;
+                if (reason.response) {
+                    this.logger.error('[request] URL: %s, RESPONSE STATUS: %s', url, reason.response.status)
+                    if (reason.response.status == 413) {
+                        var size = _.get(reason, 'request._redirectable._requestBodyLength');
+                        this.logger.warn('[request] Request too big. Ingoring. URL: %s, Size: %s bytes', url, size)
+                        return {};
+                    } else {
+                        throw new HandledError("HTTP Error " + reason.response.status);
+                    }
+                } else if (reason.request) {
+                    this.logger.error('[request] URL: %s, ERROR: %s', url, reason.message)
+                    throw new HandledError("Could not connect");
+                } else {
+                    this.logger.error('[request] URL: %s. Reason: ', url, reason)
+                    throw new HandledError("Unknown error " + reason.message);
+                }
+                // throw reason;
             });
     }
 
