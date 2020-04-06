@@ -13,4 +13,4 @@ export GKE_K8S_CLUSTER=kubevious-samples
 export MYSQL_HOST=localhost
 export MYSQL_PORT=3306
 export KUBEVIOUS_COLLECTOR=http://localhost:4000/api/v1/collect
-node src/mock/index-gke
+node mock/index-gke

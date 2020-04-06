@@ -30,7 +30,7 @@ class K8sMockLoader
 
     run()
     {
-        var dirName = Path.resolve(__dirname, '..', '..', 'mock', this._name);
+        var dirName = Path.resolve(__dirname, this._name);
         for(var name of fs.readdirSync(dirName))
         {
             var fname = Path.join(dirName, name);

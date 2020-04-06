@@ -6,4 +6,4 @@ cd $MY_DIR
 export LOG_TO_FILE=true
 export NODE_ENV=development
 export GENERATE_ONLY=true
-node src/mock/generate-only
+node mock/generate-only

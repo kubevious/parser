@@ -1,0 +1,16 @@
+{
+  "name": "mock",
+  "version": "1.0.0",
+  "description": "```sh kubectl get all --all-namespaces -o yaml > data-all.yaml kubectl get configmaps --all-namespaces -o yaml > data-config-maps.yaml kubectl get ingresses --all-namespaces -o yaml > data-ingresses.yaml kubectl get serviceaccounts --all-namespaces -o yaml > data-service-accounts.yaml kubectl get clusterroles -o yaml > data-cluster-roles.yaml kubectl get clusterrolebindings -o yaml > data-cluster-role-bindings.yaml kubectl get roles --all-namespaces -o yaml > data-roles.yaml kubectl get rolebindings --all-namespaces -o yaml > data-role-bindings.yaml ```",
+  "main": "generate-only.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "js-yaml": "^3.13.1",
+    "the-lodash": "^1.0.15",
+    "the-promise": "^1.1.4"
+  }
+}

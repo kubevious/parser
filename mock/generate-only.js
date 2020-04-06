@@ -9,7 +9,7 @@ var logger = require('the-logger').setup('parser',
 });
 logger.level = 'info';
 
-const Context = require("../lib/context");
+const Context = require("../src/lib/context");
 const context = new Context(logger);
 
 getMockLoader();
@@ -31,7 +31,7 @@ function getGKELoader()
     const path = require('path');
     const credentials = JSON.parse(fs.readFileSync(path.join(__dirname, process.env.GKE_CREDENTIALS_PATH), 'utf8'));
 
-    const Loader = require('../lib/loaders/gke');
+    const Loader = require('./src/lib/loaders/gke');
     var loader = new Loader(context,
         credentials,
         process.env.GKE_K8S_CLUSTER,
@@ -41,7 +41,7 @@ function getGKELoader()
 
 function getMockLoader()
 {
-    const MockLoader = require('../lib/loaders/k8s-mock');
+    const MockLoader = require('./k8s-mock');
     var loader = new MockLoader(context);
     context.addLoader(loader);
 }

@@ -9,4 +9,4 @@ export NODE_ENV=development
 export MYSQL_HOST=localhost
 export MYSQL_PORT=3306
 export KUBEVIOUS_COLLECTOR=http://localhost:4000/api/v1/collect
-node src/mock/index-mock
+node mock/index-mock
