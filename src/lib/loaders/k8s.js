@@ -45,22 +45,27 @@ class K8sLoader
     }
 
     _getTargets() {
-        return [
-            this._client.Node,
-            this._client.Namespace,
-            this._client.LimitRange,
-            this._client.Deployment,
-            this._client.StatefulSet,
-            this._client.HorizontalPodAutoscaler,
-            this._client.DaemonSet,
-            this._client.Job,
-            this._client.Service,
-            this._client.Ingress,
-            this._client.ConfigMap,
-            this._client.ReplicaSet,
-            this._client.Pod,
-            this._client.ServiceAccount
-        ];
+        var groups = this._context.k8sParser.getAPIGroups();
+        var targetInfos = [];
+        for(var group of groups)
+        {
+            for(var kind of group.kinds)
+            {
+                targetInfos.push({
+                    api: group.api,
+                    kind: kind
+                });
+            }
+        }
+        this.logger.info("Targets: ", targetInfos);
+
+        var targets = targetInfos.map(x => {
+            return this._client.client(x.kind, x.api);
+        });
+
+        targets = targets.filter(x => x);
+
+        return targets;
     }
 
     run()

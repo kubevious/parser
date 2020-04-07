@@ -1,4 +1,5 @@
 const Promise = require('the-promise');
+const _ = require('the-lodash');
 
 class K8sParser
 {
@@ -6,6 +7,11 @@ class K8sParser
     {
         this._context = context;
         this._logger = context.logger.sublogger("K8sParser");
+        this._groups = require("./api-groups.js");
+    }
+
+    getAPIGroups() {
+        return _.cloneDeep(this._groups);
     }
 
     parse(isPresent, obj)
