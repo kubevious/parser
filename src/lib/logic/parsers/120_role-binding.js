@@ -67,8 +67,31 @@ module.exports = {
         {
             var rawContainer = scope.fetchRawContainer(item, item.config.kind + "s");
             var logicItem = createK8sItem(rawContainer);
+            bindingScope.registerItem(logicItem);
             createAlert('Unused', 'warn', null, item.kind + ' not used.');
         } 
+
+        if (item.config.roleRef)
+        {
+            var targetNamespaceScope;
+            if (item.config.roleRef.kind == 'ClusterRole') {
+                targetNamespaceScope = scope.getNamespaceScope('');
+            } else {
+                targetNamespaceScope = namespaceScope;
+            }
+            var targetRoleScope = targetNamespaceScope.items.get(item.config.roleRef.kind, item.config.roleRef.name);
+            if (targetRoleScope)
+            {
+                for(var logicItem of bindingScope.items)
+                {
+                    targetRoleScope.registerOwnerItem(logicItem);
+                }
+            }
+            else
+            {
+                createAlert('Missing', 'error', null, 'Unresolved ' + item.config.roleRef.kind + ' ' + item.config.roleRef.name);
+            }
+        }
 
         determineSharedFlag(bindingScope);
     }
