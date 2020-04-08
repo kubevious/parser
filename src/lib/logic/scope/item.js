@@ -61,7 +61,6 @@ class ItemScope
         return this.ownerCount > 1;
     }
 
-
     get items() {
         return this._items;
     }

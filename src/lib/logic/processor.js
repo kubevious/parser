@@ -164,6 +164,9 @@ class LogicProcessor
         handlerArgs.createItem = (parent, name, params) => {
             params = params || {};
             params.kind = params.kind || handlerInfo.kind;
+            if (_.isFunction(params.kind)) {
+                params.kind = params.kind(item);
+            }
             if (!params.kind) {
                 throw new Error("Missing handler or params kind.")
             }
@@ -244,7 +247,7 @@ class LogicProcessor
             } else {
                 handlerArgs.namespaceName = handlerArgs.item.config.metadata.namespace;
             }
-            if (handlerArgs.namespaceName)
+            if (_.isNotNullOrUndefined(handlerArgs.namespaceName))
             {
                 handlerArgs.namespaceScope = handlerArgs.scope.getNamespaceScope(handlerArgs.namespaceName);
             }

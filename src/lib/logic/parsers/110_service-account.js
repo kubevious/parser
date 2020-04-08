@@ -14,7 +14,7 @@ module.exports = {
 
     needNamespaceScope: true,
 
-    handler: ({scope, item, logger, context, createItem, namespaceScope, createK8sItem, createAlert, determineSharedFlag}) =>
+    handler: ({scope, item, logger, context, namespaceScope, createK8sItem, createAlert, determineSharedFlag}) =>
     {
         var serviceAccountScope = namespaceScope.items.get(item.config);
 
@@ -32,9 +32,9 @@ module.exports = {
         {
             for(var owner of serviceAccountScope.owners)
             {
-                var item = createK8sItem(owner);
-                serviceAccountScope.registerItem(item);
-                serviceAccountScope.markUsedBy(item);
+                var logicItem = createK8sItem(owner);
+                serviceAccountScope.registerItem(logicItem);
+                serviceAccountScope.markUsedBy(logicItem);
             }
 
             determineSharedFlag(serviceAccountScope);

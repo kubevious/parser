@@ -37,8 +37,7 @@ module.exports = [
         kinds: [
             "Ingress"
         ]
-    }
-    ,
+    },
     {
         api: "rbac.authorization.k8s.io",
         kinds: [
