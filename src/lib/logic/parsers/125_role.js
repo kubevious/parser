@@ -1,3 +1,7 @@
+const _ = require("the-lodash");
+
+const K8S_RBAC_VERBS = ["get", "list", "watch", "create", "update", "patch", "delete"];
+
 module.exports = {
     target: [{
         api: "rbac.authorization.k8s.io",
@@ -50,20 +54,29 @@ module.exports = {
             }
         }
 
+        var usedVerbs = {};
+        for(var rule of roleScope.data.rules)
+        {
+            _.defaults(usedVerbs, rule.verbs);
+        }
+
+        var headers = [
+            'api',
+            'resource',
+            'name'
+        ]
+
+        headers = _.concat(headers, _.keys(usedVerbs));
+
         var roleTableConfig = {
-            headers: [
-                'api',
-                'resource',
-                'resourceName',
-                'verb'
-            ],
-            rows: roleScope.data.rules
+            headers: headers,
+            rows: roleScope.data.rules.map(x => transformRow(x))
         }
 
         for(var logicItem of roleScope.items)
         {
             logicItem.addProperties({
-                kind: "table",
+                kind: "table", // "yaml", //"table",
                 id: "role-matrix",
                 title: "Role Matrix",
                 order: 8,
@@ -72,5 +85,21 @@ module.exports = {
         }
 
         determineSharedFlag(roleScope);
+
+        /******/
+        function transformRow(x)
+        {
+            var row = {
+                api: x.target.api,
+                resource: x.target.resource,
+                name: x.target.name
+            };
+
+            for(var verb of _.keys(x.verbs)) {
+                row[verb] = true;
+            }
+
+            return row;
+        }
     }
 }

@@ -1,3 +1,5 @@
+const _ = require('the-lodash');
+
 module.exports = {
     target: [{
         api: "rbac.authorization.k8s.io",
@@ -45,30 +47,33 @@ module.exports = {
                     {
                         for(var resource of rule.resources)
                         {
-                            for(var verb of rule.verbs)
-                            {
-                                if (rule.resourceNames) {
-                                    for(var resourceName of rule.resourceNames) {
-                                        roleScope.data.rules.push({
-                                            api: api,
-                                            resource: resource,
-                                            resourceName: resourceName,
-                                            verb: verb
-                                        })
-                                    }
-                                } else {
-                                    roleScope.data.rules.push({
-                                        api: api,
-                                        resource: resource,
-                                        resourceName: '*',
-                                        verb: verb
-                                    })
+                            if (rule.resourceNames) {
+                                for(var resourceName of rule.resourceNames) {
+                                    addRule(api, resource, resourceName, rule.verbs)
                                 }
+                            } else {
+                                addRule(api, resource, '*', rule.verbs)
                             }
                         }
                     }
                 }
             }
+        }
+
+        function addRule(api, resource, name, verbs)
+        {
+            roleScope.data.rules.push({
+                target: {
+                    api,
+                    resource,
+                    name
+                },
+                verbs: _.makeDict(verbs, x => x, x => true)
+            });
+
+            // for(var verb of verbs)
+            // {
+            // }
         }
     }
 }
