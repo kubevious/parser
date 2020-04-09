@@ -29,8 +29,46 @@ module.exports = {
         throw new Error();
     },
 
-    handler: ({ item, namespaceScope }) =>
+    handler: ({ logger, item, namespaceScope }) =>
     {
-        namespaceScope.items.register(item.config);
+        var roleScope = namespaceScope.items.register(item.config);
+
+        roleScope.data.rules = [];
+
+        if (item.config.rules)
+        {
+            for(var rule of item.config.rules)
+            {
+                if (rule.apiGroups)
+                {
+                    for(var api of rule.apiGroups)
+                    {
+                        for(var resource of rule.resources)
+                        {
+                            for(var verb of rule.verbs)
+                            {
+                                if (rule.resourceNames) {
+                                    for(var resourceName of rule.resourceNames) {
+                                        roleScope.data.rules.push({
+                                            api: api,
+                                            resource: resource,
+                                            resourceName: resourceName,
+                                            verb: verb
+                                        })
+                                    }
+                                } else {
+                                    roleScope.data.rules.push({
+                                        api: api,
+                                        resource: resource,
+                                        resourceName: '*',
+                                        verb: verb
+                                    })
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 }

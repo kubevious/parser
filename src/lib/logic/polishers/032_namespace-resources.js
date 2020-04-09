@@ -100,6 +100,10 @@ module.exports = {
         appsByConsumptionTable.rows = _.orderBy(appsByConsumptionTable.rows, ['max'], 'desc');
         for(var appConsumption of _.values(appsByConsumptionDict))
         {
+            delete appConsumption['max'];
+        }
+        for(var appConsumption of _.values(appsByConsumptionDict))
+        {
             for(var metric of resourcesHelper.METRICS)
             {
                 if (_.isNullOrUndefined(appConsumption[metric]))

@@ -8,12 +8,17 @@ class ItemScope
         this._usedBy = {};
         this._owners = {};
         this._config = config;
+        this._data = {};
         this._items = [];
         this._appScopes = {};
     }
 
     get config() {
         return this._config;
+    }
+
+    get data() {
+        return this._data;
     }
 
     get usedByDns() {

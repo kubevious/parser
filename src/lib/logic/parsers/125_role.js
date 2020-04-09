@@ -37,6 +37,7 @@ module.exports = {
         {
             var rawContainer = scope.fetchRawContainer(item, item.config.kind + "s");
             var logicItem = createK8sItem(rawContainer);
+            roleScope.registerItem(logicItem);
             createAlert('Unused', 'warn', null, item.kind + ' not used.');
         } 
         else
@@ -47,6 +48,27 @@ module.exports = {
                 roleScope.registerItem(logicItem);
                 roleScope.markUsedBy(logicItem);
             }
+        }
+
+        var roleTableConfig = {
+            headers: [
+                'api',
+                'resource',
+                'resourceName',
+                'verb'
+            ],
+            rows: roleScope.data.rules
+        }
+
+        for(var logicItem of roleScope.items)
+        {
+            logicItem.addProperties({
+                kind: "table",
+                id: "role-matrix",
+                title: "Role Matrix",
+                order: 8,
+                config: roleTableConfig
+            });
         }
 
         determineSharedFlag(roleScope);
