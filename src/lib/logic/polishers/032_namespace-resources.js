@@ -17,12 +17,10 @@ module.exports = {
             headers: [
                 {
                     id: 'dn',
-                    label: 'Application'
+                    label: 'Application',
+                    kind: 'shortcut'
                 }
             ],
-            shortcuts: {
-                'dn': true
-            },
             rows: []
         }
         var appsByConsumptionDict = {};

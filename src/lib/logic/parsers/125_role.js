@@ -1,6 +1,10 @@
 const _ = require("the-lodash");
 
 const K8S_RBAC_VERBS = ["get", "list", "watch", "create", "update", "patch", "delete"];
+const K8S_RBAC_VERBS_ORDER = {};
+for(var i = 0; i < K8S_RBAC_VERBS.length; i++) {
+    K8S_RBAC_VERBS_ORDER[K8S_RBAC_VERBS[i]] = i;
+}
 
 module.exports = {
     target: [{
@@ -66,19 +70,33 @@ module.exports = {
             'name'
         ]
 
-        headers = _.concat(headers, _.keys(usedVerbs));
+        var verbHeaders = _.keys(usedVerbs);
+        verbHeaders = _.orderBy(verbHeaders, x => {
+            var order = K8S_RBAC_VERBS_ORDER[x];
+            if (order) {
+                return order;
+            }
+            return 0;
+        })
+        verbHeaders = verbHeaders.map(x => ({
+            id: x,
+            kind: 'check'
+        }))
 
+        headers = _.concat(headers, verbHeaders);
+
+        var rules = _.orderBy(roleScope.data.rules, ['target.api', 'target.resource', 'target.name']) ;
         var roleTableConfig = {
             headers: headers,
-            rows: roleScope.data.rules.map(x => transformRow(x))
+            rows: rules.map(x => transformRow(x))
         }
 
         for(var logicItem of roleScope.items)
         {
             logicItem.addProperties({
-                kind: "table", // "yaml", //"table",
-                id: "role-matrix",
-                title: "Role Matrix",
+                kind: "table",
+                id: "resource-role-matrix",
+                title: "Resource Role Matrix",
                 order: 8,
                 config: roleTableConfig
             });
