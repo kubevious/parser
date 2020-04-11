@@ -1,5 +1,4 @@
 const _ = require("the-lodash");
-const resourcesHelper = require("../helpers/resources");
 
 module.exports = {
     target: {

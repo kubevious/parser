@@ -29,7 +29,7 @@ module.exports = {
         throw new Error();
     },
 
-    handler: ({ logger, scope, item, namespaceScope, namespaceName, createK8sItem, createAlert, determineSharedFlag }) =>
+    handler: ({ scope, item, namespaceScope, namespaceName, createK8sItem, createAlert, determineSharedFlag, helpers }) =>
     {
         var bindingScope = namespaceScope.items.register(item.config);
 
@@ -47,7 +47,11 @@ module.exports = {
                     var subjNamespaceScope = scope.getNamespaceScope(namespaceName);
                     var serviceAccountScope = subjNamespaceScope.items.get('ServiceAccount', subject.name);
                     if (serviceAccountScope) {
-    
+                        if (!serviceAccountScope.data.bindings) {
+                            serviceAccountScope.data.bindings = [];
+                        }
+                        serviceAccountScope.data.bindings.push(bindingScope);
+
                         for (var serviceAccount of serviceAccountScope.items)
                         {
                             var logicItem = createK8sItem(serviceAccount);
@@ -63,14 +67,6 @@ module.exports = {
             }
         }
 
-        if (bindingScope.isNotUsed)
-        {
-            var rawContainer = scope.fetchRawContainer(item, item.config.kind + "s");
-            var logicItem = createK8sItem(rawContainer);
-            bindingScope.registerItem(logicItem);
-            createAlert('Unused', 'warn', null, item.kind + ' not used.');
-        } 
-
         if (item.config.roleRef)
         {
             var targetNamespaceScope;
@@ -82,6 +78,11 @@ module.exports = {
             var targetRoleScope = targetNamespaceScope.items.get(item.config.roleRef.kind, item.config.roleRef.name);
             if (targetRoleScope)
             {
+                if (!bindingScope.data.roles) {
+                    bindingScope.data.roles = [];
+                }
+                bindingScope.data.roles.push(targetRoleScope);
+
                 for(var logicItem of bindingScope.items)
                 {
                     targetRoleScope.registerOwnerItem(logicItem);
@@ -92,6 +93,38 @@ module.exports = {
                 createAlert('Missing', 'error', null, 'Unresolved ' + item.config.roleRef.kind + ' ' + item.config.roleRef.name);
             }
         }
+
+        if (bindingScope.isNotUsed)
+        {
+            var rawContainer = scope.fetchRawContainer(item, item.config.kind + "s");
+            var logicItem = createK8sItem(rawContainer);
+            bindingScope.registerItem(logicItem);
+            createAlert('Unused', 'warn', null, item.kind + ' not used.');
+        } 
+
+        var targetNamespaceName = null;
+        if(item.config.kind == "RoleBinding") {
+            targetNamespaceName = item.config.metadata.namespace;
+        } else if(item.config.kind == "ClusterRoleBinding") {
+            targetNamespaceName = '*';
+        }
+
+        bindingScope.data.rules = helpers.roles.makeRulesMap();
+        var roleScopes = bindingScope.data.roles;
+        if (roleScopes)
+        {
+            for(var roleScope of roleScopes)
+            {
+                bindingScope.data.rules = helpers.roles.combineRulesMap(
+                    bindingScope.data.rules,
+                    roleScope.data.rules,
+                    targetNamespaceName);
+            }
+        }
+        bindingScope.data.rules = helpers.roles.optimizeRulesMap(bindingScope.data.rules);
+
+        var propsConfig = helpers.roles.buildRoleMatrix(bindingScope.data.rules);
+        bindingScope.addProperties(propsConfig);
 
         determineSharedFlag(bindingScope);
     }

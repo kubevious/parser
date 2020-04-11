@@ -1,5 +1,4 @@
 const _ = require("the-lodash");
-const resourcesHelper = require("../helpers/resources");
 
 module.exports = {
     target: {
@@ -8,7 +7,7 @@ module.exports = {
 
     order: 32,
 
-    handler: ({scope, item, logger}) =>
+    handler: ({scope, item, logger, helpers}) =>
     {
         var usedResourcesProps = {
         }
@@ -24,7 +23,7 @@ module.exports = {
             rows: []
         }
         var appsByConsumptionDict = {};
-        for(var metric of resourcesHelper.METRICS) {
+        for(var metric of helpers.resources.METRICS) {
             usedResourcesProps[metric] = { request: 0 };
             clusterConsumptionProps[metric] = 0;
             appsByConsumptionTable.headers.push(metric);
@@ -35,7 +34,7 @@ module.exports = {
             var appResourcesProps = app.getProperties('resources');
             if (appResourcesProps)
             {
-                for(var metric of resourcesHelper.METRICS)
+                for(var metric of helpers.resources.METRICS)
                 {
                     var value = _.get(appResourcesProps.config, metric + '.request');
                     if (value)
@@ -48,7 +47,7 @@ module.exports = {
             var appUsedResourcesProps = app.getProperties('cluster-consumption');
             if (appUsedResourcesProps)
             {
-                for(var metric of resourcesHelper.METRICS)
+                for(var metric of helpers.resources.METRICS)
                 {
                     var value = appUsedResourcesProps.config[metric];
                     if (value)
@@ -85,14 +84,14 @@ module.exports = {
         /********/
         for(var appConsumption of _.values(appsByConsumptionDict))
         {
-            for(var metric of resourcesHelper.METRICS)
+            for(var metric of helpers.resources.METRICS)
             {
                 if (_.isNullOrUndefined(appConsumption[metric]))
                 {
                     appConsumption[metric] = 0;
                 }
             }
-            appConsumption['max'] = _.max(resourcesHelper.METRICS.map(metric => appConsumption[metric]));
+            appConsumption['max'] = _.max(helpers.resources.METRICS.map(metric => appConsumption[metric]));
         }
         appsByConsumptionTable.rows = _.values(appsByConsumptionDict);
         appsByConsumptionTable.rows = _.orderBy(appsByConsumptionTable.rows, ['max'], 'desc');
@@ -102,13 +101,13 @@ module.exports = {
         }
         for(var appConsumption of _.values(appsByConsumptionDict))
         {
-            for(var metric of resourcesHelper.METRICS)
+            for(var metric of helpers.resources.METRICS)
             {
                 if (_.isNullOrUndefined(appConsumption[metric]))
                 {
                     appConsumption[metric] = 0;
                 }
-                appConsumption[metric] = resourcesHelper.percentage(appConsumption[metric]);
+                appConsumption[metric] = helpers.resources.percentage(appConsumption[metric]);
             }
         }
         item.addProperties({

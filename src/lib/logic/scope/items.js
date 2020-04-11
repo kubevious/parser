@@ -26,7 +26,7 @@ class ItemsScope
         {
             this._itemsDict[kind] = {};
         }
-        var item = new ItemScope(this._parent, config);
+        var item = new ItemScope(this._parent, kind, name, config);
         this._itemsDict[kind][name] = item;
         return item;
     }

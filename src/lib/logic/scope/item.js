@@ -2,15 +2,25 @@ const _ = require('the-lodash');
 
 class ItemScope
 {
-    constructor(parent, config)
+    constructor(parent, kind, name, config)
     {
         this._parent = parent;
+        this._kind = kind;
+        this._name = name;
         this._usedBy = {};
         this._owners = {};
         this._config = config;
         this._data = {};
         this._items = [];
         this._appScopes = {};
+    }
+
+    get kind() {
+        return this._kind;
+    }
+
+    get name() {
+        return this._name;
     }
 
     get config() {
@@ -96,6 +106,14 @@ class ItemScope
     associateAppScope(appScope)
     {
         this._appScopes[appScope.name] = appScope;
+    }
+
+    addProperties(props)
+    {
+        for(var item of this.items)
+        {
+            item.addProperties(props);
+        }
     }
 }
 

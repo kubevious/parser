@@ -31,11 +31,11 @@ module.exports = {
         throw new Error();
     },
 
-    handler: ({ logger, item, namespaceScope }) =>
+    handler: ({ item, namespaceScope, helpers}) =>
     {
         var roleScope = namespaceScope.items.register(item.config);
 
-        roleScope.data.rules = [];
+        roleScope.data.rules = helpers.roles.makeRulesMap();
 
         if (item.config.rules)
         {
@@ -49,10 +49,10 @@ module.exports = {
                         {
                             if (rule.resourceNames) {
                                 for(var resourceName of rule.resourceNames) {
-                                    addRule(api, resource, resourceName, rule.verbs)
+                                    helpers.roles.addRule(roleScope.data.rules, api, resource, resourceName, rule.verbs)
                                 }
                             } else {
-                                addRule(api, resource, '*', rule.verbs)
+                                helpers.roles.addRule(roleScope.data.rules, api, resource, '*', rule.verbs)
                             }
                         }
                     }
@@ -60,20 +60,6 @@ module.exports = {
             }
         }
 
-        function addRule(api, resource, name, verbs)
-        {
-            roleScope.data.rules.push({
-                target: {
-                    api,
-                    resource,
-                    name
-                },
-                verbs: _.makeDict(verbs, x => x, x => true)
-            });
-
-            // for(var verb of verbs)
-            // {
-            // }
-        }
+        roleScope.data.roleMatrixProps = helpers.roles.buildRoleMatrix(roleScope.data.rules);
     }
 }

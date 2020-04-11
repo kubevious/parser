@@ -7,14 +7,13 @@ module.exports = {
         kind: "ServiceAccount"
     },
 
-
     order: 110,
 
     kind: 'svcaccnt',
 
     needNamespaceScope: true,
 
-    handler: ({scope, item, logger, context, namespaceScope, createK8sItem, createAlert, determineSharedFlag}) =>
+    handler: ({scope, item, namespaceScope, createK8sItem, createAlert, determineSharedFlag}) =>
     {
         var serviceAccountScope = namespaceScope.items.get(item.config);
 
@@ -22,6 +21,7 @@ module.exports = {
         {
             var rawContainer = scope.fetchRawContainer(item, "ServiceAccounts");
             var logicItem = createK8sItem(rawContainer);
+            logicItem.associateScope(serviceAccountScope);
 
             if (logicItem.naming != 'default')
             {
@@ -33,6 +33,7 @@ module.exports = {
             for(var owner of serviceAccountScope.owners)
             {
                 var logicItem = createK8sItem(owner);
+                logicItem.associateScope(serviceAccountScope);
                 serviceAccountScope.registerItem(logicItem);
                 serviceAccountScope.markUsedBy(logicItem);
             }

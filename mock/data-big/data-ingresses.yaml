@@ -167,7 +167,6 @@ items:
       ingress.kubernetes.io/forwarding-rule: k8s-fw-kubevious-kubevious--ab64a690ed0b76be
       ingress.kubernetes.io/https-forwarding-rule: k8s-fws-kubevious-kubevious--ab64a690ed0b76be
       ingress.kubernetes.io/https-target-proxy: k8s-tps-kubevious-kubevious--ab64a690ed0b76be
-      ingress.kubernetes.io/rewrite-target: /
       ingress.kubernetes.io/ssl-cert: mcrt-c2644db5-4590-42be-8d97-544f25635953
       ingress.kubernetes.io/target-proxy: k8s-tp-kubevious-kubevious--ab64a690ed0b76be
       ingress.kubernetes.io/url-map: k8s-um-kubevious-kubevious--ab64a690ed0b76be
@@ -175,10 +174,12 @@ items:
       kubernetes.io/ingress.global-static-ip-name: kubevious-ui
       networking.gke.io/managed-certificates: kubevious-certificate
     creationTimestamp: "2020-03-27T23:06:16Z"
-    generation: 3
+    generation: 10
+    labels:
+      k8s-app: kubevious
     name: kubevious
     namespace: kubevious
-    resourceVersion: "31993870"
+    resourceVersion: "36478038"
     selfLink: /apis/extensions/v1beta1/namespaces/kubevious/ingresses/kubevious
     uid: 8fa9c348-707f-11ea-8ebf-42010a800207
   spec:
@@ -189,7 +190,6 @@ items:
         - backend:
             serviceName: kubevious-ui-svc
             servicePort: 3000
-          path: /*
   status:
     loadBalancer:
       ingress:

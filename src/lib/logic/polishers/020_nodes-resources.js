@@ -1,5 +1,4 @@
 const _ = require("the-lodash");
-const resourcesHelper = require("../helpers/resources");
 
 module.exports = {
     target: {
@@ -8,12 +7,12 @@ module.exports = {
 
     order: 20,
 
-    handler: ({item, logger, infraScope}) =>
+    handler: ({item, logger, infraScope, helpers}) =>
     {
         var nodesResourcesProps = {
         }
         var perNodeResources = {}
-        for(var metric of resourcesHelper.METRICS) {
+        for(var metric of helpers.resources.METRICS) {
             nodesResourcesProps[metric] = { allocatable: 0, capacity: 0 };
             perNodeResources[metric] = null;
         }
@@ -23,7 +22,7 @@ module.exports = {
             var nodeProps = node.getProperties('resources');
             if (nodeProps)
             {
-                for(var metric of resourcesHelper.METRICS)
+                for(var metric of helpers.resources.METRICS)
                 {
                     for(var counter of _.keys(nodeProps.config[metric]))
                     {
@@ -48,7 +47,7 @@ module.exports = {
         }
 
         var nodeResourcesProps = {}
-        for(var metric of resourcesHelper.METRICS)
+        for(var metric of helpers.resources.METRICS)
         {
             if (perNodeResources[metric] == null)
             {
@@ -79,7 +78,7 @@ module.exports = {
 
 
         var clusterAllocatableResources = {}
-        for(var metric of resourcesHelper.METRICS)
+        for(var metric of helpers.resources.METRICS)
         {
             clusterAllocatableResources[metric] = nodesResourcesProps[metric].allocatable;
         }

@@ -63,6 +63,10 @@ class LogicScope
         return this._namespaceScopes[name];
     }
 
+    getNamespaceScopes() {
+        return _.values(this._namespaceScopes);
+    }
+
     setK8sConfig(logicItem, config)
     {
         logicItem.setConfig(config);

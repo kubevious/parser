@@ -1,5 +1,4 @@
 const _ = require("the-lodash");
-const resourcesHelper = require("../helpers/resources");
 
 module.exports = {
     target: {
@@ -8,11 +7,11 @@ module.exports = {
 
     order: 31,
 
-    handler: ({item, logger, context, infraScope}) =>
+    handler: ({item, logger, context, infraScope, helpers}) =>
     {
         var perPodResourcesProps = {
         }
-        for(var metric of resourcesHelper.METRICS) {
+        for(var metric of helpers.resources.METRICS) {
             perPodResourcesProps[metric] = { request: 0 };
         }
 
@@ -21,7 +20,7 @@ module.exports = {
             var contProps = container.getProperties('resources');
             if (contProps)
             {
-                for(var metric of resourcesHelper.METRICS)
+                for(var metric of helpers.resources.METRICS)
                 {
                     var value = _.get(contProps.config, metric + '.request');
                     if (value)
@@ -59,7 +58,7 @@ module.exports = {
         
         var usedResourcesProps = {
         }
-        for(var metric of resourcesHelper.METRICS)
+        for(var metric of helpers.resources.METRICS)
         {
             usedResourcesProps[metric] = { 
                 request: perPodResourcesProps[metric].request * multiplier
@@ -82,7 +81,7 @@ module.exports = {
             if (launcher.config.kind == 'Deployment' || 
                 launcher.config.kind == 'StatefulSet')
             {
-                for(var metric of resourcesHelper.METRICS)
+                for(var metric of helpers.resources.METRICS)
                 {
                     myUsedResources[metric] = usedResourcesProps[metric].request;
                 }
@@ -90,7 +89,7 @@ module.exports = {
             }
             else if (launcher.config.kind == 'DaemonSet')
             {
-                for(var metric of resourcesHelper.METRICS)
+                for(var metric of helpers.resources.METRICS)
                 {
                     myUsedResources[metric] = perPodResourcesProps[metric].request;
                 }

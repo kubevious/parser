@@ -23,7 +23,7 @@ items:
       kind: ReplicaSet
       name: gitlab-cainjector-5d757b9fdd
       uid: 99716a60-398b-11ea-b115-42010a8001d6
-    resourceVersion: "34062952"
+    resourceVersion: "37202421"
     selfLink: /api/v1/namespaces/gitlab/pods/gitlab-cainjector-5d757b9fdd-zd7sf
     uid: 13c62e8a-737f-11ea-8ebf-42010a800207
   spec:
@@ -78,11 +78,11 @@ items:
       status: "True"
       type: Initialized
     - lastProbeTime: null
-      lastTransitionTime: "2020-04-02T20:15:04Z"
+      lastTransitionTime: "2020-04-10T23:54:05Z"
       status: "True"
       type: Ready
     - lastProbeTime: null
-      lastTransitionTime: "2020-04-02T20:15:04Z"
+      lastTransitionTime: "2020-04-10T23:54:05Z"
       status: "True"
       type: ContainersReady
     - lastProbeTime: null
@@ -90,22 +90,22 @@ items:
       status: "True"
       type: PodScheduled
     containerStatuses:
-    - containerID: docker://4d45b8b4e1947677ec16d62d3d41313839618d6f3271f2e0a14770afd6887c71
+    - containerID: docker://a493fd739ba642cb541961a0fce8f9225a523d29f7cecce10c29fe880cac209f
       image: quay.io/jetstack/cert-manager-cainjector:v0.10.1
       imageID: docker-pullable://quay.io/jetstack/cert-manager-cainjector@sha256:aaa0d125234ccb2ccab729f7a553dd10c90b9079c25c56263aca80effab6d958
       lastState:
         terminated:
-          containerID: docker://16e25c6dbbfd064d40fe4a089a75449445ca59af6886c307e7cfe1f8e2883a11
+          containerID: docker://a344d48064ee7ea5aca48c3f1f679e87bae874a571dfddad9c0c7db741088364
           exitCode: 255
-          finishedAt: "2020-04-02T20:14:57Z"
+          finishedAt: "2020-04-10T23:50:26Z"
           reason: Error
-          startedAt: "2020-04-02T20:02:04Z"
+          startedAt: "2020-04-10T23:44:43Z"
       name: cainjector
       ready: true
-      restartCount: 261
+      restartCount: 1208
       state:
         running:
-          startedAt: "2020-04-02T20:15:03Z"
+          startedAt: "2020-04-10T23:54:04Z"
     hostIP: 10.128.0.37
     phase: Running
     podIP: 10.8.1.90
@@ -137,7 +137,7 @@ items:
       kind: ReplicaSet
       name: gitlab-cert-manager-5ffcc7f99f
       uid: 99816455-398b-11ea-b115-42010a8001d6
-    resourceVersion: "33957883"
+    resourceVersion: "37198415"
     selfLink: /api/v1/namespaces/gitlab/pods/gitlab-cert-manager-5ffcc7f99f-b5h99
     uid: 13c68edd-737f-11ea-8ebf-42010a800207
   spec:
@@ -200,11 +200,11 @@ items:
       status: "True"
       type: Initialized
     - lastProbeTime: null
-      lastTransitionTime: "2020-04-02T13:47:49Z"
+      lastTransitionTime: "2020-04-10T23:36:23Z"
       status: "True"
       type: Ready
     - lastProbeTime: null
-      lastTransitionTime: "2020-04-02T13:47:49Z"
+      lastTransitionTime: "2020-04-10T23:36:23Z"
       status: "True"
       type: ContainersReady
     - lastProbeTime: null
@@ -212,22 +212,22 @@ items:
       status: "True"
       type: PodScheduled
     containerStatuses:
-    - containerID: docker://e60e926ff8c5e966b18d0080f5bcc7664f7ca93bf2c651a22f48457f4646f475
+    - containerID: docker://3847005effe94292141748a24d991af6b017df458ee59baf5296009b7630e626
       image: quay.io/jetstack/cert-manager-controller:v0.10.1
       imageID: docker-pullable://quay.io/jetstack/cert-manager-controller@sha256:57521bab22044e65ec73aedc0d405b13246785022a6445605e52fe2a75e6e437
       lastState:
         terminated:
-          containerID: docker://89843c4403971e918a49c9f1676e6226ec1049f4c2f191951366db3ec8d64482
+          containerID: docker://874aaecfcba0969c547d4985fcbbe5944d4ca0d1b0640b0c5ee899055ecc0c86
           exitCode: 1
-          finishedAt: "2020-04-02T13:47:42Z"
+          finishedAt: "2020-04-10T23:36:11Z"
           reason: Error
-          startedAt: "2020-04-02T01:20:34Z"
+          startedAt: "2020-04-10T22:56:25Z"
       name: certmanager
       ready: true
-      restartCount: 75
+      restartCount: 103
       state:
         running:
-          startedAt: "2020-04-02T13:47:48Z"
+          startedAt: "2020-04-10T23:36:22Z"
     hostIP: 10.128.0.37
     phase: Running
     podIP: 10.8.1.108
@@ -886,7 +886,7 @@ items:
       kind: ReplicaSet
       name: gitlab-gitlab-runner-65ff67bdd8
       uid: 997138d9-398b-11ea-b115-42010a8001d6
-    resourceVersion: "34068456"
+    resourceVersion: "37201637"
     selfLink: /api/v1/namespaces/gitlab/pods/gitlab-gitlab-runner-65ff67bdd8-mnsbp
     uid: 13f5e140-737f-11ea-8ebf-42010a800207
   spec:
@@ -1104,38 +1104,34 @@ items:
       status: "True"
       type: Initialized
     - lastProbeTime: null
-      lastTransitionTime: "2020-04-02T20:35:11Z"
-      message: 'containers with unready status: [gitlab-gitlab-runner]'
-      reason: ContainersNotReady
-      status: "False"
+      lastTransitionTime: "2020-04-10T23:50:32Z"
+      status: "True"
       type: Ready
     - lastProbeTime: null
-      lastTransitionTime: "2020-04-02T20:35:11Z"
-      message: 'containers with unready status: [gitlab-gitlab-runner]'
-      reason: ContainersNotReady
-      status: "False"
+      lastTransitionTime: "2020-04-10T23:50:32Z"
+      status: "True"
       type: ContainersReady
     - lastProbeTime: null
       lastTransitionTime: "2020-03-31T18:40:22Z"
       status: "True"
       type: PodScheduled
     containerStatuses:
-    - containerID: docker://4c15bec5b09c2ffb33d2ebd58a81f6bdd5bc2f724c613165a0edf71e838279ec
+    - containerID: docker://fa41bdcc5e46594a5e9442e6432040a0785a00663d3b13d2b5d4cb4a25b9a056
       image: gitlab/gitlab-runner:alpine-v12.6.0
       imageID: docker-pullable://gitlab/gitlab-runner@sha256:b2638eafdd22b1e3166206838143a44468fd87d33ed76958563630301238852f
       lastState:
         terminated:
-          containerID: docker://a99f824b648e04113f07b5939baa4278eec87cc3c4814d23dc4d9fb36652c56c
+          containerID: docker://70170110d18bc435df7bd0b5e00216ef6b9b1d36af935c1000e0aca5812a685b
           exitCode: 1
-          finishedAt: "2020-04-02T20:30:14Z"
+          finishedAt: "2020-04-10T23:49:26Z"
           reason: Error
-          startedAt: "2020-04-02T20:27:12Z"
+          startedAt: "2020-04-10T23:36:38Z"
       name: gitlab-gitlab-runner
-      ready: false
-      restartCount: 301
+      ready: true
+      restartCount: 1806
       state:
         running:
-          startedAt: "2020-04-02T20:33:04Z"
+          startedAt: "2020-04-10T23:49:31Z"
     hostIP: 10.128.0.37
     initContainerStatuses:
     - containerID: docker://242cc4cb4acd4b133800a08d96da7e5a0509acd22c6dbaed7e412be9a76098e5
@@ -1768,7 +1764,7 @@ items:
       kind: ReplicaSet
       name: gitlab-nginx-ingress-controller-7db754f856
       uid: 2e1a3417-470e-11ea-96d3-42010a80017a
-    resourceVersion: "33571947"
+    resourceVersion: "37062127"
     selfLink: /api/v1/namespaces/gitlab/pods/gitlab-nginx-ingress-controller-7db754f856-gwp94
     uid: 1437d3c8-737f-11ea-8ebf-42010a800207
   spec:
@@ -1891,11 +1887,11 @@ items:
       status: "True"
       type: Initialized
     - lastProbeTime: null
-      lastTransitionTime: "2020-04-01T13:50:25Z"
+      lastTransitionTime: "2020-04-10T14:23:06Z"
       status: "True"
       type: Ready
     - lastProbeTime: null
-      lastTransitionTime: "2020-04-01T13:50:25Z"
+      lastTransitionTime: "2020-04-10T14:23:06Z"
       status: "True"
       type: ContainersReady
     - lastProbeTime: null
@@ -1903,22 +1899,22 @@ items:
       status: "True"
       type: PodScheduled
     containerStatuses:
-    - containerID: docker://157d5ae8c64be94bd91f61f6f7177b813246e582110e71a01507d4df7213e749
+    - containerID: docker://872d19535f147a9e20de6393f55bf69bd76d605fb9c60e4003e1da0d7546a0cd
       image: quay.io/kubernetes-ingress-controller/nginx-ingress-controller:0.21.0
       imageID: docker-pullable://quay.io/kubernetes-ingress-controller/nginx-ingress-controller@sha256:617076c3e3d4d0638a4927702530d8456bda64c67194f6daed272a59e93b992f
       lastState:
         terminated:
-          containerID: docker://72a4da1ad6a3d1fbab994c5ec61774353fb837796192dc5b8b9976f29f0971ba
-          exitCode: 255
-          finishedAt: "2020-04-01T13:46:48Z"
+          containerID: docker://48c3272343761be6a06ac20673231a43d9c9ede6665388b173fcbe75846b309b
+          exitCode: 143
+          finishedAt: "2020-04-10T14:22:41Z"
           reason: Error
-          startedAt: "2020-04-01T13:01:28Z"
+          startedAt: "2020-04-10T14:22:08Z"
       name: nginx-ingress-controller
       ready: true
-      restartCount: 28
+      restartCount: 30
       state:
         running:
-          startedAt: "2020-04-01T13:49:30Z"
+          startedAt: "2020-04-10T14:22:44Z"
     hostIP: 10.128.0.37
     phase: Running
     podIP: 10.8.1.92
@@ -2543,7 +2539,7 @@ items:
       kind: ReplicaSet
       name: gitlab-prometheus-server-cf7649bb9
       uid: 9a191393-398b-11ea-b115-42010a8001d6
-    resourceVersion: "33749567"
+    resourceVersion: "37200144"
     selfLink: /api/v1/namespaces/gitlab/pods/gitlab-prometheus-server-cf7649bb9-z95n4
     uid: 145447e6-737f-11ea-8ebf-42010a800207
   spec:
@@ -2649,11 +2645,11 @@ items:
       status: "True"
       type: Initialized
     - lastProbeTime: null
-      lastTransitionTime: "2020-04-02T01:06:43Z"
+      lastTransitionTime: "2020-04-10T23:44:04Z"
       status: "True"
       type: Ready
     - lastProbeTime: null
-      lastTransitionTime: "2020-04-02T01:06:43Z"
+      lastTransitionTime: "2020-04-10T23:44:04Z"
       status: "True"
       type: ContainersReady
     - lastProbeTime: null
@@ -2661,22 +2657,22 @@ items:
       status: "True"
       type: PodScheduled
     containerStatuses:
-    - containerID: docker://2e518a3f6c9c9efa09708cd40cbd15b234befb6c83afad299c06251e3b9365ee
+    - containerID: docker://2e202c747e3ad82e479d6074d14fb2de0ffc67f1219fa22f518fb737e385d033
       image: prom/prometheus:v2.11.1
       imageID: docker-pullable://prom/prometheus@sha256:8f34c18cf2ccaf21e361afd18e92da2602d0fa23a8917f759f906219242d8572
       lastState:
         terminated:
-          containerID: docker://043bec3fdbdeb8cae9c68e809ed9cafbcb0ac500c704e80670bcbbc8a5a3ac00
+          containerID: docker://c326302374b89f9c4c560d7c6017c8afce965bd7860efeb86c1a6ef6fa480fda
           exitCode: 137
-          finishedAt: "2020-04-02T01:05:52Z"
+          finishedAt: "2020-04-10T23:36:07Z"
           reason: Error
-          startedAt: "2020-04-02T00:56:36Z"
+          startedAt: "2020-04-10T23:09:57Z"
       name: prometheus-server
       ready: true
-      restartCount: 77
+      restartCount: 110
       state:
         running:
-          startedAt: "2020-04-02T01:06:00Z"
+          startedAt: "2020-04-10T23:36:14Z"
     - containerID: docker://a4710ac1d2eea66355a1039ba2a9b03d5060a3d41e25b6d1e8d5571f33c66144
       image: jimmidyson/configmap-reload:v0.2.2
       imageID: docker-pullable://jimmidyson/configmap-reload@sha256:befec9f23d2a9da86a298d448cc9140f56a457362a7d9eecddba192db1ab489e
@@ -6330,7 +6326,7 @@ items:
       kind: ReplicaSet
       name: gitlab-unicorn-84d7dc6557
       uid: b3bedb01-4709-11ea-96d3-42010a80017a
-    resourceVersion: "33573252"
+    resourceVersion: "36398032"
     selfLink: /api/v1/namespaces/gitlab/pods/gitlab-unicorn-84d7dc6557-q8gs4
     uid: 70a2d492-7409-11ea-8ebf-42010a800207
   spec:
@@ -6657,73 +6653,424 @@ items:
         defaultMode: 420
         secretName: default-token-jjkq5
   status:
+    message: 'The node was low on resource: memory. Container unicorn was using 1088628Ki,
+      which exceeds its request of 40M. '
+    phase: Failed
+    reason: Evicted
+    startTime: "2020-04-01T11:10:48Z"
+- apiVersion: v1
+  kind: Pod
+  metadata:
+    annotations:
+      checksum/config: d021e46742b5d6dd76265a6b1dd9c78cdeb6db74842f2cdaa710f411a97fbabb
+      cluster-autoscaler.kubernetes.io/safe-to-evict: "true"
+      cni.projectcalico.org/podIP: 10.8.1.116/32
+      prometheus.io/path: /-/metrics
+      prometheus.io/port: "8080"
+      prometheus.io/scrape: "true"
+    creationTimestamp: "2020-04-08T20:22:44Z"
+    generateName: gitlab-unicorn-84d7dc6557-
+    labels:
+      app: unicorn
+      pod-template-hash: 84d7dc6557
+      release: gitlab
+    name: gitlab-unicorn-84d7dc6557-vh6gk
+    namespace: gitlab
+    ownerReferences:
+    - apiVersion: apps/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: ReplicaSet
+      name: gitlab-unicorn-84d7dc6557
+      uid: b3bedb01-4709-11ea-96d3-42010a80017a
+    resourceVersion: "36422527"
+    selfLink: /api/v1/namespaces/gitlab/pods/gitlab-unicorn-84d7dc6557-vh6gk
+    uid: b453a410-79d6-11ea-bb1c-42010a800057
+  spec:
+    affinity:
+      podAntiAffinity:
+        preferredDuringSchedulingIgnoredDuringExecution:
+        - podAffinityTerm:
+            labelSelector:
+              matchLabels:
+                app: unicorn
+                release: gitlab
+            topologyKey: kubernetes.io/hostname
+          weight: 1
+    containers:
+    - env:
+      - name: TMPDIR
+        value: /tmp/gitlab
+      - name: GITALY_FEATURE_DEFAULT_ON
+        value: "1"
+      - name: CONFIG_TEMPLATE_DIRECTORY
+        value: /var/opt/gitlab/templates
+      - name: CONFIG_DIRECTORY
+        value: /srv/gitlab/config
+      - name: prometheus_multiproc_dir
+        value: /metrics
+      image: registry.gitlab.com/gitlab-org/build/cng/gitlab-unicorn-ee:v12.6.4
+      imagePullPolicy: IfNotPresent
+      lifecycle:
+        preStop:
+          exec:
+            command:
+            - /bin/bash
+            - -c
+            - pkill -SIGQUIT -f 'unicorn master'
+      livenessProbe:
+        failureThreshold: 3
+        httpGet:
+          path: /-/liveness
+          port: 8080
+          scheme: HTTP
+        initialDelaySeconds: 20
+        periodSeconds: 60
+        successThreshold: 1
+        timeoutSeconds: 30
+      name: unicorn
+      ports:
+      - containerPort: 8080
+        name: unicorn
+        protocol: TCP
+      readinessProbe:
+        failureThreshold: 3
+        httpGet:
+          path: /-/readiness
+          port: 8080
+          scheme: HTTP
+        periodSeconds: 10
+        successThreshold: 1
+        timeoutSeconds: 2
+      resources:
+        requests:
+          cpu: 10m
+          memory: 40M
+      terminationMessagePath: /dev/termination-log
+      terminationMessagePolicy: File
+      volumeMounts:
+      - mountPath: /metrics
+        name: unicorn-metrics
+      - mountPath: /var/opt/gitlab/templates
+        name: unicorn-config
+      - mountPath: /etc/gitlab
+        name: unicorn-secrets
+        readOnly: true
+      - mountPath: /srv/gitlab/config/secrets.yml
+        name: unicorn-secrets
+        subPath: rails-secrets/secrets.yml
+      - mountPath: /srv/gitlab/config/initializers/smtp_settings.rb
+        name: unicorn-config
+        subPath: smtp_settings.rb
+      - mountPath: /srv/gitlab/INSTALLATION_TYPE
+        name: unicorn-config
+        subPath: installation_type
+      - mountPath: /srv/gitlab/public/uploads/tmp
+        name: shared-upload-directory
+      - mountPath: /srv/gitlab/shared
+        name: shared-artifact-directory
+      - mountPath: /tmp
+        name: shared-tmp
+      - mountPath: /etc/ssl/certs/
+        name: etc-ssl-certs
+        readOnly: true
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: default-token-jjkq5
+        readOnly: true
+    - env:
+      - name: TMPDIR
+        value: /tmp/gitlab
+      - name: GITLAB_WORKHORSE_EXTRA_ARGS
+      - name: GITLAB_WORKHORSE_LISTEN_PORT
+        value: "8181"
+      - name: CONFIG_TEMPLATE_DIRECTORY
+        value: /var/opt/gitlab/templates
+      - name: CONFIG_DIRECTORY
+        value: /srv/gitlab/config
+      image: registry.gitlab.com/gitlab-org/build/cng/gitlab-workhorse-ee:v12.6.4
+      imagePullPolicy: IfNotPresent
+      livenessProbe:
+        exec:
+          command:
+          - /scripts/healthcheck
+        failureThreshold: 3
+        initialDelaySeconds: 20
+        periodSeconds: 60
+        successThreshold: 1
+        timeoutSeconds: 30
+      name: gitlab-workhorse
+      ports:
+      - containerPort: 8181
+        name: workhorse
+        protocol: TCP
+      readinessProbe:
+        exec:
+          command:
+          - /scripts/healthcheck
+        failureThreshold: 3
+        periodSeconds: 10
+        successThreshold: 1
+        timeoutSeconds: 2
+      resources:
+        requests:
+          cpu: 10m
+          memory: 40M
+      terminationMessagePath: /dev/termination-log
+      terminationMessagePolicy: File
+      volumeMounts:
+      - mountPath: /var/opt/gitlab/templates
+        name: workhorse-config
+      - mountPath: /etc/gitlab
+        name: workhorse-secrets
+        readOnly: true
+      - mountPath: /srv/gitlab/public/uploads/tmp
+        name: shared-upload-directory
+      - mountPath: /srv/gitlab/shared
+        name: shared-artifact-directory
+      - mountPath: /tmp
+        name: shared-tmp
+      - mountPath: /etc/ssl/certs/
+        name: etc-ssl-certs
+        readOnly: true
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: default-token-jjkq5
+        readOnly: true
+    dnsPolicy: ClusterFirst
+    enableServiceLinks: true
+    initContainers:
+    - image: registry.gitlab.com/gitlab-org/build/cng/alpine-certificates:20171114-r3
+      imagePullPolicy: IfNotPresent
+      name: certificates
+      resources:
+        requests:
+          cpu: 50m
+      terminationMessagePath: /dev/termination-log
+      terminationMessagePolicy: File
+      volumeMounts:
+      - mountPath: /etc/ssl/certs
+        name: etc-ssl-certs
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: default-token-jjkq5
+        readOnly: true
+    - args:
+      - -c
+      - sh -x /config-unicorn/configure ; sh -x /config-workhorse/configure ; mkdir
+        -p -m 3770 /tmp/gitlab
+      command:
+      - sh
+      image: busybox:latest
+      imagePullPolicy: Always
+      name: configure
+      resources:
+        requests:
+          cpu: 50m
+      terminationMessagePath: /dev/termination-log
+      terminationMessagePolicy: File
+      volumeMounts:
+      - mountPath: /config-unicorn
+        name: unicorn-config
+        readOnly: true
+      - mountPath: /config-workhorse
+        name: workhorse-config
+        readOnly: true
+      - mountPath: /init-config
+        name: init-unicorn-secrets
+        readOnly: true
+      - mountPath: /init-secrets
+        name: unicorn-secrets
+      - mountPath: /init-secrets-workhorse
+        name: workhorse-secrets
+      - mountPath: /tmp
+        name: shared-tmp
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: default-token-jjkq5
+        readOnly: true
+    - args:
+      - /scripts/wait-for-deps
+      env:
+      - name: GITALY_FEATURE_DEFAULT_ON
+        value: "1"
+      - name: CONFIG_TEMPLATE_DIRECTORY
+        value: /var/opt/gitlab/templates
+      - name: CONFIG_DIRECTORY
+        value: /srv/gitlab/config
+      - name: WORKHORSE_ARCHIVE_CACHE_DISABLED
+        value: "1"
+      image: registry.gitlab.com/gitlab-org/build/cng/gitlab-unicorn-ee:v12.6.4
+      imagePullPolicy: IfNotPresent
+      name: dependencies
+      resources:
+        requests:
+          cpu: 50m
+      terminationMessagePath: /dev/termination-log
+      terminationMessagePolicy: File
+      volumeMounts:
+      - mountPath: /var/opt/gitlab/templates
+        name: unicorn-config
+      - mountPath: /etc/gitlab
+        name: unicorn-secrets
+        readOnly: true
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: default-token-jjkq5
+        readOnly: true
+    nodeName: gke-kubevious-samples-pool-2-d17eaa99-95cn
+    priority: 0
+    restartPolicy: Always
+    schedulerName: default-scheduler
+    securityContext:
+      fsGroup: 1000
+      runAsUser: 1000
+    serviceAccount: default
+    serviceAccountName: default
+    terminationGracePeriodSeconds: 30
+    tolerations:
+    - effect: NoExecute
+      key: node.kubernetes.io/not-ready
+      operator: Exists
+      tolerationSeconds: 300
+    - effect: NoExecute
+      key: node.kubernetes.io/unreachable
+      operator: Exists
+      tolerationSeconds: 300
+    volumes:
+    - emptyDir: {}
+      name: shared-tmp
+    - emptyDir:
+        medium: Memory
+      name: unicorn-metrics
+    - configMap:
+        defaultMode: 420
+        name: gitlab-unicorn
+      name: unicorn-config
+    - configMap:
+        defaultMode: 420
+        name: gitlab-workhorse-config
+      name: workhorse-config
+    - name: init-unicorn-secrets
+      projected:
+        defaultMode: 256
+        sources:
+        - secret:
+            items:
+            - key: secrets.yml
+              path: rails-secrets/secrets.yml
+            name: gitlab-rails-secret
+        - secret:
+            items:
+            - key: secret
+              path: shell/.gitlab_shell_secret
+            name: gitlab-gitlab-shell-secret
+        - secret:
+            items:
+            - key: token
+              path: gitaly/gitaly_token
+            name: gitlab-gitaly-secret
+        - secret:
+            items:
+            - key: secret
+              path: redis/password
+            name: gitlab-redis-secret
+        - secret:
+            items:
+            - key: postgres-password
+              path: postgres/psql-password
+            name: gitlab-postgresql-password
+        - secret:
+            items:
+            - key: registry-auth.key
+              path: registry/gitlab-registry.key
+            name: gitlab-registry-secret
+        - secret:
+            items:
+            - key: shared_secret
+              path: gitlab-workhorse/secret
+            name: gitlab-gitlab-workhorse-secret
+        - secret:
+            items:
+            - key: accesskey
+              path: minio/accesskey
+            - key: secretkey
+              path: minio/secretkey
+            name: gitlab-minio-secret
+    - emptyDir:
+        medium: Memory
+      name: unicorn-secrets
+    - emptyDir:
+        medium: Memory
+      name: workhorse-secrets
+    - emptyDir: {}
+      name: shared-upload-directory
+    - emptyDir: {}
+      name: shared-artifact-directory
+    - emptyDir:
+        medium: Memory
+      name: etc-ssl-certs
+    - name: default-token-jjkq5
+      secret:
+        defaultMode: 420
+        secretName: default-token-jjkq5
+  status:
     conditions:
     - lastProbeTime: null
-      lastTransitionTime: "2020-04-01T13:52:55Z"
+      lastTransitionTime: "2020-04-08T20:25:09Z"
       status: "True"
       type: Initialized
     - lastProbeTime: null
-      lastTransitionTime: "2020-04-01T13:55:52Z"
+      lastTransitionTime: "2020-04-08T21:56:58Z"
       status: "True"
       type: Ready
     - lastProbeTime: null
-      lastTransitionTime: "2020-04-01T13:55:52Z"
+      lastTransitionTime: "2020-04-08T21:56:58Z"
       status: "True"
       type: ContainersReady
     - lastProbeTime: null
-      lastTransitionTime: "2020-04-01T11:10:48Z"
+      lastTransitionTime: "2020-04-08T20:22:44Z"
       status: "True"
       type: PodScheduled
     containerStatuses:
-    - containerID: docker://f8443144522c5b2caed0df57a71382ff8213b0e2cc3d1fc019d2e637087d49b5
+    - containerID: docker://e0083fc3d3882c8517153eaa2910d21e2aa987e9f3f1339caf900f28aa953783
       image: registry.gitlab.com/gitlab-org/build/cng/gitlab-workhorse-ee:v12.6.4
       imageID: docker-pullable://registry.gitlab.com/gitlab-org/build/cng/gitlab-workhorse-ee@sha256:6dba4d45e8a1f975604894e9fa12c28e5d30c126480ca4346ea449c25a69c4c5
-      lastState:
-        terminated:
-          containerID: docker://d1690c6bbe3a4e14f0ee8bb71a0c762e0e6f812e576c21fb5f2641dc11a155d9
-          exitCode: 255
-          finishedAt: "2020-04-01T13:46:48Z"
-          reason: Error
-          startedAt: "2020-04-01T11:14:43Z"
+      lastState: {}
       name: gitlab-workhorse
       ready: true
-      restartCount: 1
+      restartCount: 0
       state:
         running:
-          startedAt: "2020-04-01T13:53:06Z"
-    - containerID: docker://0347c0915a98e11cdb5a7d44ba2c4d2239c43403cc7d04ac6a7518f5b3648f19
+          startedAt: "2020-04-08T20:25:14Z"
+    - containerID: docker://d3b3fd448cc460743ae3ce0cb0b841008380b38f2810b257fba7f9ab48b50a98
       image: registry.gitlab.com/gitlab-org/build/cng/gitlab-unicorn-ee:v12.6.4
       imageID: docker-pullable://registry.gitlab.com/gitlab-org/build/cng/gitlab-unicorn-ee@sha256:b47d7878f286b55537822d6cf11ca4dd02796153ff0855cb5dac9f9d10991c72
       lastState:
         terminated:
-          containerID: docker://abcd3839024b8a483726c105605afa58a4a889ef4a3a37211b854f8adca1eaf4
-          exitCode: 255
-          finishedAt: "2020-04-01T13:46:48Z"
+          containerID: docker://45bc18ca22c5c6d902437a2a6516369c947d413f1bc602ebc2d92b74b1c74ade
+          exitCode: 137
+          finishedAt: "2020-04-08T21:53:25Z"
           reason: Error
-          startedAt: "2020-04-01T12:11:53Z"
+          startedAt: "2020-04-08T21:49:59Z"
       name: unicorn
       ready: true
-      restartCount: 13
+      restartCount: 17
       state:
         running:
-          startedAt: "2020-04-01T13:53:00Z"
+          startedAt: "2020-04-08T21:53:09Z"
     hostIP: 10.128.0.37
     initContainerStatuses:
-    - containerID: docker://6312a528951d55c0b6701bbabd838a3a15e6a44fa3bc90121974d80892be69c8
+    - containerID: docker://7cd8a6323315b43c4abc6423feced1aa558d58b7cce987420804769e177f3655
       image: registry.gitlab.com/gitlab-org/build/cng/alpine-certificates:20171114-r3
       imageID: docker-pullable://registry.gitlab.com/gitlab-org/build/cng/alpine-certificates@sha256:00ce9a585179e6b22c9bfea9ba82552630eab0bd25da4f13282b588b2ad022dc
       lastState: {}
       name: certificates
       ready: true
-      restartCount: 1
+      restartCount: 0
       state:
         terminated:
-          containerID: docker://6312a528951d55c0b6701bbabd838a3a15e6a44fa3bc90121974d80892be69c8
+          containerID: docker://7cd8a6323315b43c4abc6423feced1aa558d58b7cce987420804769e177f3655
           exitCode: 0
-          finishedAt: "2020-04-01T13:49:19Z"
+          finishedAt: "2020-04-08T20:23:17Z"
           reason: Completed
-          startedAt: "2020-04-01T13:49:19Z"
-    - containerID: docker://078473437f5783de04916230dcb47a39e07b1755203c17065cf463af780d092b
+          startedAt: "2020-04-08T20:23:15Z"
+    - containerID: docker://1afa6240536ae023d64d79a764dd622b34eaaf1030cc2b42596563c0ca4132b1
       image: busybox:latest
       imageID: docker-pullable://busybox@sha256:afe605d272837ce1732f390966166c2afff5391208ddd57de10942748694049d
       lastState: {}
@@ -6732,12 +7079,12 @@ items:
       restartCount: 0
       state:
         terminated:
-          containerID: docker://078473437f5783de04916230dcb47a39e07b1755203c17065cf463af780d092b
+          containerID: docker://1afa6240536ae023d64d79a764dd622b34eaaf1030cc2b42596563c0ca4132b1
           exitCode: 0
-          finishedAt: "2020-04-01T13:50:25Z"
+          finishedAt: "2020-04-08T20:23:24Z"
           reason: Completed
-          startedAt: "2020-04-01T13:50:26Z"
-    - containerID: docker://64d70bff99baea2e5b4424d2b1587a2e23b05ea5e76457289efff7a93bbf085b
+          startedAt: "2020-04-08T20:23:24Z"
+    - containerID: docker://dce72145130266f394a4cec7c7f70a21031665b2c5eb69d1f3c28faa32a7a302
       image: registry.gitlab.com/gitlab-org/build/cng/gitlab-unicorn-ee:v12.6.4
       imageID: docker-pullable://registry.gitlab.com/gitlab-org/build/cng/gitlab-unicorn-ee@sha256:b47d7878f286b55537822d6cf11ca4dd02796153ff0855cb5dac9f9d10991c72
       lastState: {}
@@ -6746,15 +7093,15 @@ items:
       restartCount: 0
       state:
         terminated:
-          containerID: docker://64d70bff99baea2e5b4424d2b1587a2e23b05ea5e76457289efff7a93bbf085b
+          containerID: docker://dce72145130266f394a4cec7c7f70a21031665b2c5eb69d1f3c28faa32a7a302
           exitCode: 0
-          finishedAt: "2020-04-01T13:52:51Z"
+          finishedAt: "2020-04-08T20:25:08Z"
           reason: Completed
-          startedAt: "2020-04-01T13:50:37Z"
+          startedAt: "2020-04-08T20:23:27Z"
     phase: Running
-    podIP: 10.8.1.96
+    podIP: 10.8.1.116
     qosClass: Burstable
-    startTime: "2020-04-01T11:10:48Z"
+    startTime: "2020-04-08T20:22:44Z"
 - apiVersion: v1
   kind: Pod
   metadata:
@@ -7845,7 +8192,7 @@ items:
       kind: ReplicaSet
       name: adservice-84b8749d65
       uid: 5d739cff-431c-11ea-96d3-42010a80017a
-    resourceVersion: "33365145"
+    resourceVersion: "37201481"
     selfLink: /api/v1/namespaces/hipster/pods/adservice-84b8749d65-ngsw4
     uid: 17c7b595-737f-11ea-8ebf-42010a800207
   spec:
@@ -7923,34 +8270,39 @@ items:
       status: "True"
       type: Initialized
     - lastProbeTime: null
-      lastTransitionTime: "2020-03-31T23:03:39Z"
-      status: "True"
+      lastTransitionTime: "2020-04-10T00:10:28Z"
+      message: 'containers with unready status: [server]'
+      reason: ContainersNotReady
+      status: "False"
       type: Ready
     - lastProbeTime: null
-      lastTransitionTime: "2020-03-31T23:03:39Z"
-      status: "True"
+      lastTransitionTime: "2020-04-10T00:10:28Z"
+      message: 'containers with unready status: [server]'
+      reason: ContainersNotReady
+      status: "False"
       type: ContainersReady
     - lastProbeTime: null
       lastTransitionTime: "2020-03-31T18:40:40Z"
       status: "True"
       type: PodScheduled
     containerStatuses:
-    - containerID: docker://fe90eb83b39181b379e0bbba6b63bf65b3824f51492744d840c26988a87e952d
+    - containerID: docker://1933910c42fa24b212fde5b1b9bc03160b09632a4c59ce08abc8fbfee9850108
       image: gcr.io/google-samples/microservices-demo/adservice:v0.1.3
       imageID: docker-pullable://gcr.io/google-samples/microservices-demo/adservice@sha256:5edd0b072ec9f582693a4de28a50721028868dad453910c867268c231af734e1
       lastState:
         terminated:
-          containerID: docker://52d7b7c53ce4f584b5ab03a4fb7ba924717bf649f45e0a5e9d3464945f4cb84d
+          containerID: docker://1933910c42fa24b212fde5b1b9bc03160b09632a4c59ce08abc8fbfee9850108
           exitCode: 143
-          finishedAt: "2020-03-31T22:57:35Z"
+          finishedAt: "2020-04-10T23:49:50Z"
           reason: Error
-          startedAt: "2020-03-31T22:56:34Z"
+          startedAt: "2020-04-10T23:48:51Z"
       name: server
-      ready: true
-      restartCount: 77
+      ready: false
+      restartCount: 486
       state:
-        running:
-          startedAt: "2020-03-31T23:02:42Z"
+        waiting:
+          message: Back-off 5m0s restarting failed container=server pod=adservice-84b8749d65-ngsw4_hipster(17c7b595-737f-11ea-8ebf-42010a800207)
+          reason: CrashLoopBackOff
     hostIP: 10.128.0.35
     phase: Running
     podIP: 10.8.0.163
@@ -7975,7 +8327,7 @@ items:
       kind: ReplicaSet
       name: cartservice-55f8ccc8f4
       uid: d8fc4c22-4390-11ea-96d3-42010a80017a
-    resourceVersion: "33303062"
+    resourceVersion: "36841166"
     selfLink: /api/v1/namespaces/hipster/pods/cartservice-55f8ccc8f4-c5flx
     uid: 17e679b4-737f-11ea-8ebf-42010a800207
   spec:
@@ -8059,11 +8411,11 @@ items:
       status: "True"
       type: Initialized
     - lastProbeTime: null
-      lastTransitionTime: "2020-03-31T18:43:18Z"
+      lastTransitionTime: "2020-04-10T00:10:50Z"
       status: "True"
       type: Ready
     - lastProbeTime: null
-      lastTransitionTime: "2020-03-31T18:43:18Z"
+      lastTransitionTime: "2020-04-10T00:10:50Z"
       status: "True"
       type: ContainersReady
     - lastProbeTime: null
@@ -8071,22 +8423,22 @@ items:
       status: "True"
       type: PodScheduled
     containerStatuses:
-    - containerID: docker://c1ea14e69ea4c5591ad20f236086dbadfe5e9abd511b78f24f9caa77c791c51f
+    - containerID: docker://b25cf39a3b4de2ef4b8e61bd4ebc0d9633fcc9c965418601e580e43e587c6a94
       image: gcr.io/google-samples/microservices-demo/cartservice:v0.1.3
       imageID: docker-pullable://gcr.io/google-samples/microservices-demo/cartservice@sha256:4e9c6ad41328210e0a4b181add097d60900ecc1b990527a832a5d47e3f209d69
       lastState:
         terminated:
-          containerID: docker://751c2ec29997d6c26f97b502f1d9d2d87b1395950ca2226b07e1d51c7b78d5d9
-          exitCode: 0
-          finishedAt: "2020-03-31T18:42:43Z"
-          reason: Completed
-          startedAt: "2020-03-31T18:42:02Z"
+          containerID: docker://058b1a26bed15c5b7f0f5a87e18941559c0a6b4c0b23d82de1e72a6ca113bc84
+          exitCode: 137
+          finishedAt: "2020-04-10T00:10:14Z"
+          reason: Error
+          startedAt: "2020-04-10T00:08:01Z"
       name: server
       ready: true
-      restartCount: 1
+      restartCount: 3
       state:
         running:
-          startedAt: "2020-03-31T18:42:46Z"
+          startedAt: "2020-04-10T00:10:26Z"
     hostIP: 10.128.0.35
     phase: Running
     podIP: 10.8.0.164
@@ -8245,7 +8597,7 @@ items:
       kind: ReplicaSet
       name: currencyservice-7775f7949
       uid: 5d09f261-431c-11ea-96d3-42010a80017a
-    resourceVersion: "33303026"
+    resourceVersion: "36841070"
     selfLink: /api/v1/namespaces/hipster/pods/currencyservice-7775f7949-4bx5q
     uid: 17fda23a-737f-11ea-8ebf-42010a800207
   spec:
@@ -8322,11 +8674,11 @@ items:
       status: "True"
       type: Initialized
     - lastProbeTime: null
-      lastTransitionTime: "2020-03-31T18:43:08Z"
+      lastTransitionTime: "2020-04-10T00:10:29Z"
       status: "True"
       type: Ready
     - lastProbeTime: null
-      lastTransitionTime: "2020-03-31T18:43:08Z"
+      lastTransitionTime: "2020-04-10T00:10:29Z"
       status: "True"
       type: ContainersReady
     - lastProbeTime: null
@@ -8334,22 +8686,22 @@ items:
       status: "True"
       type: PodScheduled
     containerStatuses:
-    - containerID: docker://219af656ad6d14caf5e49b56527a3cdaf60c16f2c33072a10003256ffee14561
+    - containerID: docker://11870ba241486eb99afa132ed397c1114394165f3b866ad297b3e55d5b7ec56a
       image: gcr.io/google-samples/microservices-demo/currencyservice:v0.1.3
       imageID: docker-pullable://gcr.io/google-samples/microservices-demo/currencyservice@sha256:52818623cf85b8a0f01709b06ce94bde44b9ee27203c35b832663f55cde1fe83
       lastState:
         terminated:
-          containerID: docker://ed0430057927ef3f37b10935b3ea9b7da49ec4c2fb9c0b4e674062fb24eab09a
+          containerID: docker://7a0fb1f98d802e50f511126b7694c652b5f6636e86ffe01c4e699bc59435f22a
           exitCode: 137
-          finishedAt: "2020-03-31T18:42:46Z"
+          finishedAt: "2020-04-10T00:09:15Z"
           reason: Error
-          startedAt: "2020-03-31T18:42:01Z"
+          startedAt: "2020-04-10T00:08:00Z"
       name: server
       ready: true
-      restartCount: 1
+      restartCount: 4
       state:
         running:
-          startedAt: "2020-03-31T18:42:48Z"
+          startedAt: "2020-04-10T00:09:32Z"
     hostIP: 10.128.0.35
     phase: Running
     podIP: 10.8.0.160
@@ -8374,7 +8726,7 @@ items:
       kind: ReplicaSet
       name: emailservice-6545668f4f
       uid: 5bd1e06f-431c-11ea-96d3-42010a80017a
-    resourceVersion: "33303013"
+    resourceVersion: "36840780"
     selfLink: /api/v1/namespaces/hipster/pods/emailservice-6545668f4f-x5lrn
     uid: 1805ecb5-737f-11ea-8ebf-42010a800207
   spec:
@@ -8452,11 +8804,11 @@ items:
       status: "True"
       type: Initialized
     - lastProbeTime: null
-      lastTransitionTime: "2020-03-31T18:42:56Z"
+      lastTransitionTime: "2020-04-10T00:09:29Z"
       status: "True"
       type: Ready
     - lastProbeTime: null
-      lastTransitionTime: "2020-03-31T18:42:56Z"
+      lastTransitionTime: "2020-04-10T00:09:29Z"
       status: "True"
       type: ContainersReady
     - lastProbeTime: null
@@ -8505,7 +8857,7 @@ items:
       kind: ReplicaSet
       name: frontend-7dbdf6c769
       uid: 29bbf1e3-431b-11ea-96d3-42010a80017a
-    resourceVersion: "33302931"
+    resourceVersion: "36841020"
     selfLink: /api/v1/namespaces/hipster/pods/frontend-7dbdf6c769-b2t8p
     uid: 1860d02f-737f-11ea-8ebf-42010a800207
   spec:
@@ -8603,11 +8955,11 @@ items:
       status: "True"
       type: Initialized
     - lastProbeTime: null
-      lastTransitionTime: "2020-03-31T18:42:22Z"
+      lastTransitionTime: "2020-04-10T00:10:22Z"
       status: "True"
       type: Ready
     - lastProbeTime: null
-      lastTransitionTime: "2020-03-31T18:42:22Z"
+      lastTransitionTime: "2020-04-10T00:10:22Z"
       status: "True"
       type: ContainersReady
     - lastProbeTime: null
@@ -8615,16 +8967,16 @@ items:
       status: "True"
       type: PodScheduled
     containerStatuses:
-    - containerID: docker://7002d9c553b751cdd858de8969211d75606e24e1586c4441e3b9269c2ae8dd7a
+    - containerID: docker://6c8a8a5e8e85f929a871eb55c29197d1992e5ce4eabcf06f939037aa861e971d
       image: gcr.io/google-samples/microservices-demo/frontend:v0.1.3
       imageID: docker-pullable://gcr.io/google-samples/microservices-demo/frontend@sha256:0c72f37ed9aac1e65bccafc0ce7675ab9d1b6a407cdcefb2b9a608eec83490d5
       lastState: {}
       name: server
       ready: true
-      restartCount: 0
+      restartCount: 2
       state:
         running:
-          startedAt: "2020-03-31T18:42:03Z"
+          startedAt: "2020-04-10T00:10:02Z"
     hostIP: 10.128.0.35
     phase: Running
     podIP: 10.8.0.169
@@ -8759,7 +9111,7 @@ items:
       kind: ReplicaSet
       name: paymentservice-6b9d88465f
       uid: 5c7abd32-431c-11ea-96d3-42010a80017a
-    resourceVersion: "33303002"
+    resourceVersion: "36841076"
     selfLink: /api/v1/namespaces/hipster/pods/paymentservice-6b9d88465f-6lflc
     uid: 17a2e5df-737f-11ea-8ebf-42010a800207
   spec:
@@ -8835,11 +9187,11 @@ items:
       status: "True"
       type: Initialized
     - lastProbeTime: null
-      lastTransitionTime: "2020-03-31T18:43:00Z"
+      lastTransitionTime: "2020-04-10T00:10:30Z"
       status: "True"
       type: Ready
     - lastProbeTime: null
-      lastTransitionTime: "2020-03-31T18:43:00Z"
+      lastTransitionTime: "2020-04-10T00:10:30Z"
       status: "True"
       type: ContainersReady
     - lastProbeTime: null
@@ -8847,16 +9199,22 @@ items:
       status: "True"
       type: PodScheduled
     containerStatuses:
-    - containerID: docker://e4f660ad6d43890e11b72210b4727ff6000738e844ed61440376c78fcb485c34
+    - containerID: docker://ea05466dd13fabe5c8c846b5f99cb15f5c01d59c5a22d7e548653bd1e27a6700
       image: gcr.io/google-samples/microservices-demo/paymentservice:v0.1.3
       imageID: docker-pullable://gcr.io/google-samples/microservices-demo/paymentservice@sha256:c82409d85cd2006ee13537d3f404b0c85d9fbb55642450602e015f63abc571e1
-      lastState: {}
+      lastState:
+        terminated:
+          containerID: docker://e4f660ad6d43890e11b72210b4727ff6000738e844ed61440376c78fcb485c34
+          exitCode: 137
+          finishedAt: "2020-04-10T00:08:31Z"
+          reason: Error
+          startedAt: "2020-03-31T18:42:40Z"
       name: server
       ready: true
-      restartCount: 0
+      restartCount: 1
       state:
         running:
-          startedAt: "2020-03-31T18:42:40Z"
+          startedAt: "2020-04-10T00:08:45Z"
     hostIP: 10.128.0.35
     phase: Running
     podIP: 10.8.0.173
@@ -8881,7 +9239,7 @@ items:
       kind: ReplicaSet
       name: productcatalogservice-7f5dc87d7
       uid: 2b65422c-431b-11ea-96d3-42010a80017a
-    resourceVersion: "33885045"
+    resourceVersion: "37185767"
     selfLink: /api/v1/namespaces/hipster/pods/productcatalogservice-7f5dc87d7-tsndv
     uid: 15e7ad50-737f-11ea-8ebf-42010a800207
   spec:
@@ -8957,11 +9315,11 @@ items:
       status: "True"
       type: Initialized
     - lastProbeTime: null
-      lastTransitionTime: "2020-04-02T09:22:18Z"
+      lastTransitionTime: "2020-04-10T22:40:33Z"
       status: "True"
       type: Ready
     - lastProbeTime: null
-      lastTransitionTime: "2020-04-02T09:22:18Z"
+      lastTransitionTime: "2020-04-10T22:40:33Z"
       status: "True"
       type: ContainersReady
     - lastProbeTime: null
@@ -8969,22 +9327,22 @@ items:
       status: "True"
       type: PodScheduled
     containerStatuses:
-    - containerID: docker://5c449e2cc4eb9d3e8cf4575ea5268c63625d80e3a26e24b78f3dd4755017c460
+    - containerID: docker://4f7d3fb94c61b08a14c3547b604021662ace8121def9b4381556d47963d43ac2
       image: gcr.io/google-samples/microservices-demo/productcatalogservice:v0.1.3
       imageID: docker-pullable://gcr.io/google-samples/microservices-demo/productcatalogservice@sha256:cb4fe6bb148ef473e34b978c90df4249370b2a5a13bd789455aaa97cc367aaa1
       lastState:
         terminated:
-          containerID: docker://e79224fb9ff35808e61bdc4451d25643105c9b4b72d45b0592e0a2836205cf8a
+          containerID: docker://0a728c251ef9b2d0e042a4f388a05e91034f70868b907748b10ecd7a31273f78
           exitCode: 2
-          finishedAt: "2020-04-02T09:22:01Z"
+          finishedAt: "2020-04-09T20:35:05Z"
           reason: Error
-          startedAt: "2020-04-01T14:16:05Z"
+          startedAt: "2020-04-09T20:33:51Z"
       name: server
       ready: true
-      restartCount: 20
+      restartCount: 29
       state:
         running:
-          startedAt: "2020-04-02T09:22:04Z"
+          startedAt: "2020-04-09T20:35:19Z"
     hostIP: 10.128.0.37
     phase: Running
     podIP: 10.8.1.77
@@ -9009,7 +9367,7 @@ items:
       kind: ReplicaSet
       name: recommendationservice-744d5589c7
       uid: 29151317-431b-11ea-96d3-42010a80017a
-    resourceVersion: "34067466"
+    resourceVersion: "37202372"
     selfLink: /api/v1/namespaces/hipster/pods/recommendationservice-744d5589c7-njg8v
     uid: 181c9c8d-737f-11ea-8ebf-42010a800207
   spec:
@@ -9089,13 +9447,13 @@ items:
       status: "True"
       type: Initialized
     - lastProbeTime: null
-      lastTransitionTime: "2020-03-31T18:40:43Z"
+      lastTransitionTime: "2020-04-10T00:10:36Z"
       message: 'containers with unready status: [server]'
       reason: ContainersNotReady
       status: "False"
       type: Ready
     - lastProbeTime: null
-      lastTransitionTime: "2020-03-31T18:40:43Z"
+      lastTransitionTime: "2020-04-10T00:10:36Z"
       message: 'containers with unready status: [server]'
       reason: ContainersNotReady
       status: "False"
@@ -9105,23 +9463,22 @@ items:
       status: "True"
       type: PodScheduled
     containerStatuses:
-    - containerID: docker://fe685adfb43265957c47991c88403f387930d858648946b20222b2ad30c9982e
+    - containerID: docker://567df6575d41fdcd81d6f75f27d1d40fc101195db5958b699d6517ffb9fe519e
       image: gcr.io/google-samples/microservices-demo/recommendationservice:v0.1.3
       imageID: docker-pullable://gcr.io/google-samples/microservices-demo/recommendationservice@sha256:4ad2659fbe0a68bdfebcf86b8d95c5734f44014d484c94d9ffe0d313eed57f4e
       lastState:
         terminated:
-          containerID: docker://fe685adfb43265957c47991c88403f387930d858648946b20222b2ad30c9982e
+          containerID: docker://91b211ec0a1207568c71e275d1e7805c32b516ee289a19e1db3d46224b65676d
           exitCode: 137
-          finishedAt: "2020-04-02T20:31:30Z"
+          finishedAt: "2020-04-10T23:53:46Z"
           reason: Error
-          startedAt: "2020-04-02T20:31:04Z"
+          startedAt: "2020-04-10T23:53:20Z"
       name: server
       ready: false
-      restartCount: 1018
+      restartCount: 4958
       state:
-        waiting:
-          message: Back-off 5m0s restarting failed container=server pod=recommendationservice-744d5589c7-njg8v_hipster(181c9c8d-737f-11ea-8ebf-42010a800207)
-          reason: CrashLoopBackOff
+        running:
+          startedAt: "2020-04-10T23:53:50Z"
     hostIP: 10.128.0.35
     phase: Running
     podIP: 10.8.0.162
@@ -9265,7 +9622,7 @@ items:
       kind: ReplicaSet
       name: shippingservice-5f96974545
       uid: 2e796d8d-431b-11ea-96d3-42010a80017a
-    resourceVersion: "33755255"
+    resourceVersion: "37192530"
     selfLink: /api/v1/namespaces/hipster/pods/shippingservice-5f96974545-q6dm9
     uid: 16dc34e0-737f-11ea-8ebf-42010a800207
   spec:
@@ -9341,11 +9698,11 @@ items:
       status: "True"
       type: Initialized
     - lastProbeTime: null
-      lastTransitionTime: "2020-04-02T01:30:44Z"
+      lastTransitionTime: "2020-04-10T23:10:24Z"
       status: "True"
       type: Ready
     - lastProbeTime: null
-      lastTransitionTime: "2020-04-02T01:30:44Z"
+      lastTransitionTime: "2020-04-10T23:10:24Z"
       status: "True"
       type: ContainersReady
     - lastProbeTime: null
@@ -9353,22 +9710,22 @@ items:
       status: "True"
       type: PodScheduled
     containerStatuses:
-    - containerID: docker://2c0c533dfebc49af933a94a6912c8aada2ab4323d0d324ac7f2af0b84d342666
+    - containerID: docker://74bcd44b891e36f2bc2b7b803d9b402c340150743e00c09fde7b39e08ebcb1ab
       image: gcr.io/google-samples/microservices-demo/shippingservice:v0.1.3
       imageID: docker-pullable://gcr.io/google-samples/microservices-demo/shippingservice@sha256:6440aabdb33ad7f8ec4bd0e8922902b5fe3ad81fb8a262705ecb262a39bb33de
       lastState:
         terminated:
-          containerID: docker://d2eb53f0b1e40c0a30b83bab4d6958c281494c3e3062b8b878516a66b930106a
+          containerID: docker://986b45693190716a59eb109998f2dc3ab686779a8dccbce910c7e723049c94c2
           exitCode: 2
-          finishedAt: "2020-04-02T01:30:26Z"
+          finishedAt: "2020-04-10T23:10:10Z"
           reason: Error
-          startedAt: "2020-04-02T01:27:53Z"
+          startedAt: "2020-04-10T23:09:02Z"
       name: server
       ready: true
-      restartCount: 15
+      restartCount: 30
       state:
         running:
-          startedAt: "2020-04-02T01:30:31Z"
+          startedAt: "2020-04-10T23:10:16Z"
     hostIP: 10.128.0.37
     phase: Running
     podIP: 10.8.1.74
@@ -11187,7 +11544,7 @@ items:
       kind: ReplicaSet
       name: heapster-gke-566bdc98db
       uid: 5af6681d-6f58-11ea-8ebf-42010a800207
-    resourceVersion: "33973687"
+    resourceVersion: "37190283"
     selfLink: /api/v1/namespaces/kube-system/pods/heapster-gke-566bdc98db-92f4r
     uid: 17045181-737f-11ea-8ebf-42010a800207
   spec:
@@ -11345,22 +11702,16 @@ items:
       status: "True"
       type: PodScheduled
     containerStatuses:
-    - containerID: docker://f1cc9a79d42a93e43f2e9c6a7545dc168ab1a86c69d22e5a99fceb0f5269bbee
+    - containerID: docker://2fe1b86e73dd77459e8c2d8e6b9f40d929917719ec40bb693dc624cc1cbb0c45
       image: gke.gcr.io/heapster:v1.7.2
       imageID: docker-pullable://gke.gcr.io/heapster@sha256:26891d2f8c22407a772b911aed912993e1c530128ebb2d3561b49fc16a52d765
-      lastState:
-        terminated:
-          containerID: docker://d5af0ba404dd7aeb3fa11ee2fcd4267eb9e5fa0aac0e6e1f983bd362fbb6819e
-          exitCode: 2
-          finishedAt: "2020-04-02T14:48:12Z"
-          reason: Error
-          startedAt: "2020-04-02T09:56:52Z"
+      lastState: {}
       name: heapster
       ready: true
-      restartCount: 75
+      restartCount: 104
       state:
         running:
-          startedAt: "2020-04-02T14:48:16Z"
+          startedAt: "2020-04-10T23:00:43Z"
     - containerID: docker://563ecf52d3bff50e72f1795cb06c9ab9ba7532d77c0ce5644e2d35712f12352e
       image: k8s.gcr.io/addon-resizer:1.8.3
       imageID: docker-pullable://k8s.gcr.io/addon-resizer@sha256:07353f7b26327f0d933515a22b1de587b040d3d85c464ea299c1b9f242529326
@@ -12692,7 +13043,7 @@ items:
       kind: ReplicaSet
       name: l7-default-backend-fd59995cd
       uid: be96f3e7-3437-11ea-9cdc-42010a8001cf
-    resourceVersion: "33571680"
+    resourceVersion: "37199471"
     selfLink: /api/v1/namespaces/kube-system/pods/l7-default-backend-fd59995cd-4rsq4
     uid: 176c5682-737f-11ea-8ebf-42010a800207
   spec:
@@ -12769,16 +13120,22 @@ items:
       status: "True"
       type: PodScheduled
     containerStatuses:
-    - containerID: docker://bfd80d185cce1820e6e4d7d966fa3f9e0a72a2eb86eb5ea75401254cd55eeba8
+    - containerID: docker://020f0ed29813c0bad74e0047cb0e4ddea47a88028a1ea05eac874c849ca36f66
       image: k8s.gcr.io/defaultbackend-amd64:1.5
       imageID: docker-pullable://k8s.gcr.io/defaultbackend-amd64@sha256:4dc5e07c8ca4e23bddb3153737d7b8c556e5fb2f29c4558b7cd6e6df99c512c7
-      lastState: {}
+      lastState:
+        terminated:
+          containerID: docker://871ebca53c943a69b064c4a281872dba01fffcfc38c5c5eecbf1645c42c32f6d
+          exitCode: 0
+          finishedAt: "2020-04-10T23:40:25Z"
+          reason: Completed
+          startedAt: "2020-04-10T21:56:50Z"
       name: default-http-backend
       ready: true
-      restartCount: 11
+      restartCount: 16
       state:
         running:
-          startedAt: "2020-04-01T13:49:36Z"
+          startedAt: "2020-04-10T23:40:59Z"
     hostIP: 10.128.0.37
     phase: Running
     podIP: 10.8.1.94
@@ -13314,24 +13671,24 @@ items:
   kind: Pod
   metadata:
     annotations:
-      cni.projectcalico.org/podIP: 10.8.0.199/32
-    creationTimestamp: "2020-04-02T02:02:58Z"
-    generateName: kubevious-55c9b88bfc-
+      cni.projectcalico.org/podIP: 10.8.0.221/32
+    creationTimestamp: "2020-04-08T07:32:59Z"
+    generateName: kubevious-865cf6dfcf-
     labels:
       k8s-app: kubevious
-      pod-template-hash: 55c9b88bfc
-    name: kubevious-55c9b88bfc-5r2mr
+      pod-template-hash: 865cf6dfcf
+    name: kubevious-865cf6dfcf-s9jjd
     namespace: kubevious
     ownerReferences:
     - apiVersion: apps/v1
       blockOwnerDeletion: true
       controller: true
       kind: ReplicaSet
-      name: kubevious-55c9b88bfc
-      uid: 136c4f6e-7486-11ea-8ebf-42010a800207
-    resourceVersion: "33763816"
-    selfLink: /api/v1/namespaces/kubevious/pods/kubevious-55c9b88bfc-5r2mr
-    uid: 136fc477-7486-11ea-8ebf-42010a800207
+      name: kubevious-865cf6dfcf
+      uid: 2c352d7e-796b-11ea-bb1c-42010a800057
+    resourceVersion: "36841061"
+    selfLink: /api/v1/namespaces/kubevious/pods/kubevious-865cf6dfcf-s9jjd
+    uid: 2c382faa-796b-11ea-bb1c-42010a800057
   spec:
     containers:
     - env:
@@ -13340,7 +13697,7 @@ items:
       envFrom:
       - configMapRef:
           name: kubevious-mysql-client
-      image: kubevious/kubevious:0.4.9
+      image: kubevious/kubevious:0.5.2
       imagePullPolicy: IfNotPresent
       name: kubevious
       ports:
@@ -13384,37 +13741,43 @@ items:
   status:
     conditions:
     - lastProbeTime: null
-      lastTransitionTime: "2020-04-02T02:02:58Z"
+      lastTransitionTime: "2020-04-08T07:32:59Z"
       status: "True"
       type: Initialized
     - lastProbeTime: null
-      lastTransitionTime: "2020-04-02T02:03:09Z"
+      lastTransitionTime: "2020-04-10T00:10:28Z"
       status: "True"
       type: Ready
     - lastProbeTime: null
-      lastTransitionTime: "2020-04-02T02:03:09Z"
+      lastTransitionTime: "2020-04-10T00:10:28Z"
       status: "True"
       type: ContainersReady
     - lastProbeTime: null
-      lastTransitionTime: "2020-04-02T02:02:58Z"
+      lastTransitionTime: "2020-04-08T07:32:59Z"
       status: "True"
       type: PodScheduled
     containerStatuses:
-    - containerID: docker://c573e7ab6655e875ab9c2a15cf74dc557f85629d8e689c231a2930b404340f80
-      image: kubevious/kubevious:0.4.9
-      imageID: docker-pullable://kubevious/kubevious@sha256:f344e60a9d927ba14d7d69edfc7dc750294b60b6481e80148ef45e4fe4eedcb1
-      lastState: {}
+    - containerID: docker://3350d58819fa66566c1bd3ba566e691e1f14b49a47e1f311d21389083cf928bd
+      image: kubevious/kubevious:0.5.2
+      imageID: docker-pullable://kubevious/kubevious@sha256:054a5156a11246cfb7f4db7f16c40c79a61d4918c4a841eecb91821ee678668c
+      lastState:
+        terminated:
+          containerID: docker://959005e752174d5339133c40d6c494b5bb1e7dc59c483c99987ea9f87edef391
+          exitCode: 139
+          finishedAt: "2020-04-10T00:10:20Z"
+          reason: Error
+          startedAt: "2020-04-08T07:33:39Z"
       name: kubevious
       ready: true
-      restartCount: 0
+      restartCount: 1
       state:
         running:
-          startedAt: "2020-04-02T02:03:07Z"
+          startedAt: "2020-04-10T00:10:27Z"
     hostIP: 10.128.0.35
     phase: Running
-    podIP: 10.8.0.199
+    podIP: 10.8.0.221
     qosClass: Burstable
-    startTime: "2020-04-02T02:02:58Z"
+    startTime: "2020-04-08T07:32:59Z"
 - apiVersion: v1
   kind: Pod
   metadata:
@@ -13613,24 +13976,24 @@ items:
   kind: Pod
   metadata:
     annotations:
-      cni.projectcalico.org/podIP: 10.8.0.200/32
-    creationTimestamp: "2020-04-02T02:02:58Z"
-    generateName: kubevious-parser-6594d58d68-
+      cni.projectcalico.org/podIP: 10.8.0.220/32
+    creationTimestamp: "2020-04-08T07:33:00Z"
+    generateName: kubevious-parser-85d9bf6d8c-
     labels:
       k8s-app: kubevious-parser
-      pod-template-hash: 6594d58d68
-    name: kubevious-parser-6594d58d68-gkmr9
+      pod-template-hash: 85d9bf6d8c
+    name: kubevious-parser-85d9bf6d8c-dqqsg
     namespace: kubevious
     ownerReferences:
     - apiVersion: apps/v1
       blockOwnerDeletion: true
       controller: true
       kind: ReplicaSet
-      name: kubevious-parser-6594d58d68
-      uid: 137af4b2-7486-11ea-8ebf-42010a800207
-    resourceVersion: "33763842"
-    selfLink: /api/v1/namespaces/kubevious/pods/kubevious-parser-6594d58d68-gkmr9
-    uid: 137db333-7486-11ea-8ebf-42010a800207
+      name: kubevious-parser-85d9bf6d8c
+      uid: 2c4fdf29-796b-11ea-bb1c-42010a800057
+    resourceVersion: "36202559"
+    selfLink: /api/v1/namespaces/kubevious/pods/kubevious-parser-85d9bf6d8c-dqqsg
+    uid: 2c5204d8-796b-11ea-bb1c-42010a800057
   spec:
     containers:
     - env:
@@ -13638,7 +14001,7 @@ items:
         value: production
       - name: KUBEVIOUS_COLLECTOR
         value: http://kubevious-svc.kubevious.svc.cluster.local:4000/api/v1/collect
-      image: kubevious/parser:0.4.11
+      image: kubevious/parser:0.5.6
       imagePullPolicy: IfNotPresent
       name: kubevious-parser
       ports:
@@ -13682,59 +14045,59 @@ items:
   status:
     conditions:
     - lastProbeTime: null
-      lastTransitionTime: "2020-04-02T02:02:59Z"
+      lastTransitionTime: "2020-04-08T07:33:00Z"
       status: "True"
       type: Initialized
     - lastProbeTime: null
-      lastTransitionTime: "2020-04-02T02:03:13Z"
+      lastTransitionTime: "2020-04-08T07:33:32Z"
       status: "True"
       type: Ready
     - lastProbeTime: null
-      lastTransitionTime: "2020-04-02T02:03:13Z"
+      lastTransitionTime: "2020-04-08T07:33:32Z"
       status: "True"
       type: ContainersReady
     - lastProbeTime: null
-      lastTransitionTime: "2020-04-02T02:02:59Z"
+      lastTransitionTime: "2020-04-08T07:33:00Z"
       status: "True"
       type: PodScheduled
     containerStatuses:
-    - containerID: docker://4068ed2a4433cfe179ff3a0a5a34e2061e47ca138f2846dce2da67815ffdc20c
-      image: kubevious/parser:0.4.11
-      imageID: docker-pullable://kubevious/parser@sha256:27b3de0728bc72c325f3f0ca0179a014e838abf0d677713806a4edbcba76c1e7
+    - containerID: docker://c1035c1833e2ad308e7f56da8e17fe287a46650b211c94c79ee2f6896a858ec3
+      image: kubevious/parser:0.5.6
+      imageID: docker-pullable://kubevious/parser@sha256:a97d8e86b22d5899927b901dd83e3953928ff31ab4c67974e5ab1b227d956d39
       lastState: {}
       name: kubevious-parser
       ready: true
       restartCount: 0
       state:
         running:
-          startedAt: "2020-04-02T02:03:12Z"
+          startedAt: "2020-04-08T07:33:30Z"
     hostIP: 10.128.0.35
     phase: Running
-    podIP: 10.8.0.200
+    podIP: 10.8.0.220
     qosClass: Burstable
-    startTime: "2020-04-02T02:02:59Z"
+    startTime: "2020-04-08T07:33:00Z"
 - apiVersion: v1
   kind: Pod
   metadata:
     annotations:
-      cni.projectcalico.org/podIP: 10.8.0.202/32
-    creationTimestamp: "2020-04-02T02:53:34Z"
-    generateName: kubevious-ui-79cccf9fb9-
+      cni.projectcalico.org/podIP: 10.8.0.219/32
+    creationTimestamp: "2020-04-08T07:33:00Z"
+    generateName: kubevious-ui-686cfc86f-
     labels:
       k8s-app: kubevious-ui
-      pod-template-hash: 79cccf9fb9
-    name: kubevious-ui-79cccf9fb9-j6chk
+      pod-template-hash: 686cfc86f
+    name: kubevious-ui-686cfc86f-8g8f8
     namespace: kubevious
     ownerReferences:
     - apiVersion: apps/v1
       blockOwnerDeletion: true
       controller: true
       kind: ReplicaSet
-      name: kubevious-ui-79cccf9fb9
-      uid: 24840308-748d-11ea-8ebf-42010a800207
-    resourceVersion: "33777810"
-    selfLink: /api/v1/namespaces/kubevious/pods/kubevious-ui-79cccf9fb9-j6chk
-    uid: 2487a4d8-748d-11ea-8ebf-42010a800207
+      name: kubevious-ui-686cfc86f
+      uid: 2c68b921-796b-11ea-bb1c-42010a800057
+    resourceVersion: "36202503"
+    selfLink: /api/v1/namespaces/kubevious/pods/kubevious-ui-686cfc86f-8g8f8
+    uid: 2c6c48eb-796b-11ea-bb1c-42010a800057
   spec:
     containers:
     - env:
@@ -13747,7 +14110,7 @@ items:
       envFrom:
       - configMapRef:
           name: kubevious-mysql-client
-      image: kubevious/ui:0.4.6
+      image: kubevious/ui:0.5.3
       imagePullPolicy: IfNotPresent
       name: kubevious-ui
       ports:
@@ -13797,37 +14160,37 @@ items:
   status:
     conditions:
     - lastProbeTime: null
-      lastTransitionTime: "2020-04-02T02:53:34Z"
+      lastTransitionTime: "2020-04-08T07:33:00Z"
       status: "True"
       type: Initialized
     - lastProbeTime: null
-      lastTransitionTime: "2020-04-02T02:53:38Z"
+      lastTransitionTime: "2020-04-08T07:33:22Z"
       status: "True"
       type: Ready
     - lastProbeTime: null
-      lastTransitionTime: "2020-04-02T02:53:38Z"
+      lastTransitionTime: "2020-04-08T07:33:22Z"
       status: "True"
       type: ContainersReady
     - lastProbeTime: null
-      lastTransitionTime: "2020-04-02T02:53:34Z"
+      lastTransitionTime: "2020-04-08T07:33:00Z"
       status: "True"
       type: PodScheduled
     containerStatuses:
-    - containerID: docker://3f43b8937e8c411eef3185aa301c9eb60fbadc2948d826bc109a274b2ed26190
-      image: kubevious/ui:0.4.6
-      imageID: docker-pullable://kubevious/ui@sha256:0adbc2e84d1582eab6d20f5fdec9a88185d6459bd1033de4f0f6afef0ebb64ac
+    - containerID: docker://4db573767adcae7c662dfd64e8b6b9a0a2e189b01263a3dd415315ea05619453
+      image: kubevious/ui:0.5.3
+      imageID: docker-pullable://kubevious/ui@sha256:1c962d137878baf11563a5a36e8e401195685ea091f3410004bf556698ce3f57
       lastState: {}
       name: kubevious-ui
       ready: true
       restartCount: 0
       state:
         running:
-          startedAt: "2020-04-02T02:53:38Z"
+          startedAt: "2020-04-08T07:33:20Z"
     hostIP: 10.128.0.35
     phase: Running
-    podIP: 10.8.0.202
+    podIP: 10.8.0.219
     qosClass: Burstable
-    startTime: "2020-04-02T02:53:34Z"
+    startTime: "2020-04-08T07:33:00Z"
 - apiVersion: v1
   kind: Pod
   metadata:
@@ -19081,7 +19444,7 @@ items:
       helm.sh/chart: cainjector-v0.10.1
     name: gitlab-cainjector
     namespace: gitlab
-    resourceVersion: "34062954"
+    resourceVersion: "37202423"
     selfLink: /apis/apps/v1/namespaces/gitlab/deployments/gitlab-cainjector
     uid: 995eb501-398b-11ea-b115-42010a8001d6
   spec:
@@ -19141,8 +19504,8 @@ items:
       reason: NewReplicaSetAvailable
       status: "True"
       type: Progressing
-    - lastTransitionTime: "2020-04-02T20:15:04Z"
-      lastUpdateTime: "2020-04-02T20:15:04Z"
+    - lastTransitionTime: "2020-04-10T23:54:05Z"
+      lastUpdateTime: "2020-04-10T23:54:05Z"
       message: Deployment has minimum availability.
       reason: MinimumReplicasAvailable
       status: "True"
@@ -19166,7 +19529,7 @@ items:
       helm.sh/chart: certmanager-v0.10.1
     name: gitlab-cert-manager
     namespace: gitlab
-    resourceVersion: "33752743"
+    resourceVersion: "37198418"
     selfLink: /apis/apps/v1/namespaces/gitlab/deployments/gitlab-cert-manager
     uid: 99614a55-398b-11ea-b115-42010a8001d6
   spec:
@@ -19238,8 +19601,8 @@ items:
       reason: NewReplicaSetAvailable
       status: "True"
       type: Progressing
-    - lastTransitionTime: "2020-04-02T01:20:36Z"
-      lastUpdateTime: "2020-04-02T01:20:36Z"
+    - lastTransitionTime: "2020-04-10T23:36:23Z"
+      lastUpdateTime: "2020-04-10T23:36:23Z"
       message: Deployment has minimum availability.
       reason: MinimumReplicasAvailable
       status: "True"
@@ -19549,7 +19912,7 @@ items:
       release: gitlab
     name: gitlab-gitlab-runner
     namespace: gitlab
-    resourceVersion: "34068459"
+    resourceVersion: "37201639"
     selfLink: /apis/apps/v1/namespaces/gitlab/deployments/gitlab-gitlab-runner
     uid: 9960a25d-398b-11ea-b115-42010a8001d6
   spec:
@@ -19764,6 +20127,7 @@ items:
             name: gitlab-gitlab-runner
           name: scripts
   status:
+    availableReplicas: 1
     conditions:
     - lastTransitionTime: "2020-01-18T00:43:52Z"
       lastUpdateTime: "2020-01-18T00:45:09Z"
@@ -19771,15 +20135,15 @@ items:
       reason: NewReplicaSetAvailable
       status: "True"
       type: Progressing
-    - lastTransitionTime: "2020-04-02T20:35:11Z"
-      lastUpdateTime: "2020-04-02T20:35:11Z"
-      message: Deployment does not have minimum availability.
-      reason: MinimumReplicasUnavailable
-      status: "False"
+    - lastTransitionTime: "2020-04-10T23:50:32Z"
+      lastUpdateTime: "2020-04-10T23:50:32Z"
+      message: Deployment has minimum availability.
+      reason: MinimumReplicasAvailable
+      status: "True"
       type: Available
     observedGeneration: 1
+    readyReplicas: 1
     replicas: 1
-    unavailableReplicas: 1
     updatedReplicas: 1
 - apiVersion: apps/v1
   kind: Deployment
@@ -20111,7 +20475,7 @@ items:
       release: gitlab
     name: gitlab-nginx-ingress-controller
     namespace: gitlab
-    resourceVersion: "33571954"
+    resourceVersion: "37062133"
     selfLink: /apis/apps/v1/namespaces/gitlab/deployments/gitlab-nginx-ingress-controller
     uid: 995e41f0-398b-11ea-b115-42010a8001d6
   spec:
@@ -20237,8 +20601,8 @@ items:
       reason: NewReplicaSetAvailable
       status: "True"
       type: Progressing
-    - lastTransitionTime: "2020-04-01T13:50:25Z"
-      lastUpdateTime: "2020-04-01T13:50:25Z"
+    - lastTransitionTime: "2020-04-10T14:23:06Z"
+      lastUpdateTime: "2020-04-10T14:23:06Z"
       message: Deployment has minimum availability.
       reason: MinimumReplicasAvailable
       status: "True"
@@ -20493,7 +20857,7 @@ items:
       release: gitlab
     name: gitlab-prometheus-server
     namespace: gitlab
-    resourceVersion: "33749570"
+    resourceVersion: "37200147"
     selfLink: /apis/apps/v1/namespaces/gitlab/deployments/gitlab-prometheus-server
     uid: 9976d02c-398b-11ea-b115-42010a8001d6
   spec:
@@ -20736,7 +21100,7 @@ items:
     annotations:
       deployment.kubernetes.io/revision: "1"
     creationTimestamp: "2020-01-18T00:43:52Z"
-    generation: 50
+    generation: 68
     labels:
       app: registry
       chart: registry-0.3.0
@@ -20744,7 +21108,7 @@ items:
       release: gitlab
     name: gitlab-registry
     namespace: gitlab
-    resourceVersion: "33572007"
+    resourceVersion: "37196458"
     selfLink: /apis/apps/v1/namespaces/gitlab/deployments/gitlab-registry
     uid: 99636a67-398b-11ea-b115-42010a8001d6
   spec:
@@ -20886,13 +21250,13 @@ items:
       reason: NewReplicaSetAvailable
       status: "True"
       type: Progressing
-    - lastTransitionTime: "2020-04-01T13:50:33Z"
-      lastUpdateTime: "2020-04-01T13:50:33Z"
+    - lastTransitionTime: "2020-04-10T23:22:00Z"
+      lastUpdateTime: "2020-04-10T23:22:00Z"
       message: Deployment has minimum availability.
       reason: MinimumReplicasAvailable
       status: "True"
       type: Available
-    observedGeneration: 50
+    observedGeneration: 68
     readyReplicas: 1
     replicas: 1
     updatedReplicas: 1
@@ -21396,7 +21760,7 @@ items:
       release: gitlab
     name: gitlab-unicorn
     namespace: gitlab
-    resourceVersion: "33573256"
+    resourceVersion: "36422532"
     selfLink: /apis/apps/v1/namespaces/gitlab/deployments/gitlab-unicorn
     uid: 9968e6a8-398b-11ea-b115-42010a8001d6
   spec:
@@ -21723,8 +22087,8 @@ items:
       reason: NewReplicaSetAvailable
       status: "True"
       type: Progressing
-    - lastTransitionTime: "2020-04-01T13:55:52Z"
-      lastUpdateTime: "2020-04-01T13:55:52Z"
+    - lastTransitionTime: "2020-04-08T21:56:58Z"
+      lastUpdateTime: "2020-04-08T21:56:58Z"
       message: Deployment has minimum availability.
       reason: MinimumReplicasAvailable
       status: "True"
@@ -21744,7 +22108,7 @@ items:
     generation: 3
     name: adservice
     namespace: hipster
-    resourceVersion: "33365148"
+    resourceVersion: "36841060"
     selfLink: /apis/apps/v1/namespaces/hipster/deployments/adservice
     uid: a424ede3-3441-11ea-9cdc-42010a8001cf
   spec:
@@ -21810,7 +22174,6 @@ items:
         securityContext: {}
         terminationGracePeriodSeconds: 5
   status:
-    availableReplicas: 1
     conditions:
     - lastTransitionTime: "2020-02-01T06:01:42Z"
       lastUpdateTime: "2020-02-01T06:01:42Z"
@@ -21818,15 +22181,15 @@ items:
       reason: NewReplicaSetAvailable
       status: "True"
       type: Progressing
-    - lastTransitionTime: "2020-03-31T23:03:39Z"
-      lastUpdateTime: "2020-03-31T23:03:39Z"
-      message: Deployment has minimum availability.
-      reason: MinimumReplicasAvailable
-      status: "True"
+    - lastTransitionTime: "2020-04-10T00:10:28Z"
+      lastUpdateTime: "2020-04-10T00:10:28Z"
+      message: Deployment does not have minimum availability.
+      reason: MinimumReplicasUnavailable
+      status: "False"
       type: Available
     observedGeneration: 3
-    readyReplicas: 1
     replicas: 1
+    unavailableReplicas: 1
     updatedReplicas: 1
 - apiVersion: apps/v1
   kind: Deployment
@@ -21839,7 +22202,7 @@ items:
     generation: 4
     name: cartservice
     namespace: hipster
-    resourceVersion: "33303065"
+    resourceVersion: "36841169"
     selfLink: /apis/apps/v1/namespaces/hipster/deployments/cartservice
     uid: a29ac8cf-3441-11ea-9cdc-42010a8001cf
   spec:
@@ -21919,8 +22282,8 @@ items:
       reason: NewReplicaSetAvailable
       status: "True"
       type: Progressing
-    - lastTransitionTime: "2020-03-31T18:43:20Z"
-      lastUpdateTime: "2020-03-31T18:43:20Z"
+    - lastTransitionTime: "2020-04-10T00:10:50Z"
+      lastUpdateTime: "2020-04-10T00:10:50Z"
       message: Deployment has minimum availability.
       reason: MinimumReplicasAvailable
       status: "True"
@@ -22045,7 +22408,7 @@ items:
     generation: 3
     name: currencyservice
     namespace: hipster
-    resourceVersion: "33303029"
+    resourceVersion: "36841073"
     selfLink: /apis/apps/v1/namespaces/hipster/deployments/currencyservice
     uid: a31b37af-3441-11ea-9cdc-42010a8001cf
   spec:
@@ -22118,8 +22481,8 @@ items:
       reason: NewReplicaSetAvailable
       status: "True"
       type: Progressing
-    - lastTransitionTime: "2020-03-31T18:43:13Z"
-      lastUpdateTime: "2020-03-31T18:43:13Z"
+    - lastTransitionTime: "2020-04-10T00:10:29Z"
+      lastUpdateTime: "2020-04-10T00:10:29Z"
       message: Deployment has minimum availability.
       reason: MinimumReplicasAvailable
       status: "True"
@@ -22139,7 +22502,7 @@ items:
     generation: 3
     name: emailservice
     namespace: hipster
-    resourceVersion: "33303016"
+    resourceVersion: "36840783"
     selfLink: /apis/apps/v1/namespaces/hipster/deployments/emailservice
     uid: a0685217-3441-11ea-9cdc-42010a8001cf
   spec:
@@ -22213,8 +22576,8 @@ items:
       reason: NewReplicaSetAvailable
       status: "True"
       type: Progressing
-    - lastTransitionTime: "2020-03-31T18:43:12Z"
-      lastUpdateTime: "2020-03-31T18:43:12Z"
+    - lastTransitionTime: "2020-04-10T00:09:29Z"
+      lastUpdateTime: "2020-04-10T00:09:29Z"
       message: Deployment has minimum availability.
       reason: MinimumReplicasAvailable
       status: "True"
@@ -22234,7 +22597,7 @@ items:
     generation: 2
     name: frontend
     namespace: hipster
-    resourceVersion: "33302935"
+    resourceVersion: "36841024"
     selfLink: /apis/apps/v1/namespaces/hipster/deployments/frontend
     uid: a15c8a4d-3441-11ea-9cdc-42010a8001cf
   spec:
@@ -22330,8 +22693,8 @@ items:
       reason: NewReplicaSetAvailable
       status: "True"
       type: Progressing
-    - lastTransitionTime: "2020-03-31T18:43:03Z"
-      lastUpdateTime: "2020-03-31T18:43:03Z"
+    - lastTransitionTime: "2020-04-10T00:10:22Z"
+      lastUpdateTime: "2020-04-10T00:10:22Z"
       message: Deployment has minimum availability.
       reason: MinimumReplicasAvailable
       status: "True"
@@ -22427,7 +22790,7 @@ items:
     generation: 3
     name: paymentservice
     namespace: hipster
-    resourceVersion: "33303005"
+    resourceVersion: "36841079"
     selfLink: /apis/apps/v1/namespaces/hipster/deployments/paymentservice
     uid: a1d5e17e-3441-11ea-9cdc-42010a8001cf
   spec:
@@ -22499,8 +22862,8 @@ items:
       reason: NewReplicaSetAvailable
       status: "True"
       type: Progressing
-    - lastTransitionTime: "2020-03-31T18:43:11Z"
-      lastUpdateTime: "2020-03-31T18:43:11Z"
+    - lastTransitionTime: "2020-04-10T00:10:30Z"
+      lastUpdateTime: "2020-04-10T00:10:30Z"
       message: Deployment has minimum availability.
       reason: MinimumReplicasAvailable
       status: "True"
@@ -22520,7 +22883,7 @@ items:
     generation: 2
     name: productcatalogservice
     namespace: hipster
-    resourceVersion: "33885048"
+    resourceVersion: "37185770"
     selfLink: /apis/apps/v1/namespaces/hipster/deployments/productcatalogservice
     uid: a2397ecc-3441-11ea-9cdc-42010a8001cf
   spec:
@@ -22592,8 +22955,8 @@ items:
       reason: NewReplicaSetAvailable
       status: "True"
       type: Progressing
-    - lastTransitionTime: "2020-04-02T09:22:18Z"
-      lastUpdateTime: "2020-04-02T09:22:18Z"
+    - lastTransitionTime: "2020-04-10T22:40:33Z"
+      lastUpdateTime: "2020-04-10T22:40:33Z"
       message: Deployment has minimum availability.
       reason: MinimumReplicasAvailable
       status: "True"
@@ -22613,7 +22976,7 @@ items:
     generation: 2
     name: recommendationservice
     namespace: hipster
-    resourceVersion: "33301611"
+    resourceVersion: "36841108"
     selfLink: /apis/apps/v1/namespaces/hipster/deployments/recommendationservice
     uid: a1103ee1-3441-11ea-9cdc-42010a8001cf
   spec:
@@ -22688,8 +23051,8 @@ items:
       reason: NewReplicaSetAvailable
       status: "True"
       type: Progressing
-    - lastTransitionTime: "2020-03-31T18:40:25Z"
-      lastUpdateTime: "2020-03-31T18:40:25Z"
+    - lastTransitionTime: "2020-04-10T00:10:36Z"
+      lastUpdateTime: "2020-04-10T00:10:36Z"
       message: Deployment does not have minimum availability.
       reason: MinimumReplicasUnavailable
       status: "False"
@@ -22801,7 +23164,7 @@ items:
     generation: 2
     name: shippingservice
     namespace: hipster
-    resourceVersion: "33755258"
+    resourceVersion: "37192533"
     selfLink: /apis/apps/v1/namespaces/hipster/deployments/shippingservice
     uid: a38191a7-3441-11ea-9cdc-42010a8001cf
   spec:
@@ -22873,8 +23236,8 @@ items:
       reason: NewReplicaSetAvailable
       status: "True"
       type: Progressing
-    - lastTransitionTime: "2020-04-02T01:30:44Z"
-      lastUpdateTime: "2020-04-02T01:30:44Z"
+    - lastTransitionTime: "2020-04-10T23:10:24Z"
+      lastUpdateTime: "2020-04-10T23:10:24Z"
       message: Deployment has minimum availability.
       reason: MinimumReplicasAvailable
       status: "True"
@@ -24151,12 +24514,12 @@ items:
   kind: Deployment
   metadata:
     annotations:
-      deployment.kubernetes.io/revision: "3"
+      deployment.kubernetes.io/revision: "6"
     creationTimestamp: "2020-03-27T23:06:16Z"
-    generation: 3
+    generation: 6
     name: kubevious
     namespace: kubevious
-    resourceVersion: "33763825"
+    resourceVersion: "36841064"
     selfLink: /apis/apps/v1/namespaces/kubevious/deployments/kubevious
     uid: 8f93d9b0-707f-11ea-8ebf-42010a800207
   spec:
@@ -24184,7 +24547,7 @@ items:
           envFrom:
           - configMapRef:
               name: kubevious-mysql-client
-          image: kubevious/kubevious:0.4.9
+          image: kubevious/kubevious:0.5.2
           imagePullPolicy: IfNotPresent
           name: kubevious
           ports:
@@ -24207,19 +24570,19 @@ items:
   status:
     availableReplicas: 1
     conditions:
-    - lastTransitionTime: "2020-04-01T13:50:04Z"
-      lastUpdateTime: "2020-04-01T13:50:04Z"
+    - lastTransitionTime: "2020-03-27T23:06:16Z"
+      lastUpdateTime: "2020-04-08T07:33:40Z"
+      message: ReplicaSet "kubevious-865cf6dfcf" has successfully progressed.
+      reason: NewReplicaSetAvailable
+      status: "True"
+      type: Progressing
+    - lastTransitionTime: "2020-04-10T00:10:28Z"
+      lastUpdateTime: "2020-04-10T00:10:28Z"
       message: Deployment has minimum availability.
       reason: MinimumReplicasAvailable
       status: "True"
       type: Available
-    - lastTransitionTime: "2020-03-27T23:06:16Z"
-      lastUpdateTime: "2020-04-02T02:03:09Z"
-      message: ReplicaSet "kubevious-55c9b88bfc" has successfully progressed.
-      reason: NewReplicaSetAvailable
-      status: "True"
-      type: Progressing
-    observedGeneration: 3
+    observedGeneration: 6
     readyReplicas: 1
     replicas: 1
     updatedReplicas: 1
@@ -24227,12 +24590,12 @@ items:
   kind: Deployment
   metadata:
     annotations:
-      deployment.kubernetes.io/revision: "1"
+      deployment.kubernetes.io/revision: "6"
     creationTimestamp: "2020-04-02T02:02:58Z"
-    generation: 1
+    generation: 6
     name: kubevious-parser
     namespace: kubevious
-    resourceVersion: "33763844"
+    resourceVersion: "36202566"
     selfLink: /apis/apps/v1/namespaces/kubevious/deployments/kubevious-parser
     uid: 13795f4a-7486-11ea-8ebf-42010a800207
   spec:
@@ -24259,7 +24622,7 @@ items:
             value: production
           - name: KUBEVIOUS_COLLECTOR
             value: http://kubevious-svc.kubevious.svc.cluster.local:4000/api/v1/collect
-          image: kubevious/parser:0.4.11
+          image: kubevious/parser:0.5.6
           imagePullPolicy: IfNotPresent
           name: kubevious-parser
           ports:
@@ -24282,19 +24645,19 @@ items:
   status:
     availableReplicas: 1
     conditions:
-    - lastTransitionTime: "2020-04-02T02:03:13Z"
-      lastUpdateTime: "2020-04-02T02:03:13Z"
+    - lastTransitionTime: "2020-04-05T03:05:22Z"
+      lastUpdateTime: "2020-04-05T03:05:22Z"
       message: Deployment has minimum availability.
       reason: MinimumReplicasAvailable
       status: "True"
       type: Available
     - lastTransitionTime: "2020-04-02T02:02:58Z"
-      lastUpdateTime: "2020-04-02T02:03:13Z"
-      message: ReplicaSet "kubevious-parser-6594d58d68" has successfully progressed.
+      lastUpdateTime: "2020-04-08T07:33:32Z"
+      message: ReplicaSet "kubevious-parser-85d9bf6d8c" has successfully progressed.
       reason: NewReplicaSetAvailable
       status: "True"
       type: Progressing
-    observedGeneration: 1
+    observedGeneration: 6
     readyReplicas: 1
     replicas: 1
     updatedReplicas: 1
@@ -24302,12 +24665,12 @@ items:
   kind: Deployment
   metadata:
     annotations:
-      deployment.kubernetes.io/revision: "5"
+      deployment.kubernetes.io/revision: "8"
     creationTimestamp: "2020-03-27T23:06:16Z"
-    generation: 5
+    generation: 8
     name: kubevious-ui
     namespace: kubevious
-    resourceVersion: "33777819"
+    resourceVersion: "36202512"
     selfLink: /apis/apps/v1/namespaces/kubevious/deployments/kubevious-ui
     uid: 8f945e6c-707f-11ea-8ebf-42010a800207
   spec:
@@ -24339,7 +24702,7 @@ items:
           envFrom:
           - configMapRef:
               name: kubevious-mysql-client
-          image: kubevious/ui:0.4.6
+          image: kubevious/ui:0.5.3
           imagePullPolicy: IfNotPresent
           name: kubevious-ui
           ports:
@@ -24377,12 +24740,12 @@ items:
       status: "True"
       type: Available
     - lastTransitionTime: "2020-03-27T23:06:16Z"
-      lastUpdateTime: "2020-04-02T02:53:38Z"
-      message: ReplicaSet "kubevious-ui-79cccf9fb9" has successfully progressed.
+      lastUpdateTime: "2020-04-08T07:33:22Z"
+      message: ReplicaSet "kubevious-ui-686cfc86f" has successfully progressed.
       reason: NewReplicaSetAvailable
       status: "True"
       type: Progressing
-    observedGeneration: 5
+    observedGeneration: 8
     readyReplicas: 1
     replicas: 1
     updatedReplicas: 1
@@ -26756,7 +27119,7 @@ items:
       kind: Deployment
       name: gitlab-cainjector
       uid: 995eb501-398b-11ea-b115-42010a8001d6
-    resourceVersion: "34062953"
+    resourceVersion: "37202422"
     selfLink: /apis/apps/v1/namespaces/gitlab/replicasets/gitlab-cainjector-5d757b9fdd
     uid: 99716a60-398b-11ea-b115-42010a8001d6
   spec:
@@ -26833,7 +27196,7 @@ items:
       kind: Deployment
       name: gitlab-cert-manager
       uid: 99614a55-398b-11ea-b115-42010a8001d6
-    resourceVersion: "33752741"
+    resourceVersion: "37198416"
     selfLink: /apis/apps/v1/namespaces/gitlab/replicasets/gitlab-cert-manager-5ffcc7f99f
     uid: 99816455-398b-11ea-b115-42010a8001d6
   spec:
@@ -27189,7 +27552,7 @@ items:
       kind: Deployment
       name: gitlab-gitlab-runner
       uid: 9960a25d-398b-11ea-b115-42010a8001d6
-    resourceVersion: "34068458"
+    resourceVersion: "37201638"
     selfLink: /apis/apps/v1/namespaces/gitlab/replicasets/gitlab-gitlab-runner-65ff67bdd8
     uid: 997138d9-398b-11ea-b115-42010a8001d6
   spec:
@@ -27399,8 +27762,10 @@ items:
             name: gitlab-gitlab-runner
           name: scripts
   status:
+    availableReplicas: 1
     fullyLabeledReplicas: 1
     observedGeneration: 1
+    readyReplicas: 1
     replicas: 1
 - apiVersion: apps/v1
   kind: ReplicaSet
@@ -27863,7 +28228,7 @@ items:
       kind: Deployment
       name: gitlab-nginx-ingress-controller
       uid: 995e41f0-398b-11ea-b115-42010a8001d6
-    resourceVersion: "33571950"
+    resourceVersion: "37062132"
     selfLink: /apis/apps/v1/namespaces/gitlab/replicasets/gitlab-nginx-ingress-controller-7db754f856
     uid: 2e1a3417-470e-11ea-96d3-42010a80017a
   spec:
@@ -28628,7 +28993,7 @@ items:
       kind: Deployment
       name: gitlab-prometheus-server
       uid: 9976d02c-398b-11ea-b115-42010a8001d6
-    resourceVersion: "33749569"
+    resourceVersion: "37200146"
     selfLink: /apis/apps/v1/namespaces/gitlab/replicasets/gitlab-prometheus-server-cf7649bb9
     uid: 9a191393-398b-11ea-b115-42010a8001d6
   spec:
@@ -29082,7 +29447,7 @@ items:
       deployment.kubernetes.io/max-replicas: "2"
       deployment.kubernetes.io/revision: "1"
     creationTimestamp: "2020-01-18T00:43:52Z"
-    generation: 50
+    generation: 68
     labels:
       app: registry
       pod-template-hash: 74c959fc8
@@ -29096,7 +29461,7 @@ items:
       kind: Deployment
       name: gitlab-registry
       uid: 99636a67-398b-11ea-b115-42010a8001d6
-    resourceVersion: "33572006"
+    resourceVersion: "37196456"
     selfLink: /apis/apps/v1/namespaces/gitlab/replicasets/gitlab-registry-74c959fc8
     uid: 99924f2e-398b-11ea-b115-42010a8001d6
   spec:
@@ -29227,7 +29592,7 @@ items:
   status:
     availableReplicas: 1
     fullyLabeledReplicas: 1
-    observedGeneration: 50
+    observedGeneration: 68
     readyReplicas: 1
     replicas: 1
 - apiVersion: apps/v1
@@ -30660,7 +31025,7 @@ items:
       kind: Deployment
       name: gitlab-unicorn
       uid: 9968e6a8-398b-11ea-b115-42010a8001d6
-    resourceVersion: "33573253"
+    resourceVersion: "36422529"
     selfLink: /apis/apps/v1/namespaces/gitlab/replicasets/gitlab-unicorn-84d7dc6557
     uid: b3bedb01-4709-11ea-96d3-42010a80017a
   spec:
@@ -31084,7 +31449,7 @@ items:
       kind: Deployment
       name: adservice
       uid: a424ede3-3441-11ea-9cdc-42010a8001cf
-    resourceVersion: "33365146"
+    resourceVersion: "36841059"
     selfLink: /apis/apps/v1/namespaces/hipster/replicasets/adservice-84b8749d65
     uid: 5d739cff-431c-11ea-96d3-42010a80017a
   spec:
@@ -31145,10 +31510,8 @@ items:
         securityContext: {}
         terminationGracePeriodSeconds: 5
   status:
-    availableReplicas: 1
     fullyLabeledReplicas: 1
     observedGeneration: 2
-    readyReplicas: 1
     replicas: 1
 - apiVersion: apps/v1
   kind: ReplicaSet
@@ -31255,7 +31618,7 @@ items:
       kind: Deployment
       name: cartservice
       uid: a29ac8cf-3441-11ea-9cdc-42010a8001cf
-    resourceVersion: "33303063"
+    resourceVersion: "36841168"
     selfLink: /apis/apps/v1/namespaces/hipster/replicasets/cartservice-55f8ccc8f4
     uid: d8fc4c22-4390-11ea-96d3-42010a80017a
   spec:
@@ -31892,7 +32255,7 @@ items:
       kind: Deployment
       name: currencyservice
       uid: a31b37af-3441-11ea-9cdc-42010a8001cf
-    resourceVersion: "33303027"
+    resourceVersion: "36841072"
     selfLink: /apis/apps/v1/namespaces/hipster/replicasets/currencyservice-7775f7949
     uid: 5d09f261-431c-11ea-96d3-42010a80017a
   spec:
@@ -32145,7 +32508,7 @@ items:
       kind: Deployment
       name: emailservice
       uid: a0685217-3441-11ea-9cdc-42010a8001cf
-    resourceVersion: "33303014"
+    resourceVersion: "36840782"
     selfLink: /apis/apps/v1/namespaces/hipster/replicasets/emailservice-6545668f4f
     uid: 5bd1e06f-431c-11ea-96d3-42010a80017a
   spec:
@@ -32422,7 +32785,7 @@ items:
       kind: Deployment
       name: frontend
       uid: a15c8a4d-3441-11ea-9cdc-42010a8001cf
-    resourceVersion: "33302933"
+    resourceVersion: "36841022"
     selfLink: /apis/apps/v1/namespaces/hipster/replicasets/frontend-7dbdf6c769
     uid: 29bbf1e3-431b-11ea-96d3-42010a80017a
   spec:
@@ -32828,7 +33191,7 @@ items:
       kind: Deployment
       name: paymentservice
       uid: a1d5e17e-3441-11ea-9cdc-42010a8001cf
-    resourceVersion: "33303003"
+    resourceVersion: "36841078"
     selfLink: /apis/apps/v1/namespaces/hipster/replicasets/paymentservice-6b9d88465f
     uid: 5c7abd32-431c-11ea-96d3-42010a80017a
   spec:
@@ -32995,7 +33358,7 @@ items:
       kind: Deployment
       name: productcatalogservice
       uid: a2397ecc-3441-11ea-9cdc-42010a8001cf
-    resourceVersion: "33885046"
+    resourceVersion: "37185769"
     selfLink: /apis/apps/v1/namespaces/hipster/replicasets/productcatalogservice-7f5dc87d7
     uid: 2b65422c-431b-11ea-96d3-42010a80017a
   spec:
@@ -33080,7 +33443,7 @@ items:
       kind: Deployment
       name: recommendationservice
       uid: a1103ee1-3441-11ea-9cdc-42010a8001cf
-    resourceVersion: "33301610"
+    resourceVersion: "36841107"
     selfLink: /apis/apps/v1/namespaces/hipster/replicasets/recommendationservice-744d5589c7
     uid: 29151317-431b-11ea-96d3-42010a80017a
   spec:
@@ -33418,7 +33781,7 @@ items:
       kind: Deployment
       name: shippingservice
       uid: a38191a7-3441-11ea-9cdc-42010a8001cf
-    resourceVersion: "33755256"
+    resourceVersion: "37192532"
     selfLink: /apis/apps/v1/namespaces/hipster/replicasets/shippingservice-5f96974545
     uid: 2e796d8d-431b-11ea-96d3-42010a80017a
   spec:
@@ -35854,7 +36217,7 @@ items:
       deployment.kubernetes.io/max-replicas: "2"
       deployment.kubernetes.io/revision: "3"
     creationTimestamp: "2020-04-02T02:02:58Z"
-    generation: 1
+    generation: 2
     labels:
       k8s-app: kubevious
       pod-template-hash: 55c9b88bfc
@@ -35867,11 +36230,11 @@ items:
       kind: Deployment
       name: kubevious
       uid: 8f93d9b0-707f-11ea-8ebf-42010a800207
-    resourceVersion: "33763817"
+    resourceVersion: "34959986"
     selfLink: /apis/apps/v1/namespaces/kubevious/replicasets/kubevious-55c9b88bfc
     uid: 136c4f6e-7486-11ea-8ebf-42010a800207
   spec:
-    replicas: 1
+    replicas: 0
     selector:
       matchLabels:
         k8s-app: kubevious
@@ -35911,11 +36274,8 @@ items:
         serviceAccountName: kubevious
         terminationGracePeriodSeconds: 30
   status:
-    availableReplicas: 1
-    fullyLabeledReplicas: 1
-    observedGeneration: 1
-    readyReplicas: 1
-    replicas: 1
+    observedGeneration: 2
+    replicas: 0
 - apiVersion: apps/v1
   kind: ReplicaSet
   metadata:
@@ -35961,6 +36321,73 @@ items:
           - configMapRef:
               name: kubevious-mysql-client
           image: kubevious/kubevious:0.4.8
+          imagePullPolicy: IfNotPresent
+          name: kubevious
+          ports:
+          - containerPort: 4000
+            name: http
+            protocol: TCP
+          resources:
+            requests:
+              cpu: 100m
+              memory: 200Mi
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        serviceAccount: kubevious
+        serviceAccountName: kubevious
+        terminationGracePeriodSeconds: 30
+  status:
+    observedGeneration: 2
+    replicas: 0
+- apiVersion: apps/v1
+  kind: ReplicaSet
+  metadata:
+    annotations:
+      deployment.kubernetes.io/desired-replicas: "1"
+      deployment.kubernetes.io/max-replicas: "2"
+      deployment.kubernetes.io/revision: "5"
+    creationTimestamp: "2020-04-06T02:09:45Z"
+    generation: 2
+    labels:
+      k8s-app: kubevious
+      pod-template-hash: 794d54fdb6
+    name: kubevious-794d54fdb6
+    namespace: kubevious
+    ownerReferences:
+    - apiVersion: apps/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: Deployment
+      name: kubevious
+      uid: 8f93d9b0-707f-11ea-8ebf-42010a800207
+    resourceVersion: "36202612"
+    selfLink: /apis/apps/v1/namespaces/kubevious/replicasets/kubevious-794d54fdb6
+    uid: af7e969c-77ab-11ea-bb1c-42010a800057
+  spec:
+    replicas: 0
+    selector:
+      matchLabels:
+        k8s-app: kubevious
+        pod-template-hash: 794d54fdb6
+    template:
+      metadata:
+        creationTimestamp: null
+        labels:
+          k8s-app: kubevious
+          pod-template-hash: 794d54fdb6
+      spec:
+        containers:
+        - env:
+          - name: NODE_ENV
+            value: production
+          envFrom:
+          - configMapRef:
+              name: kubevious-mysql-client
+          image: kubevious/kubevious:0.5.1
           imagePullPolicy: IfNotPresent
           name: kubevious
           ports:
@@ -36056,9 +36483,146 @@ items:
     annotations:
       deployment.kubernetes.io/desired-replicas: "1"
       deployment.kubernetes.io/max-replicas: "2"
+      deployment.kubernetes.io/revision: "6"
+    creationTimestamp: "2020-04-08T07:32:59Z"
+    generation: 1
+    labels:
+      k8s-app: kubevious
+      pod-template-hash: 865cf6dfcf
+    name: kubevious-865cf6dfcf
+    namespace: kubevious
+    ownerReferences:
+    - apiVersion: apps/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: Deployment
+      name: kubevious
+      uid: 8f93d9b0-707f-11ea-8ebf-42010a800207
+    resourceVersion: "36841062"
+    selfLink: /apis/apps/v1/namespaces/kubevious/replicasets/kubevious-865cf6dfcf
+    uid: 2c352d7e-796b-11ea-bb1c-42010a800057
+  spec:
+    replicas: 1
+    selector:
+      matchLabels:
+        k8s-app: kubevious
+        pod-template-hash: 865cf6dfcf
+    template:
+      metadata:
+        creationTimestamp: null
+        labels:
+          k8s-app: kubevious
+          pod-template-hash: 865cf6dfcf
+      spec:
+        containers:
+        - env:
+          - name: NODE_ENV
+            value: production
+          envFrom:
+          - configMapRef:
+              name: kubevious-mysql-client
+          image: kubevious/kubevious:0.5.2
+          imagePullPolicy: IfNotPresent
+          name: kubevious
+          ports:
+          - containerPort: 4000
+            name: http
+            protocol: TCP
+          resources:
+            requests:
+              cpu: 100m
+              memory: 200Mi
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        serviceAccount: kubevious
+        serviceAccountName: kubevious
+        terminationGracePeriodSeconds: 30
+  status:
+    availableReplicas: 1
+    fullyLabeledReplicas: 1
+    observedGeneration: 1
+    readyReplicas: 1
+    replicas: 1
+- apiVersion: apps/v1
+  kind: ReplicaSet
+  metadata:
+    annotations:
+      deployment.kubernetes.io/desired-replicas: "1"
+      deployment.kubernetes.io/max-replicas: "2"
+      deployment.kubernetes.io/revision: "4"
+    creationTimestamp: "2020-04-05T02:53:19Z"
+    generation: 2
+    labels:
+      k8s-app: kubevious
+      pod-template-hash: d6b55cfc9
+    name: kubevious-d6b55cfc9
+    namespace: kubevious
+    ownerReferences:
+    - apiVersion: apps/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: Deployment
+      name: kubevious
+      uid: 8f93d9b0-707f-11ea-8ebf-42010a800207
+    resourceVersion: "35336260"
+    selfLink: /apis/apps/v1/namespaces/kubevious/replicasets/kubevious-d6b55cfc9
+    uid: 9af57068-76e8-11ea-bb1c-42010a800057
+  spec:
+    replicas: 0
+    selector:
+      matchLabels:
+        k8s-app: kubevious
+        pod-template-hash: d6b55cfc9
+    template:
+      metadata:
+        creationTimestamp: null
+        labels:
+          k8s-app: kubevious
+          pod-template-hash: d6b55cfc9
+      spec:
+        containers:
+        - env:
+          - name: NODE_ENV
+            value: production
+          envFrom:
+          - configMapRef:
+              name: kubevious-mysql-client
+          image: kubevious/kubevious:0.4.10
+          imagePullPolicy: IfNotPresent
+          name: kubevious
+          ports:
+          - containerPort: 4000
+            name: http
+            protocol: TCP
+          resources:
+            requests:
+              cpu: 100m
+              memory: 200Mi
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        serviceAccount: kubevious
+        serviceAccountName: kubevious
+        terminationGracePeriodSeconds: 30
+  status:
+    observedGeneration: 2
+    replicas: 0
+- apiVersion: apps/v1
+  kind: ReplicaSet
+  metadata:
+    annotations:
+      deployment.kubernetes.io/desired-replicas: "1"
+      deployment.kubernetes.io/max-replicas: "2"
       deployment.kubernetes.io/revision: "1"
     creationTimestamp: "2020-04-02T02:02:58Z"
-    generation: 1
+    generation: 2
     labels:
       k8s-app: kubevious-parser
       pod-template-hash: 6594d58d68
@@ -36071,11 +36635,11 @@ items:
       kind: Deployment
       name: kubevious-parser
       uid: 13795f4a-7486-11ea-8ebf-42010a800207
-    resourceVersion: "33763843"
+    resourceVersion: "34959935"
     selfLink: /apis/apps/v1/namespaces/kubevious/replicasets/kubevious-parser-6594d58d68
     uid: 137af4b2-7486-11ea-8ebf-42010a800207
   spec:
-    replicas: 1
+    replicas: 0
     selector:
       matchLabels:
         k8s-app: kubevious-parser
@@ -36114,11 +36678,420 @@ items:
         serviceAccountName: kubevious-parser
         terminationGracePeriodSeconds: 30
   status:
+    observedGeneration: 2
+    replicas: 0
+- apiVersion: apps/v1
+  kind: ReplicaSet
+  metadata:
+    annotations:
+      deployment.kubernetes.io/desired-replicas: "1"
+      deployment.kubernetes.io/max-replicas: "2"
+      deployment.kubernetes.io/revision: "2"
+    creationTimestamp: "2020-04-05T02:53:19Z"
+    generation: 2
+    labels:
+      k8s-app: kubevious-parser
+      pod-template-hash: 679556b9f6
+    name: kubevious-parser-679556b9f6
+    namespace: kubevious
+    ownerReferences:
+    - apiVersion: apps/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: Deployment
+      name: kubevious-parser
+      uid: 13795f4a-7486-11ea-8ebf-42010a800207
+    resourceVersion: "34968410"
+    selfLink: /apis/apps/v1/namespaces/kubevious/replicasets/kubevious-parser-679556b9f6
+    uid: 9b0cd6ad-76e8-11ea-bb1c-42010a800057
+  spec:
+    replicas: 0
+    selector:
+      matchLabels:
+        k8s-app: kubevious-parser
+        pod-template-hash: 679556b9f6
+    template:
+      metadata:
+        creationTimestamp: null
+        labels:
+          k8s-app: kubevious-parser
+          pod-template-hash: 679556b9f6
+      spec:
+        containers:
+        - env:
+          - name: NODE_ENV
+            value: production
+          - name: KUBEVIOUS_COLLECTOR
+            value: http://kubevious-svc.kubevious.svc.cluster.local:4000/api/v1/collect
+          image: kubevious/parser:0.4.20
+          imagePullPolicy: IfNotPresent
+          name: kubevious-parser
+          ports:
+          - containerPort: 4500
+            name: http
+            protocol: TCP
+          resources:
+            requests:
+              cpu: 100m
+              memory: 200Mi
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        serviceAccount: kubevious-parser
+        serviceAccountName: kubevious-parser
+        terminationGracePeriodSeconds: 30
+  status:
+    observedGeneration: 2
+    replicas: 0
+- apiVersion: apps/v1
+  kind: ReplicaSet
+  metadata:
+    annotations:
+      deployment.kubernetes.io/desired-replicas: "1"
+      deployment.kubernetes.io/max-replicas: "2"
+      deployment.kubernetes.io/revision: "5"
+    creationTimestamp: "2020-04-06T02:09:45Z"
+    generation: 2
+    labels:
+      k8s-app: kubevious-parser
+      pod-template-hash: 6c6749879
+    name: kubevious-parser-6c6749879
+    namespace: kubevious
+    ownerReferences:
+    - apiVersion: apps/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: Deployment
+      name: kubevious-parser
+      uid: 13795f4a-7486-11ea-8ebf-42010a800207
+    resourceVersion: "36202565"
+    selfLink: /apis/apps/v1/namespaces/kubevious/replicasets/kubevious-parser-6c6749879
+    uid: afa4fa35-77ab-11ea-bb1c-42010a800057
+  spec:
+    replicas: 0
+    selector:
+      matchLabels:
+        k8s-app: kubevious-parser
+        pod-template-hash: 6c6749879
+    template:
+      metadata:
+        creationTimestamp: null
+        labels:
+          k8s-app: kubevious-parser
+          pod-template-hash: 6c6749879
+      spec:
+        containers:
+        - env:
+          - name: NODE_ENV
+            value: production
+          - name: KUBEVIOUS_COLLECTOR
+            value: http://kubevious-svc.kubevious.svc.cluster.local:4000/api/v1/collect
+          image: kubevious/parser:0.5.2
+          imagePullPolicy: IfNotPresent
+          name: kubevious-parser
+          ports:
+          - containerPort: 4500
+            name: http
+            protocol: TCP
+          resources:
+            requests:
+              cpu: 100m
+              memory: 200Mi
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        serviceAccount: kubevious-parser
+        serviceAccountName: kubevious-parser
+        terminationGracePeriodSeconds: 30
+  status:
+    observedGeneration: 2
+    replicas: 0
+- apiVersion: apps/v1
+  kind: ReplicaSet
+  metadata:
+    annotations:
+      deployment.kubernetes.io/desired-replicas: "1"
+      deployment.kubernetes.io/max-replicas: "2"
+      deployment.kubernetes.io/revision: "3"
+    creationTimestamp: "2020-04-05T03:28:33Z"
+    generation: 2
+    labels:
+      k8s-app: kubevious-parser
+      pod-template-hash: 6f8c445555
+    name: kubevious-parser-6f8c445555
+    namespace: kubevious
+    ownerReferences:
+    - apiVersion: apps/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: Deployment
+      name: kubevious-parser
+      uid: 13795f4a-7486-11ea-8ebf-42010a800207
+    resourceVersion: "34982080"
+    selfLink: /apis/apps/v1/namespaces/kubevious/replicasets/kubevious-parser-6f8c445555
+    uid: 86dccd94-76ed-11ea-bb1c-42010a800057
+  spec:
+    replicas: 0
+    selector:
+      matchLabels:
+        k8s-app: kubevious-parser
+        pod-template-hash: 6f8c445555
+    template:
+      metadata:
+        creationTimestamp: null
+        labels:
+          k8s-app: kubevious-parser
+          pod-template-hash: 6f8c445555
+      spec:
+        containers:
+        - env:
+          - name: NODE_ENV
+            value: production
+          - name: KUBEVIOUS_COLLECTOR
+            value: http://kubevious-svc.kubevious.svc.cluster.local:4000/api/v1/collect
+          image: kubevious/parser:0.4.21
+          imagePullPolicy: IfNotPresent
+          name: kubevious-parser
+          ports:
+          - containerPort: 4500
+            name: http
+            protocol: TCP
+          resources:
+            requests:
+              cpu: 100m
+              memory: 200Mi
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        serviceAccount: kubevious-parser
+        serviceAccountName: kubevious-parser
+        terminationGracePeriodSeconds: 30
+  status:
+    observedGeneration: 2
+    replicas: 0
+- apiVersion: apps/v1
+  kind: ReplicaSet
+  metadata:
+    annotations:
+      deployment.kubernetes.io/desired-replicas: "1"
+      deployment.kubernetes.io/max-replicas: "2"
+      deployment.kubernetes.io/revision: "4"
+    creationTimestamp: "2020-04-05T04:18:29Z"
+    generation: 2
+    labels:
+      k8s-app: kubevious-parser
+      pod-template-hash: 76bc6566b
+    name: kubevious-parser-76bc6566b
+    namespace: kubevious
+    ownerReferences:
+    - apiVersion: apps/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: Deployment
+      name: kubevious-parser
+      uid: 13795f4a-7486-11ea-8ebf-42010a800207
+    resourceVersion: "35336289"
+    selfLink: /apis/apps/v1/namespaces/kubevious/replicasets/kubevious-parser-76bc6566b
+    uid: 810fbb39-76f4-11ea-bb1c-42010a800057
+  spec:
+    replicas: 0
+    selector:
+      matchLabels:
+        k8s-app: kubevious-parser
+        pod-template-hash: 76bc6566b
+    template:
+      metadata:
+        creationTimestamp: null
+        labels:
+          k8s-app: kubevious-parser
+          pod-template-hash: 76bc6566b
+      spec:
+        containers:
+        - env:
+          - name: NODE_ENV
+            value: production
+          - name: KUBEVIOUS_COLLECTOR
+            value: http://kubevious-svc.kubevious.svc.cluster.local:4000/api/v1/collect
+          image: kubevious/parser:0.4.22
+          imagePullPolicy: IfNotPresent
+          name: kubevious-parser
+          ports:
+          - containerPort: 4500
+            name: http
+            protocol: TCP
+          resources:
+            requests:
+              cpu: 100m
+              memory: 200Mi
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        serviceAccount: kubevious-parser
+        serviceAccountName: kubevious-parser
+        terminationGracePeriodSeconds: 30
+  status:
+    observedGeneration: 2
+    replicas: 0
+- apiVersion: apps/v1
+  kind: ReplicaSet
+  metadata:
+    annotations:
+      deployment.kubernetes.io/desired-replicas: "1"
+      deployment.kubernetes.io/max-replicas: "2"
+      deployment.kubernetes.io/revision: "6"
+    creationTimestamp: "2020-04-08T07:33:00Z"
+    generation: 1
+    labels:
+      k8s-app: kubevious-parser
+      pod-template-hash: 85d9bf6d8c
+    name: kubevious-parser-85d9bf6d8c
+    namespace: kubevious
+    ownerReferences:
+    - apiVersion: apps/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: Deployment
+      name: kubevious-parser
+      uid: 13795f4a-7486-11ea-8ebf-42010a800207
+    resourceVersion: "36202560"
+    selfLink: /apis/apps/v1/namespaces/kubevious/replicasets/kubevious-parser-85d9bf6d8c
+    uid: 2c4fdf29-796b-11ea-bb1c-42010a800057
+  spec:
+    replicas: 1
+    selector:
+      matchLabels:
+        k8s-app: kubevious-parser
+        pod-template-hash: 85d9bf6d8c
+    template:
+      metadata:
+        creationTimestamp: null
+        labels:
+          k8s-app: kubevious-parser
+          pod-template-hash: 85d9bf6d8c
+      spec:
+        containers:
+        - env:
+          - name: NODE_ENV
+            value: production
+          - name: KUBEVIOUS_COLLECTOR
+            value: http://kubevious-svc.kubevious.svc.cluster.local:4000/api/v1/collect
+          image: kubevious/parser:0.5.6
+          imagePullPolicy: IfNotPresent
+          name: kubevious-parser
+          ports:
+          - containerPort: 4500
+            name: http
+            protocol: TCP
+          resources:
+            requests:
+              cpu: 100m
+              memory: 200Mi
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        serviceAccount: kubevious-parser
+        serviceAccountName: kubevious-parser
+        terminationGracePeriodSeconds: 30
+  status:
     availableReplicas: 1
     fullyLabeledReplicas: 1
     observedGeneration: 1
     readyReplicas: 1
     replicas: 1
+- apiVersion: apps/v1
+  kind: ReplicaSet
+  metadata:
+    annotations:
+      deployment.kubernetes.io/desired-replicas: "1"
+      deployment.kubernetes.io/max-replicas: "2"
+      deployment.kubernetes.io/revision: "6"
+    creationTimestamp: "2020-04-05T02:53:19Z"
+    generation: 2
+    labels:
+      k8s-app: kubevious-ui
+      pod-template-hash: 54dc98746b
+    name: kubevious-ui-54dc98746b
+    namespace: kubevious
+    ownerReferences:
+    - apiVersion: apps/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: Deployment
+      name: kubevious-ui
+      uid: 8f945e6c-707f-11ea-8ebf-42010a800207
+    resourceVersion: "35336306"
+    selfLink: /apis/apps/v1/namespaces/kubevious/replicasets/kubevious-ui-54dc98746b
+    uid: 9b298252-76e8-11ea-bb1c-42010a800057
+  spec:
+    replicas: 0
+    selector:
+      matchLabels:
+        k8s-app: kubevious-ui
+        pod-template-hash: 54dc98746b
+    template:
+      metadata:
+        creationTimestamp: null
+        labels:
+          k8s-app: kubevious-ui
+          pod-template-hash: 54dc98746b
+      spec:
+        containers:
+        - env:
+          - name: NODE_ENV
+            value: production
+          - name: BACKEND_URL
+            value: http://kubevious-svc.kubevious.svc.cluster.local:4000
+          - name: FORCE_HTTPS
+            value: "true"
+          envFrom:
+          - configMapRef:
+              name: kubevious-mysql-client
+          image: kubevious/ui:0.4.7
+          imagePullPolicy: IfNotPresent
+          name: kubevious-ui
+          ports:
+          - containerPort: 3000
+            name: http
+            protocol: TCP
+          resources:
+            requests:
+              cpu: 25m
+              memory: 100Mi
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          volumeMounts:
+          - mountPath: /app/views/partials
+            name: header-config-volume
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        serviceAccount: kubevious-ui
+        serviceAccountName: kubevious-ui
+        terminationGracePeriodSeconds: 30
+        volumes:
+        - configMap:
+            defaultMode: 420
+            name: kubevious-ui-header
+          name: header-config-volume
+  status:
+    observedGeneration: 2
+    replicas: 0
 - apiVersion: apps/v1
   kind: ReplicaSet
   metadata:
@@ -36275,6 +37248,88 @@ items:
     annotations:
       deployment.kubernetes.io/desired-replicas: "1"
       deployment.kubernetes.io/max-replicas: "2"
+      deployment.kubernetes.io/revision: "8"
+    creationTimestamp: "2020-04-08T07:33:00Z"
+    generation: 1
+    labels:
+      k8s-app: kubevious-ui
+      pod-template-hash: 686cfc86f
+    name: kubevious-ui-686cfc86f
+    namespace: kubevious
+    ownerReferences:
+    - apiVersion: apps/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: Deployment
+      name: kubevious-ui
+      uid: 8f945e6c-707f-11ea-8ebf-42010a800207
+    resourceVersion: "36202504"
+    selfLink: /apis/apps/v1/namespaces/kubevious/replicasets/kubevious-ui-686cfc86f
+    uid: 2c68b921-796b-11ea-bb1c-42010a800057
+  spec:
+    replicas: 1
+    selector:
+      matchLabels:
+        k8s-app: kubevious-ui
+        pod-template-hash: 686cfc86f
+    template:
+      metadata:
+        creationTimestamp: null
+        labels:
+          k8s-app: kubevious-ui
+          pod-template-hash: 686cfc86f
+      spec:
+        containers:
+        - env:
+          - name: NODE_ENV
+            value: production
+          - name: BACKEND_URL
+            value: http://kubevious-svc.kubevious.svc.cluster.local:4000
+          - name: FORCE_HTTPS
+            value: "true"
+          envFrom:
+          - configMapRef:
+              name: kubevious-mysql-client
+          image: kubevious/ui:0.5.3
+          imagePullPolicy: IfNotPresent
+          name: kubevious-ui
+          ports:
+          - containerPort: 3000
+            name: http
+            protocol: TCP
+          resources:
+            requests:
+              cpu: 25m
+              memory: 100Mi
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          volumeMounts:
+          - mountPath: /app/views/partials
+            name: header-config-volume
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        serviceAccount: kubevious-ui
+        serviceAccountName: kubevious-ui
+        terminationGracePeriodSeconds: 30
+        volumes:
+        - configMap:
+            defaultMode: 420
+            name: kubevious-ui-header
+          name: header-config-volume
+  status:
+    availableReplicas: 1
+    fullyLabeledReplicas: 1
+    observedGeneration: 1
+    readyReplicas: 1
+    replicas: 1
+- apiVersion: apps/v1
+  kind: ReplicaSet
+  metadata:
+    annotations:
+      deployment.kubernetes.io/desired-replicas: "1"
+      deployment.kubernetes.io/max-replicas: "2"
       deployment.kubernetes.io/revision: "2"
     creationTimestamp: "2020-03-28T00:00:51Z"
     generation: 2
@@ -36348,7 +37403,7 @@ items:
       deployment.kubernetes.io/max-replicas: "2"
       deployment.kubernetes.io/revision: "5"
     creationTimestamp: "2020-04-02T02:53:34Z"
-    generation: 1
+    generation: 2
     labels:
       k8s-app: kubevious-ui
       pod-template-hash: 79cccf9fb9
@@ -36361,11 +37416,11 @@ items:
       kind: Deployment
       name: kubevious-ui
       uid: 8f945e6c-707f-11ea-8ebf-42010a800207
-    resourceVersion: "33777811"
+    resourceVersion: "34960017"
     selfLink: /apis/apps/v1/namespaces/kubevious/replicasets/kubevious-ui-79cccf9fb9
     uid: 24840308-748d-11ea-8ebf-42010a800207
   spec:
-    replicas: 1
+    replicas: 0
     selector:
       matchLabels:
         k8s-app: kubevious-ui
@@ -36417,11 +37472,87 @@ items:
             name: kubevious-ui-header
           name: header-config-volume
   status:
-    availableReplicas: 1
-    fullyLabeledReplicas: 1
-    observedGeneration: 1
-    readyReplicas: 1
-    replicas: 1
+    observedGeneration: 2
+    replicas: 0
+- apiVersion: apps/v1
+  kind: ReplicaSet
+  metadata:
+    annotations:
+      deployment.kubernetes.io/desired-replicas: "1"
+      deployment.kubernetes.io/max-replicas: "2"
+      deployment.kubernetes.io/revision: "7"
+    creationTimestamp: "2020-04-06T02:09:46Z"
+    generation: 2
+    labels:
+      k8s-app: kubevious-ui
+      pod-template-hash: 85f4cb5959
+    name: kubevious-ui-85f4cb5959
+    namespace: kubevious
+    ownerReferences:
+    - apiVersion: apps/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: Deployment
+      name: kubevious-ui
+      uid: 8f945e6c-707f-11ea-8ebf-42010a800207
+    resourceVersion: "36202511"
+    selfLink: /apis/apps/v1/namespaces/kubevious/replicasets/kubevious-ui-85f4cb5959
+    uid: afd0b29a-77ab-11ea-bb1c-42010a800057
+  spec:
+    replicas: 0
+    selector:
+      matchLabels:
+        k8s-app: kubevious-ui
+        pod-template-hash: 85f4cb5959
+    template:
+      metadata:
+        creationTimestamp: null
+        labels:
+          k8s-app: kubevious-ui
+          pod-template-hash: 85f4cb5959
+      spec:
+        containers:
+        - env:
+          - name: NODE_ENV
+            value: production
+          - name: BACKEND_URL
+            value: http://kubevious-svc.kubevious.svc.cluster.local:4000
+          - name: FORCE_HTTPS
+            value: "true"
+          envFrom:
+          - configMapRef:
+              name: kubevious-mysql-client
+          image: kubevious/ui:0.5.1
+          imagePullPolicy: IfNotPresent
+          name: kubevious-ui
+          ports:
+          - containerPort: 3000
+            name: http
+            protocol: TCP
+          resources:
+            requests:
+              cpu: 25m
+              memory: 100Mi
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          volumeMounts:
+          - mountPath: /app/views/partials
+            name: header-config-volume
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        serviceAccount: kubevious-ui
+        serviceAccountName: kubevious-ui
+        terminationGracePeriodSeconds: 30
+        volumes:
+        - configMap:
+            defaultMode: 420
+            name: kubevious-ui-header
+          name: header-config-volume
+  status:
+    observedGeneration: 2
+    replicas: 0
 - apiVersion: apps/v1
   kind: ReplicaSet
   metadata:
@@ -39134,10 +40265,10 @@ items:
   metadata:
     annotations:
       autoscaling.alpha.kubernetes.io/conditions: '[{"type":"AbleToScale","status":"True","lastTransitionTime":"2020-01-18T00:44:09Z","reason":"ReadyForNewScale","message":"recommended
-        size matches current size"},{"type":"ScalingActive","status":"True","lastTransitionTime":"2020-04-01T13:50:35Z","reason":"ValidMetricFound","message":"the
+        size matches current size"},{"type":"ScalingActive","status":"True","lastTransitionTime":"2020-04-10T00:10:05Z","reason":"ValidMetricFound","message":"the
         HPA was able to successfully calculate a replica count from cpu resource"},{"type":"ScalingLimited","status":"False","lastTransitionTime":"2020-03-31T02:19:23Z","reason":"DesiredWithinRange","message":"the
         desired count is within the acceptable range"}]'
-      autoscaling.alpha.kubernetes.io/current-metrics: '[{"type":"Resource","resource":{"name":"cpu","currentAverageValue":"3m"}}]'
+      autoscaling.alpha.kubernetes.io/current-metrics: '[{"type":"Resource","resource":{"name":"cpu","currentAverageValue":"1m"}}]'
       autoscaling.alpha.kubernetes.io/metrics: '[{"type":"Resource","resource":{"name":"cpu","targetAverageValue":"100m"}}]'
       kubectl.kubernetes.io/last-applied-configuration: |
         {"apiVersion":"autoscaling/v1","kind":"HorizontalPodAutoscaler","metadata":{"annotations":{"autoscaling.alpha.kubernetes.io/conditions":"[{\"type\":\"AbleToScale\",\"status\":\"True\",\"lastTransitionTime\":\"2020-01-18T00:44:09Z\",\"reason\":\"ReadyForNewScale\",\"message\":\"recommended size matches current size\"},{\"type\":\"ScalingActive\",\"status\":\"True\",\"lastTransitionTime\":\"2020-01-30T07:05:49Z\",\"reason\":\"ValidMetricFound\",\"message\":\"the HPA was able to successfully calculate a replica count from cpu resource\"},{\"type\":\"ScalingLimited\",\"status\":\"True\",\"lastTransitionTime\":\"2020-01-30T07:19:56Z\",\"reason\":\"TooFewReplicas\",\"message\":\"the desired replica count is increasing faster than the maximum scale rate\"}]","autoscaling.alpha.kubernetes.io/current-metrics":"[{\"type\":\"Resource\",\"resource\":{\"name\":\"cpu\",\"currentAverageValue\":\"2m\"}}]","autoscaling.alpha.kubernetes.io/metrics":"[{\"type\":\"Resource\",\"resource\":{\"name\":\"cpu\",\"targetAverageValue\":\"100m\"}}]"},"creationTimestamp":"2020-01-18T00:43:52Z","labels":{"app":"gitlab-shell","chart":"gitlab-shell-2.6.5","heritage":"Helm","release":"gitlab"},"name":"gitlab-gitlab-shell","namespace":"gitlab","selfLink":"/apis/autoscaling/v1/namespaces/gitlab/horizontalpodautoscalers/gitlab-gitlab-shell","uid":"998ad60c-398b-11ea-b115-42010a8001d6"},"spec":{"maxReplicas":3,"minReplicas":1,"scaleTargetRef":{"apiVersion":"apps/v1","kind":"Deployment","name":"gitlab-gitlab-shell"}},"status":{"currentReplicas":2,"desiredReplicas":2,"lastScaleTime":"2020-01-18T00:44:11Z"}}
@@ -39149,7 +40280,7 @@ items:
       release: gitlab
     name: gitlab-gitlab-shell
     namespace: gitlab
-    resourceVersion: "34068431"
+    resourceVersion: "37202428"
     selfLink: /apis/autoscaling/v1/namespaces/gitlab/horizontalpodautoscalers/gitlab-gitlab-shell
     uid: 998ad60c-398b-11ea-b115-42010a8001d6
   spec:
@@ -39168,7 +40299,7 @@ items:
   metadata:
     annotations:
       autoscaling.alpha.kubernetes.io/conditions: '[{"type":"AbleToScale","status":"True","lastTransitionTime":"2020-01-18T00:44:08Z","reason":"ReadyForNewScale","message":"recommended
-        size matches current size"},{"type":"ScalingActive","status":"True","lastTransitionTime":"2020-04-02T01:20:53Z","reason":"ValidMetricFound","message":"the
+        size matches current size"},{"type":"ScalingActive","status":"True","lastTransitionTime":"2020-04-10T22:56:37Z","reason":"ValidMetricFound","message":"the
         HPA was able to successfully calculate a replica count from cpu resource utilization
         (percentage of request)"},{"type":"ScalingLimited","status":"False","lastTransitionTime":"2020-02-04T00:55:09Z","reason":"DesiredWithinRange","message":"the
         desired count is within the acceptable range"}]'
@@ -39183,7 +40314,7 @@ items:
       release: gitlab
     name: gitlab-registry
     namespace: gitlab
-    resourceVersion: "34067805"
+    resourceVersion: "37202430"
     selfLink: /apis/autoscaling/v1/namespaces/gitlab/horizontalpodautoscalers/gitlab-registry
     uid: 998a3b00-398b-11ea-b115-42010a8001d6
   spec:
@@ -39198,16 +40329,16 @@ items:
     currentCPUUtilizationPercentage: 2
     currentReplicas: 1
     desiredReplicas: 1
-    lastScaleTime: "2020-04-01T13:15:00Z"
+    lastScaleTime: "2020-04-10T23:27:36Z"
 - apiVersion: autoscaling/v1
   kind: HorizontalPodAutoscaler
   metadata:
     annotations:
       autoscaling.alpha.kubernetes.io/conditions: '[{"type":"AbleToScale","status":"True","lastTransitionTime":"2020-01-18T00:44:11Z","reason":"ReadyForNewScale","message":"recommended
-        size matches current size"},{"type":"ScalingActive","status":"True","lastTransitionTime":"2020-04-01T13:56:00Z","reason":"ValidMetricFound","message":"the
+        size matches current size"},{"type":"ScalingActive","status":"True","lastTransitionTime":"2020-04-10T00:10:05Z","reason":"ValidMetricFound","message":"the
         HPA was able to successfully calculate a replica count from cpu resource"},{"type":"ScalingLimited","status":"False","lastTransitionTime":"2020-03-29T09:44:39Z","reason":"DesiredWithinRange","message":"the
         desired count is within the acceptable range"}]'
-      autoscaling.alpha.kubernetes.io/current-metrics: '[{"type":"Resource","resource":{"name":"cpu","currentAverageValue":"21m"}}]'
+      autoscaling.alpha.kubernetes.io/current-metrics: '[{"type":"Resource","resource":{"name":"cpu","currentAverageValue":"48m"}}]'
       autoscaling.alpha.kubernetes.io/metrics: '[{"type":"Resource","resource":{"name":"cpu","targetAverageValue":"350m"}}]'
       kubectl.kubernetes.io/last-applied-configuration: |
         {"apiVersion":"autoscaling/v1","kind":"HorizontalPodAutoscaler","metadata":{"annotations":{"autoscaling.alpha.kubernetes.io/conditions":"[{\"type\":\"AbleToScale\",\"status\":\"True\",\"lastTransitionTime\":\"2020-01-18T00:44:11Z\",\"reason\":\"ReadyForNewScale\",\"message\":\"recommended size matches current size\"},{\"type\":\"ScalingActive\",\"status\":\"True\",\"lastTransitionTime\":\"2020-02-03T19:10:28Z\",\"reason\":\"ValidMetricFound\",\"message\":\"the HPA was able to successfully calculate a replica count from cpu resource\"},{\"type\":\"ScalingLimited\",\"status\":\"False\",\"lastTransitionTime\":\"2020-01-18T01:01:34Z\",\"reason\":\"DesiredWithinRange\",\"message\":\"the desired count is within the acceptable range\"}]","autoscaling.alpha.kubernetes.io/current-metrics":"[{\"type\":\"Resource\",\"resource\":{\"name\":\"cpu\",\"currentAverageValue\":\"15m\"}}]","autoscaling.alpha.kubernetes.io/metrics":"[{\"type\":\"Resource\",\"resource\":{\"name\":\"cpu\",\"targetAverageValue\":\"350m\"}}]"},"creationTimestamp":"2020-01-18T00:43:52Z","labels":{"app":"sidekiq","chart":"sidekiq-2.6.5","heritage":"Helm","release":"gitlab"},"name":"gitlab-sidekiq-all-in-1","namespace":"gitlab","selfLink":"/apis/autoscaling/v1/namespaces/gitlab/horizontalpodautoscalers/gitlab-sidekiq-all-in-1","uid":"998ae407-398b-11ea-b115-42010a8001d6"},"spec":{"maxReplicas":2,"minReplicas":1,"scaleTargetRef":{"apiVersion":"apps/v1","kind":"Deployment","name":"gitlab-sidekiq-all-in-1"}},"status":{"currentReplicas":9,"desiredReplicas":9,"lastScaleTime":"2020-02-02T23:45:10Z"}}
@@ -39219,7 +40350,7 @@ items:
       release: gitlab
     name: gitlab-sidekiq-all-in-1
     namespace: gitlab
-    resourceVersion: "34068432"
+    resourceVersion: "37202431"
     selfLink: /apis/autoscaling/v1/namespaces/gitlab/horizontalpodautoscalers/gitlab-sidekiq-all-in-1
     uid: 998ae407-398b-11ea-b115-42010a8001d6
   spec:
@@ -39238,10 +40369,10 @@ items:
   metadata:
     annotations:
       autoscaling.alpha.kubernetes.io/conditions: '[{"type":"AbleToScale","status":"True","lastTransitionTime":"2020-01-18T00:44:08Z","reason":"ReadyForNewScale","message":"recommended
-        size matches current size"},{"type":"ScalingActive","status":"True","lastTransitionTime":"2020-04-01T13:50:35Z","reason":"ValidMetricFound","message":"the
-        HPA was able to successfully calculate a replica count from cpu resource"},{"type":"ScalingLimited","status":"True","lastTransitionTime":"2020-04-02T13:56:32Z","reason":"TooFewReplicas","message":"the
+        size matches current size"},{"type":"ScalingActive","status":"True","lastTransitionTime":"2020-04-08T02:24:00Z","reason":"ValidMetricFound","message":"the
+        HPA was able to successfully calculate a replica count from cpu resource"},{"type":"ScalingLimited","status":"True","lastTransitionTime":"2020-04-10T23:01:16Z","reason":"TooFewReplicas","message":"the
         desired replica count is more than the maximum replica count"}]'
-      autoscaling.alpha.kubernetes.io/current-metrics: '[{"type":"Resource","resource":{"name":"cpu","currentAverageValue":"18m"}}]'
+      autoscaling.alpha.kubernetes.io/current-metrics: '[{"type":"Resource","resource":{"name":"cpu","currentAverageValue":"8m"}}]'
       autoscaling.alpha.kubernetes.io/metrics: '[{"type":"Resource","resource":{"name":"cpu","targetAverageValue":"1"}}]'
       kubectl.kubernetes.io/last-applied-configuration: |
         {"apiVersion":"autoscaling/v1","kind":"HorizontalPodAutoscaler","metadata":{"annotations":{"autoscaling.alpha.kubernetes.io/conditions":"[{\"type\":\"AbleToScale\",\"status\":\"True\",\"lastTransitionTime\":\"2020-01-18T00:44:08Z\",\"reason\":\"ScaleDownStabilized\",\"message\":\"recent recommendations were higher than current one, applying the highest recent recommendation\"},{\"type\":\"ScalingActive\",\"status\":\"True\",\"lastTransitionTime\":\"2020-02-02T23:56:47Z\",\"reason\":\"ValidMetricFound\",\"message\":\"the HPA was able to successfully calculate a replica count from cpu resource\"},{\"type\":\"ScalingLimited\",\"status\":\"False\",\"lastTransitionTime\":\"2020-02-04T00:51:27Z\",\"reason\":\"DesiredWithinRange\",\"message\":\"the desired count is within the acceptable range\"}]","autoscaling.alpha.kubernetes.io/current-metrics":"[{\"type\":\"Resource\",\"resource\":{\"name\":\"cpu\",\"currentAverageValue\":\"4m\"}}]","autoscaling.alpha.kubernetes.io/metrics":"[{\"type\":\"Resource\",\"resource\":{\"name\":\"cpu\",\"targetAverageValue\":\"1\"}}]"},"creationTimestamp":"2020-01-18T00:43:52Z","labels":{"app":"unicorn","chart":"unicorn-2.6.5","heritage":"Helm","release":"gitlab"},"name":"gitlab-unicorn","namespace":"gitlab","selfLink":"/apis/autoscaling/v1/namespaces/gitlab/horizontalpodautoscalers/gitlab-unicorn","uid":"998b0a32-398b-11ea-b115-42010a8001d6"},"spec":{"maxReplicas":3,"minReplicas":2,"scaleTargetRef":{"apiVersion":"apps/v1","kind":"Deployment","name":"gitlab-unicorn"}},"status":{"currentReplicas":2,"desiredReplicas":2,"lastScaleTime":"2020-02-03T00:26:40Z"}}
@@ -39253,7 +40384,7 @@ items:
       release: gitlab
     name: gitlab-unicorn
     namespace: gitlab
-    resourceVersion: "34068430"
+    resourceVersion: "37202427"
     selfLink: /apis/autoscaling/v1/namespaces/gitlab/horizontalpodautoscalers/gitlab-unicorn
     uid: 998b0a32-398b-11ea-b115-42010a8001d6
   spec:

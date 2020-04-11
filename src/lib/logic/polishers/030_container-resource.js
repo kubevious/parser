@@ -1,5 +1,4 @@
 const _ = require("the-lodash");
-const resourcesHelper = require("../helpers/resources");
 
 module.exports = {
     target: {
@@ -8,11 +7,11 @@ module.exports = {
 
     order: 30,
 
-    handler: ({scope, item, logger}) =>
+    handler: ({scope, item, logger, helpers}) =>
     {
         var resourcesProps = {
         }
-        for(var metric of resourcesHelper.METRICS) {
+        for(var metric of helpers.resources.METRICS) {
             collectResourceMetric(metric);
         }
 
@@ -44,7 +43,7 @@ module.exports = {
                     return;
                 }
             }
-            resourcesProps[metric][counter] = resourcesHelper.parse(metric, rawValue);
+            resourcesProps[metric][counter] = helpers.resources.parse(metric, rawValue);
         }
 
         function getDefaultMetric(metric, counter)

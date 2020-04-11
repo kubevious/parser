@@ -1,5 +1,4 @@
 const _ = require("the-lodash");
-const resourcesHelper = require("../helpers/resources");
 
 module.exports = {
     target: {
@@ -11,7 +10,7 @@ module.exports = {
 
     order: 10,
 
-    handler: ({scope, item, createK8sItem, infraScope}) =>
+    handler: ({scope, item, createK8sItem, infraScope, helpers}) =>
     {
         infraScope.increaseNodeCount();
         
@@ -23,7 +22,7 @@ module.exports = {
 
         var resourcesProps = {
         }
-        for(var metric of resourcesHelper.METRICS) {
+        for(var metric of helpers.resources.METRICS) {
             collectResourceMetric(metric);
         }
 
@@ -52,7 +51,7 @@ module.exports = {
             if (!rawValue) {
                 return;
             }
-            resourcesProps[metric][counter] = resourcesHelper.parse(metric, rawValue);
+            resourcesProps[metric][counter] = helpers.resources.parse(metric, rawValue);
         }
     }
 }

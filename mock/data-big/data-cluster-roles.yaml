@@ -1535,7 +1535,7 @@ items:
   metadata:
     creationTimestamp: "2020-04-02T02:02:58Z"
     name: kubevious-kubevious-parser
-    resourceVersion: "33763721"
+    resourceVersion: "36202358"
     selfLink: /apis/rbac.authorization.k8s.io/v1/clusterroles/kubevious-kubevious-parser
     uid: 13060dc5-7486-11ea-8ebf-42010a800207
   rules:
@@ -1548,6 +1548,7 @@ items:
     - pods
     - nodes
     - limitranges
+    - serviceaccounts
     verbs:
     - get
     - list
@@ -1588,6 +1589,17 @@ items:
     - get
     - list
     - watch
+  - apiGroups:
+    - rbac.authorization.k8s.io
+    resources:
+    - roles
+    - rolebindings
+    - clusterroles
+    - clusterrolebindings
+    verbs:
+    - get
+    - list
+    - watch
 - apiVersion: rbac.authorization.k8s.io/v1
   kind: ClusterRole
   metadata:
@@ -1621,6 +1633,26 @@ items:
     - get
     - list
     - watch
+- apiVersion: rbac.authorization.k8s.io/v1
+  kind: ClusterRole
+  metadata:
+    annotations:
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"rbac.authorization.k8s.io/v1","kind":"ClusterRole","metadata":{"annotations":{},"name":"pods-fetcher"},"rules":[{"apiGroups":[""],"resources":["pods"],"verbs":["watch","get","list"]}]}
+    creationTimestamp: "2020-04-10T23:35:07Z"
+    name: pods-fetcher
+    resourceVersion: "37201198"
+    selfLink: /apis/rbac.authorization.k8s.io/v1/clusterroles/pods-fetcher
+    uid: e9a42a70-7b83-11ea-bb1c-42010a800057
+  rules:
+  - apiGroups:
+    - ""
+    resources:
+    - pods
+    verbs:
+    - watch
+    - get
+    - list
 - apiVersion: rbac.authorization.k8s.io/v1
   kind: ClusterRole
   metadata:

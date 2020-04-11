@@ -10,6 +10,9 @@ class LogicProcessor
         this._context = context;
         this._logger = context.logger.sublogger("LogicProcessor");
 
+        this._helpers = {};
+        this._extractHelpers();
+
         this._processors = [];
         this._extractProcessors('parsers', 'concrete');
         this._extractProcessors('polishers', 'logic');
@@ -17,6 +20,23 @@ class LogicProcessor
 
     get logger() {
         return this._logger;
+    }
+
+    _extractHelpers()
+    {
+        this.logger.info('[_extractHelpers] ');
+        var files = fs.readdirSync(path.join(__dirname, 'helpers'));
+        files = _.filter(files, x => x.endsWith('.js'));
+
+        this._helpers = {};
+        for(var x of files)
+        {
+            var name = path.parse(x).name;
+            const helper = require('./helpers/' + name);
+            this._helpers[name] = helper;
+        }
+
+        this.logger.info('[_extractHelpers] ', _.keys(this._helpers));
     }
 
     _extractProcessors(location, targetKind)
@@ -124,38 +144,54 @@ class LogicProcessor
             handlerInfo.targetKind,
             handlerInfo.target);
 
-        var items = [];
+        var targets = [];
         if (handlerInfo.targetKind == 'concrete') {
-            items = this._context.concreteRegistry.filterItems(handlerInfo.target);
+            var items = this._context.concreteRegistry.filterItems(handlerInfo.target);
+            targets = items.map(x => ({ id: x.id, item: x }));
         } else if (handlerInfo.targetKind == 'logic') {
             var path = _.clone(handlerInfo.target.path);
-            items = this._extractTreeItems(scope, path);
+            var items = this._extractTreeItems(scope, path);
+            targets = items.map(x => ({ id: x.dn, item: x }));
+        } else if (handlerInfo.targetKind == 'scope') {
+            if (handlerInfo.target.namespaced) {
+                var items = scope.getNamespaceScopes();
+                if (handlerInfo.target.scopeKind) {
+                    items = _.flatten(items.map(x => x.items.getAll(handlerInfo.target.scopeKind)))
+                    targets = items.map(x => ({ id: 'scope-item-' + x.kind + '-' + x.name, itemScope: x }));
+                } else {
+                    targets = items.map(x => ({ id: 'scope-ns-' + x.name, namespaceScope: x }));
+                }
+            } else {
+                targets.push({ id: 'scope' })
+            }
         }
 
-        if (items)
+        if (targets)
         {
-            for(var item of items)
+            for(var target of targets)
             {
-                this._processHandler(scope, handlerInfo, item);
+                this._processHandler(scope, handlerInfo, target);
             }
         }
     }
 
-    _processHandler(scope, handlerInfo, item)
+    _processHandler(scope, handlerInfo, target)
     {
         this._logger.silly("[_processHandler] Handler: %s, Item: %s", 
             handlerInfo.name, 
-            item.id);
+            target.id);
 
         var handlerArgs = {
             scope: scope,
             logger: this.logger,
-            item: item,
             context: this._context,
+            helpers: this._helpers,
 
             createdItems: [],
             createdAlerts: []
         }
+
+        _.defaults(handlerArgs, target);
 
         handlerArgs.hasCreatedItems = () => {
             return handlerArgs.createdItems.length > 0;
@@ -165,7 +201,7 @@ class LogicProcessor
             params = params || {};
             params.kind = params.kind || handlerInfo.kind;
             if (_.isFunction(params.kind)) {
-                params.kind = params.kind(item);
+                params.kind = params.kind(target.item);
             }
             if (!params.kind) {
                 throw new Error("Missing handler or params kind.")
@@ -180,9 +216,9 @@ class LogicProcessor
 
         handlerArgs.createK8sItem = (parent, params) => {
             params = params || {};
-            var name = params.name || item.config.metadata.name;
+            var name = params.name || target.item.config.metadata.name;
             var newObj = handlerArgs.createItem(parent, name, params);
-            scope.setK8sConfig(newObj, item.config);
+            scope.setK8sConfig(newObj, target.item.config);
             return newObj;
         }
 

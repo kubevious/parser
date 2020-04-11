@@ -19,33 +19,33 @@ items:
   kind: ConfigMap
   metadata:
     annotations:
-      control-plane.alpha.kubernetes.io/leader: '{"holderIdentity":"gitlab-cainjector-5d757b9fdd-zd7sf_1ac78c90-451f-4e71-9530-556cd7672862","leaseDurationSeconds":15,"acquireTime":"2020-04-02T20:15:21Z","renewTime":"2020-04-02T20:41:30Z","leaderTransitions":676}'
+      control-plane.alpha.kubernetes.io/leader: '{"holderIdentity":"gitlab-cainjector-5d757b9fdd-zd7sf_eb3797fe-9a0c-46ee-ac94-5d6e27193ca9","leaseDurationSeconds":15,"acquireTime":"2020-04-10T23:48:22Z","renewTime":"2020-04-10T23:49:42Z","leaderTransitions":1592}'
     creationTimestamp: "2020-01-18T00:44:03Z"
     name: cert-manager-cainjector-leader-election
     namespace: gitlab
-    resourceVersion: "34070211"
+    resourceVersion: "37201451"
     selfLink: /api/v1/namespaces/gitlab/configmaps/cert-manager-cainjector-leader-election
     uid: a00dce84-398b-11ea-b115-42010a8001d6
 - apiVersion: v1
   kind: ConfigMap
   metadata:
     annotations:
-      control-plane.alpha.kubernetes.io/leader: '{"holderIdentity":"gitlab-cainjector-5d757b9fdd-zd7sf_3e1fbddc-9857-410e-8d5f-a8fdf5017f9b","leaseDurationSeconds":15,"acquireTime":"2020-04-02T20:15:24Z","renewTime":"2020-04-02T20:41:32Z","leaderTransitions":680}'
+      control-plane.alpha.kubernetes.io/leader: '{"holderIdentity":"gitlab-cainjector-5d757b9fdd-zd7sf_20cc0cb9-c886-4ad7-8fc8-d90a7e116853","leaseDurationSeconds":15,"acquireTime":"2020-04-10T23:48:22Z","renewTime":"2020-04-10T23:49:42Z","leaderTransitions":1600}'
     creationTimestamp: "2020-01-18T00:44:03Z"
     name: cert-manager-cainjector-leader-election-core
     namespace: gitlab
-    resourceVersion: "34070217"
+    resourceVersion: "37201604"
     selfLink: /api/v1/namespaces/gitlab/configmaps/cert-manager-cainjector-leader-election-core
     uid: a01aa0f3-398b-11ea-b115-42010a8001d6
 - apiVersion: v1
   kind: ConfigMap
   metadata:
     annotations:
-      control-plane.alpha.kubernetes.io/leader: '{"holderIdentity":"gitlab-cert-manager-5ffcc7f99f-b5h99-external-cert-manager-controller","leaseDurationSeconds":60,"acquireTime":"2020-03-31T18:42:30Z","renewTime":"2020-04-02T20:41:31Z","leaderTransitions":11}'
+      control-plane.alpha.kubernetes.io/leader: '{"holderIdentity":"gitlab-cert-manager-5ffcc7f99f-b5h99-external-cert-manager-controller","leaseDurationSeconds":60,"acquireTime":"2020-03-31T18:42:30Z","renewTime":"2020-04-10T23:54:03Z","leaderTransitions":11}'
     creationTimestamp: "2020-01-18T00:44:07Z"
     name: cert-manager-controller
     namespace: gitlab
-    resourceVersion: "34070215"
+    resourceVersion: "37202413"
     selfLink: /api/v1/namespaces/gitlab/configmaps/cert-manager-controller
     uid: a2549524-398b-11ea-b115-42010a8001d6
 - apiVersion: v1
@@ -1608,11 +1608,11 @@ items:
   kind: ConfigMap
   metadata:
     annotations:
-      control-plane.alpha.kubernetes.io/leader: '{"holderIdentity":"gitlab-nginx-ingress-controller-7db754f856-gwp94","leaseDurationSeconds":30,"acquireTime":"2020-04-02T13:49:58Z","renewTime":"2020-04-02T20:41:27Z","leaderTransitions":42}'
+      control-plane.alpha.kubernetes.io/leader: '{"holderIdentity":"gitlab-nginx-ingress-controller-7db754f856-c68sq","leaseDurationSeconds":30,"acquireTime":"2020-04-10T14:20:41Z","renewTime":"2020-04-10T23:54:07Z","leaderTransitions":43}'
     creationTimestamp: "2020-01-18T00:44:03Z"
     name: ingress-controller-leader-gitlab-nginx
     namespace: gitlab
-    resourceVersion: "34070196"
+    resourceVersion: "37202437"
     selfLink: /api/v1/namespaces/gitlab/configmaps/ingress-controller-leader-gitlab-nginx
     uid: a029393d-398b-11ea-b115-42010a8001d6
 - apiVersion: v1
@@ -2626,11 +2626,11 @@ items:
   kind: ConfigMap
   metadata:
     annotations:
-      control-plane.alpha.kubernetes.io/leader: '{"holderIdentity":"gke-f005108ec19aa6d238be-199c-4e3f-vm_e9039","leaseDurationSeconds":15,"acquireTime":"2020-04-02T13:50:28Z","renewTime":"2020-04-02T20:41:30Z","leaderTransitions":11}'
+      control-plane.alpha.kubernetes.io/leader: '{"holderIdentity":"gke-f005108ec19aa6d238be-199c-4e3f-vm_e9039","leaseDurationSeconds":15,"acquireTime":"2020-04-02T13:50:28Z","renewTime":"2020-04-10T23:54:11Z","leaderTransitions":11}'
     creationTimestamp: "2020-01-11T06:00:42Z"
     name: gke-common-webhook-lock
     namespace: kube-system
-    resourceVersion: "34070209"
+    resourceVersion: "37202447"
     selfLink: /api/v1/namespaces/kube-system/configmaps/gke-common-webhook-lock
     uid: b370ebe1-3437-11ea-9cdc-42010a8001cf
 - apiVersion: v1
@@ -2653,11 +2653,11 @@ items:
   kind: ConfigMap
   metadata:
     annotations:
-      control-plane.alpha.kubernetes.io/leader: '{"holderIdentity":"gke-f005108ec19aa6d238be-199c-4e3f-vm_4d3ba","leaseDurationSeconds":15,"acquireTime":"2020-04-02T13:50:30Z","renewTime":"2020-04-02T20:41:30Z","leaderTransitions":12}'
+      control-plane.alpha.kubernetes.io/leader: '{"holderIdentity":"gke-f005108ec19aa6d238be-199c-4e3f-vm_4d3ba","leaseDurationSeconds":15,"acquireTime":"2020-04-02T13:50:30Z","renewTime":"2020-04-10T23:54:11Z","leaderTransitions":12}'
     creationTimestamp: "2020-01-11T06:01:04Z"
     name: ingress-gce-lock
     namespace: kube-system
-    resourceVersion: "34070210"
+    resourceVersion: "37202446"
     selfLink: /api/v1/namespaces/kube-system/configmaps/ingress-gce-lock
     uid: c02f9e07-3437-11ea-9cdc-42010a8001cf
 - apiVersion: v1
