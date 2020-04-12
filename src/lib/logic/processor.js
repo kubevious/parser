@@ -347,11 +347,15 @@ class LogicProcessor
     {
         this.logger.silly("[_propagateFlags] %s...", node.dn)
 
-        if (node.hasFlag('radioactive')) 
+        if (!node.parent) {
+            return;
+        }
+
+        for(var flagInfo of node.getFlags())
         {
-            if (node.parent) 
+            if (flagInfo.propagatable)
             {
-                node.parent.setFlag('radioactive');
+                node.parent.setFlag(flagInfo.name, flagInfo);
             }
         }
     }

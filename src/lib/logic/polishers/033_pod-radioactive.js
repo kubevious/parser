@@ -38,7 +38,7 @@ module.exports = {
 
         if (_.keys(radioactiveProps).length > 0)
         {
-            item.setFlag("radioactive");
+            item.setPropagatableFlag("radioactive");
 
             item.addProperties({
                 kind: "key-value",

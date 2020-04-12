@@ -115,6 +115,23 @@ class ItemScope
             item.addProperties(props);
         }
     }
+
+    setFlag(flag, params)
+    {
+        for(var item of this.items)
+        {
+            item.setFlag(flag, params);
+        }
+    }
+
+    setPropagatableFlag(flag)
+    {
+        for(var item of this.items)
+        {
+            item.setPropagatableFlag(flag);
+        }
+    }
+    
 }
 
 module.exports = ItemScope;

@@ -126,6 +126,8 @@ module.exports = {
         var propsConfig = helpers.roles.buildRoleMatrix(bindingScope.data.rules);
         bindingScope.addProperties(propsConfig);
 
+        bindingScope.setPropagatableFlag("xnamespace");
+
         determineSharedFlag(bindingScope);
     }
 }

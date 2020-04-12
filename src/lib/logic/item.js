@@ -1,4 +1,4 @@
-const _ = require('lodash');
+const _ = require('the-lodash');
 const resourcesHelper = require("./helpers/resources");
 const DocsHelper = require("kubevious-helpers").Docs;
 
@@ -94,9 +94,20 @@ class LogicItem
         this._scope = scope;
     }
 
-    setFlag(name)
+    setPropagatableFlag(name)
     {
-        this._flags[name] = true;
+        return this.setFlag(name, { propagatable: true });
+    }
+
+    setFlag(name, params)
+    {
+        if (params) {
+            params = _.clone(params);
+        } else {
+            params = {}
+        }
+        params.name = name;
+        this._flags[name] = params;
     }
 
     hasFlag(name)
@@ -104,6 +115,11 @@ class LogicItem
         if (this._flags[name])
             return true;
         return false;
+    }
+
+    getFlags()
+    {
+        return _.values(this._flags);
     }
 
     setUsedBy(dn)
