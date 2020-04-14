@@ -345,7 +345,15 @@ class LogicItem
         node.name = this.naming;
         node.kind = this.kind;
         node.order = this.order;
-        node.errorCount = _.keys(this._alerts).length;
+        node.alertCount = {
+        };
+        for(var alert of _.values(this._alerts))
+        {
+            if (!node.alertCount[alert.severity]) {
+                node.alertCount[alert.severity] = 0;
+            }
+            node.alertCount[alert.severity] += 1;
+        }
         node.flags = this._flags;
         node.hasChildren = this.hasChildren;
         node = _.deepClean(node);
@@ -376,3 +384,6 @@ class LogicItem
 }
 
 module.exports = LogicItem;
+
+module.exports.ALERT_ERROR = 'error';
+module.exports.ALERT_WARN = 'warn';
