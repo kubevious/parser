@@ -33,6 +33,13 @@ module.exports = {
     {
         var bindingScope = namespaceScope.items.register(item.config);
 
+        var targetNamespaceName = null;
+        if(item.config.kind == "RoleBinding") {
+            targetNamespaceName = item.config.metadata.namespace;
+        } else if(item.config.kind == "ClusterRoleBinding") {
+            targetNamespaceName = '*';
+        }
+
         var subjects = item.config.subjects;
         if (subjects)
         {
@@ -40,11 +47,11 @@ module.exports = {
             {
                 if (subject.kind == 'ServiceAccount')
                 {
-                    var namespaceName = namespaceScope.name;
+                    var subjNamespaceName = namespaceScope.name;
                     if (subject.namespace) {
-                        namespaceName = subject.namespace;
+                        subjNamespaceName = subject.namespace;
                     }
-                    var subjNamespaceScope = scope.getNamespaceScope(namespaceName);
+                    var subjNamespaceScope = scope.getNamespaceScope(subjNamespaceName);
                     var serviceAccountScope = subjNamespaceScope.items.get('ServiceAccount', subject.name);
                     if (serviceAccountScope) {
                         if (!serviceAccountScope.data.bindings) {
@@ -57,6 +64,11 @@ module.exports = {
                             var logicItem = createK8sItem(serviceAccount);
                             bindingScope.registerItem(logicItem);
                             bindingScope.markUsedBy(logicItem);
+
+                            if (targetNamespaceName != subjNamespaceName)
+                            {
+                                logicItem.setPropagatableFlag("xnamespace");
+                            }
                         } 
                     }
                     else
@@ -102,13 +114,6 @@ module.exports = {
             createAlert('Unused', 'warn', null, item.kind + ' not used.');
         } 
 
-        var targetNamespaceName = null;
-        if(item.config.kind == "RoleBinding") {
-            targetNamespaceName = item.config.metadata.namespace;
-        } else if(item.config.kind == "ClusterRoleBinding") {
-            targetNamespaceName = '*';
-        }
-
         bindingScope.data.rules = helpers.roles.makeRulesMap();
         var roleScopes = bindingScope.data.roles;
         if (roleScopes)
@@ -125,8 +130,6 @@ module.exports = {
 
         var propsConfig = helpers.roles.buildRoleMatrix(bindingScope.data.rules);
         bindingScope.addProperties(propsConfig);
-
-        bindingScope.setPropagatableFlag("xnamespace");
 
         determineSharedFlag(bindingScope);
     }
