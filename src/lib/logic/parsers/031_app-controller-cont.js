@@ -78,7 +78,7 @@ module.exports = {
                 var imageItem = container.fetchByNaming("image", image);
                 imageItem.addProperties({
                     kind: "key-value",
-                    id: "props",
+                    id: "properties",
                     title: "Properties",
                     order: 10,
                     config: {

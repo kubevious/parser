@@ -345,15 +345,6 @@ class LogicItem
         node.name = this.naming;
         node.kind = this.kind;
         node.order = this.order;
-        node.alertCount = {
-        };
-        for(var alert of _.values(this._alerts))
-        {
-            if (!node.alertCount[alert.severity]) {
-                node.alertCount[alert.severity] = 0;
-            }
-            node.alertCount[alert.severity] += 1;
-        }
         node.flags = this._flags;
         node.hasChildren = this.hasChildren;
         node = _.deepClean(node);
