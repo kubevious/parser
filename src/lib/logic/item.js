@@ -194,26 +194,14 @@ class LogicItem
         return null;
     }
 
-    addAlert(kind, severity, date, msg)
+    addAlert(kind, severity, msg)
     {
         var id = kind;
-        if (date) {
-            id += '-' + date;
-        }
 
         var info = {
             id: id,
             severity: severity,
             msg: msg
-        }
-        if (date) {
-            info.date = date;
-        } else {
-            info.date = new Date();
-        }
-        if (info.date instanceof Date)
-        {
-            info.date = info.date.toISOString();
         }
         this._alerts[id] = info;
     }

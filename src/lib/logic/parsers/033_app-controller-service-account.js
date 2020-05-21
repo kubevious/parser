@@ -32,12 +32,12 @@ module.exports = {
             if (serviceAccountScope) {
                 serviceAccountScope.registerOwnerItem(app);
             } else {
-                app.addAlert('Missing', 'error', null, 'Service account ' + name + ' is not found.');
+                app.addAlert('Missing', 'error', 'Service account ' + name + ' is not found.');
             }
         }
         else
         {
-            app.addAlert('Missing', 'warn', null, 'Service account is not set.');
+            app.addAlert('Missing', 'warn', 'Service account is not set.');
         }
     }
 }

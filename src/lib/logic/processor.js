@@ -222,11 +222,10 @@ class LogicProcessor
             return newObj;
         }
 
-        handlerArgs.createAlert = (kind, severity, date, msg) => {
+        handlerArgs.createAlert = (kind, severity, msg) => {
             handlerArgs.createdAlerts.push({
                 kind,
                 severity,
-                date,
                 msg
             });
         }
@@ -265,7 +264,6 @@ class LogicProcessor
                 createdItem.addAlert(
                     alertInfo.kind, 
                     alertInfo.severity, 
-                    alertInfo.date, 
                     alertInfo.msg);
             }
         }

@@ -73,7 +73,7 @@ module.exports = {
                     }
                     else
                     {
-                        createAlert('Missing', 'error', null, 'Could not find ' + subject.namespace + '::' + subject.name + ' ServiceAccount.');
+                        createAlert('Missing', 'error', 'Could not find ' + subject.namespace + '::' + subject.name + ' ServiceAccount.');
                     }
                 }
             }
@@ -102,7 +102,7 @@ module.exports = {
             }
             else
             {
-                createAlert('Missing', 'error', null, 'Unresolved ' + item.config.roleRef.kind + ' ' + item.config.roleRef.name);
+                createAlert('Missing', 'error', 'Unresolved ' + item.config.roleRef.kind + ' ' + item.config.roleRef.name);
             }
         }
 
@@ -111,7 +111,7 @@ module.exports = {
             var rawContainer = scope.fetchRawContainer(item, item.config.kind + "s");
             var logicItem = createK8sItem(rawContainer);
             bindingScope.registerItem(logicItem);
-            createAlert('Unused', 'warn', null, item.kind + ' not used.');
+            createAlert('Unused', 'warn', item.kind + ' not used.');
         } 
 
         bindingScope.data.rules = helpers.roles.makeRulesMap();

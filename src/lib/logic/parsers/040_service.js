@@ -45,21 +45,21 @@ module.exports = {
                         if (appPortInfo) {
                             createService(appPortInfo.portItem, { name: serviceItemName })
                         } else {
-                            createAlert('Port-' + appPort, 'warn', null, 'Missing port ' + appPort + ' definition.');
+                            createAlert('Port-' + appPort, 'warn', 'Missing port ' + appPort + ' definition.');
                         }
                     }
                 }
             }
 
             if (appScopes.length == 0) {
-                createAlert('MissingApp', 'error', null, 'Could not find apps matching selector.');
+                createAlert('MissingApp', 'error', 'Could not find apps matching selector.');
             } else if (appScopes.length > 1) {
-                createAlert('MultipleApps', 'warn', null, 'More than one apps matched selector.');
+                createAlert('MultipleApps', 'warn', 'More than one apps matched selector.');
             }
         }
         else
         {
-            // createAlert('MissingSelector', 'error', null, 'Missing selector.');
+            // createAlert('MissingSelector', 'error', 'Missing selector.');
         }
 
         if (!hasCreatedItems()) {

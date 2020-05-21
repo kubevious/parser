@@ -40,7 +40,7 @@ module.exports = {
         if (!hasCreatedItems()) {
             var rawContainer = scope.fetchRawContainer(item, "Ingresses");
             createIngress(rawContainer);
-            createAlert('Missing', 'error', null, 'Could not match Ingress to Services.');
+            createAlert('Missing', 'error', 'Could not match Ingress to Services.');
         }
 
         /*** HELPERS ***/
@@ -69,7 +69,7 @@ module.exports = {
             }
             else
             {
-                createAlert('MissingSvc-' + backendConfig.serviceName, 'error', null, 'Service ' + backendConfig.serviceName + ' is missing.');
+                createAlert('MissingSvc-' + backendConfig.serviceName, 'error', 'Service ' + backendConfig.serviceName + ' is missing.');
             }
         }
 

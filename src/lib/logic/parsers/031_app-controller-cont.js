@@ -116,7 +116,7 @@ module.exports = {
                                     envVars[dataKey] = configMapScope.config.data[dataKey];
                                 }
                             } else {
-                                createAlert("EmptyConfig", "warn", null, 'ConfigMap has no data: ' + envFromObj.configMapRef.name);
+                                createAlert("EmptyConfig", "warn", 'ConfigMap has no data: ' + envFromObj.configMapRef.name);
                             }
                         }
                     }
@@ -171,7 +171,7 @@ module.exports = {
             else
             {
                 if (!isOptional) {
-                    createAlert("MissingConfig", "error", null, 'Could not find ConfigMap ' + name);
+                    createAlert("MissingConfig", "error", 'Could not find ConfigMap ' + name);
                 }
             }
             return configMapScope;

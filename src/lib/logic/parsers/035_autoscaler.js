@@ -30,7 +30,7 @@ module.exports = {
         if (!appInfo) {
             var rawContainer = scope.fetchRawContainer(item, "Autoscalers");
             createK8sItem(rawContainer);
-            createAlert('MissingApp', 'error', null, 'Could not find apps matching scaleTargetRef.');
+            createAlert('MissingApp', 'error', 'Could not find apps matching scaleTargetRef.');
             return;
         }
 

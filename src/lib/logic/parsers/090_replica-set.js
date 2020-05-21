@@ -30,7 +30,7 @@ module.exports = {
         if (!hasCreatedItems()) {
             var rawContainer = scope.fetchRawContainer(item, "ReplicaSets");
             createReplicaSet(rawContainer);
-            createAlert('BestPractice', 'warn', null, 'Directly using ReplicaSet. Use Deploment, StatefulSet or DaemonSet instead.');
+            createAlert('BestPractice', 'warn', 'Directly using ReplicaSet. Use Deploment, StatefulSet or DaemonSet instead.');
         }
 
         /*** HELPERS ***/

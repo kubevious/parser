@@ -22,7 +22,7 @@ module.exports = {
         {
             var rawContainer = scope.fetchRawContainer(item, "ConfigMaps");
             createK8sItem(rawContainer);
-            createAlert('Unused', 'warn', null, 'ConfigMap not used.');
+            createAlert('Unused', 'warn', 'ConfigMap not used.');
         }
     }
 }

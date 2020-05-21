@@ -25,7 +25,7 @@ module.exports = {
 
             if (logicItem.naming != 'default')
             {
-                createAlert('Unused', 'warn', null, 'ServiceAccount not used.');
+                createAlert('Unused', 'warn', 'ServiceAccount not used.');
             }
         } 
         else 

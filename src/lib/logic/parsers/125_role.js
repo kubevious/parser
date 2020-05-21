@@ -40,7 +40,7 @@ module.exports = {
             var rawContainer = scope.fetchRawContainer(item, item.config.kind + "s");
             var logicItem = createK8sItem(rawContainer);
             roleScope.registerItem(logicItem);
-            createAlert('Unused', 'warn', null, item.kind + ' not used.');
+            createAlert('Unused', 'warn', item.kind + ' not used.');
         } 
         else
         {

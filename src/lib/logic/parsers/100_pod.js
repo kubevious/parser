@@ -23,7 +23,7 @@ module.exports = {
                     if (condition.message) {
                         msg += condition.message;
                     }
-                    createAlert(condition.type, 'error', condition.lastTransitionTime, msg);
+                    createAlert(condition.type, 'error', msg);
                 }
             }
         }
@@ -44,7 +44,7 @@ module.exports = {
         if (!hasCreatedItems()) {
             var rawContainer = scope.fetchRawContainer(item, "Pods");
             createK8sItem(rawContainer);
-            createAlert('MissingController', 'warn', null, 'Controller not found.');
+            createAlert('MissingController', 'warn', 'Controller not found.');
         }
 
     }
