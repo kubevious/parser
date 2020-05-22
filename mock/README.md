@@ -11,4 +11,5 @@ kubectl get roles --all-namespaces -o yaml > data-roles.yaml
 kubectl get rolebindings --all-namespaces -o yaml > data-role-bindings.yaml
 kubectl get pvc --all-namespaces -o yaml > data-role-pvc.yaml
 kubectl get pv --all-namespaces -o yaml > data-role-pv.yaml
+kubectl get nodes -o yaml > data-node.yaml
 ```

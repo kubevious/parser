@@ -1,5 +1,4 @@
 const _ = require("the-lodash");
-const NameHelpers = require("../../utils/name-helpers.js");
 
 module.exports = {
     targetKind: 'scope',
@@ -28,6 +27,7 @@ module.exports = {
                         {
                             var pvc = podItem.fetchByNaming("pvc", pvcScope.name);
                             scope.setK8sConfig(pvc, pvcScope.config);
+                            pvcScope.registerItem(pvc);
                             pvcScope.markUsedBy(pvc);
                         }
                     }     

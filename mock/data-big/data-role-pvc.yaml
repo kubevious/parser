@@ -142,41 +142,6 @@ items:
       pv.kubernetes.io/bind-completed: "yes"
       pv.kubernetes.io/bound-by-controller: "yes"
       volume.beta.kubernetes.io/storage-provisioner: kubernetes.io/gce-pd
-    creationTimestamp: "2020-01-18T01:01:19Z"
-    finalizers:
-    - kubernetes.io/pvc-protection
-    labels:
-      app: redis
-      name: redis-server
-      redis-node: "true"
-      release: gitlab
-    name: data-gitlab-redis-server-2
-    namespace: gitlab
-    resourceVersion: "2021127"
-    selfLink: /api/v1/namespaces/gitlab/persistentvolumeclaims/data-gitlab-redis-server-2
-    uid: 09728c28-398e-11ea-97ba-42010a800159
-  spec:
-    accessModes:
-    - ReadWriteOnce
-    resources:
-      requests:
-        storage: 8Gi
-    storageClassName: standard
-    volumeMode: Filesystem
-    volumeName: pvc-09728c28-398e-11ea-97ba-42010a800159
-  status:
-    accessModes:
-    - ReadWriteOnce
-    capacity:
-      storage: 8Gi
-    phase: Bound
-- apiVersion: v1
-  kind: PersistentVolumeClaim
-  metadata:
-    annotations:
-      pv.kubernetes.io/bind-completed: "yes"
-      pv.kubernetes.io/bound-by-controller: "yes"
-      volume.beta.kubernetes.io/storage-provisioner: kubernetes.io/gce-pd
     creationTimestamp: "2020-01-18T00:43:50Z"
     finalizers:
     - kubernetes.io/pvc-protection

@@ -157,12 +157,13 @@ class LogicProcessor
                 var items = scope.getNamespaceScopes();
                 if (handlerInfo.target.scopeKind) {
                     items = _.flatten(items.map(x => x.items.getAll(handlerInfo.target.scopeKind)))
-                    targets = items.map(x => ({ id: 'scope-item-' + x.kind + '-' + x.name, itemScope: x }));
+                    targets = items.map(x => ({ id: 'scope-item-' + x.kind + '-' + x.name, itemScope: x, item: x }));
                 } else {
-                    targets = items.map(x => ({ id: 'scope-ns-' + x.name, namespaceScope: x }));
+                    targets = items.map(x => ({ id: 'scope-ns-' + x.name, namespaceScope: x, item: x }));
                 }
             } else {
-                targets.push({ id: 'scope' })
+                var items = scope.getInfraScope().items.getAll(handlerInfo.target.scopeKind);
+                targets = items.map(x => ({ id: 'scope-item-' + x.kind + '-' + x.name, itemScope: x, item: x }));
             }
         }
 

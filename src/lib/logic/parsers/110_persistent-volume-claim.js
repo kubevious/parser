@@ -21,8 +21,9 @@ module.exports = {
         if (pvcScope.isNotUsed)
         {
             var rawContainer = scope.fetchRawContainer(item, "PersistentVolumeClaims");
-            createK8sItem(rawContainer);
+            var pvcItem = createK8sItem(rawContainer);
             createAlert('Unused', 'warn', 'PersistentVolumeClaim not attached.');
+            pvcScope.registerItem(pvcItem);
         }
     }
 }
