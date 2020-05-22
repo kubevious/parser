@@ -15,6 +15,8 @@ module.exports = {
 
     handler: ({scope, item, createK8sItem, createAlert, hasCreatedItems, namespaceScope}) =>
     {
+        namespaceScope.items.register(item.config);
+        
         var conditions = _.get(item.config, 'status.conditions');
         if (conditions) {
             for(var condition of conditions) {
