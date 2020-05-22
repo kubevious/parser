@@ -274,16 +274,19 @@ class LogicProcessor
         handlerArgs.infraScope = handlerArgs.scope.getInfraScope();
 
         handlerArgs.namespaceName = null;
-        if (handlerInfo.needNamespaceScope || handlerInfo.needAppScope)
+        if (handlerInfo.targetKind == 'concrete' || handlerInfo.targetKind == 'logic')
         {
-            if (handlerInfo.namespaceNameCb) {
-                handlerArgs.namespaceName = handlerInfo.namespaceNameCb(handlerArgs.item);
-            } else {
-                handlerArgs.namespaceName = handlerArgs.item.config.metadata.namespace;
-            }
-            if (_.isNotNullOrUndefined(handlerArgs.namespaceName))
+            if (handlerInfo.needNamespaceScope || handlerInfo.needAppScope)
             {
-                handlerArgs.namespaceScope = handlerArgs.scope.getNamespaceScope(handlerArgs.namespaceName);
+                if (handlerInfo.namespaceNameCb) {
+                    handlerArgs.namespaceName = handlerInfo.namespaceNameCb(handlerArgs.item);
+                } else {
+                    handlerArgs.namespaceName = handlerArgs.item.config.metadata.namespace;
+                }
+                if (_.isNotNullOrUndefined(handlerArgs.namespaceName))
+                {
+                    handlerArgs.namespaceScope = handlerArgs.scope.getNamespaceScope(handlerArgs.namespaceName);
+                }
             }
         }
 

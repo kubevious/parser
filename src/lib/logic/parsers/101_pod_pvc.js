@@ -2,21 +2,18 @@ const _ = require("the-lodash");
 const NameHelpers = require("../../utils/name-helpers.js");
 
 module.exports = {
-    targetKind: 'logic',
+    targetKind: 'scope',
 
-    target: [{
-        path: ["ns", "app", "launcher", "pod"]
-    }, {
-        path: ["ns", "app", "launcher", "replicaset", "pod"]
-    }],
+    target: {
+        namespaced: true,
+        scopeKind: 'Pod'
+    },
 
     order: 101,
 
-    needNamespaceScope: true,
-
-    handler: ({scope, item, namespaceScope}) =>
+    handler: ({ scope, itemScope}) =>
     {
-        var volumes = _.get(item.config, 'spec.volumes');
+        var volumes = _.get(itemScope.config, 'spec.volumes');
         if (volumes)
         {
             for(var volume of volumes)
@@ -24,12 +21,15 @@ module.exports = {
                 var pvcName = _.get(volume, 'persistentVolumeClaim.claimName');
                 if (pvcName)
                 {
-                    var pvcScope = namespaceScope.items.get('PersistentVolumeClaim', pvcName);
+                    var pvcScope = itemScope.parent.items.get('PersistentVolumeClaim', pvcName);
                     if (pvcScope)
                     {
-                        var pvc = item.fetchByNaming("pvc", pvcScope.name);
-                        scope.setK8sConfig(pvc, pvcScope.config);
-                        pvcScope.markUsedBy(pvc);
+                        for(var podItem of itemScope.items)
+                        {
+                            var pvc = podItem.fetchByNaming("pvc", pvcScope.name);
+                            scope.setK8sConfig(pvc, pvcScope.config);
+                            pvcScope.markUsedBy(pvc);
+                        }
                     }     
                 }
             }
