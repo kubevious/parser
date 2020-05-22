@@ -15,6 +15,10 @@ class ItemScope
         this._appScopes = {};
     }
 
+    get parent() {
+        return this._parent;
+    }
+
     get kind() {
         return this._kind;
     }

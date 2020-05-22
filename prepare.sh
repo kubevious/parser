@@ -4,9 +4,11 @@ MY_DIR="$(dirname $MY_PATH)"
 cd $MY_DIR
 
 cd mock
+rm -rf node_modules/
 npm install
 cd ..
 
 cd src
+rm -rf node_modules/
 npm install
 npm update kubevious-helpers

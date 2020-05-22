@@ -15,6 +15,8 @@ module.exports = {
 
     handler: ({scope, item, createK8sItem, createAlert, hasCreatedItems, namespaceScope}) =>
     {
+        var itemScope = namespaceScope.items.register(item.config);
+        
         var conditions = _.get(item.config, 'status.conditions');
         if (conditions) {
             for(var condition of conditions) {
@@ -36,14 +38,17 @@ module.exports = {
                 for(var ownerItem of ownerItems) 
                 {
                     var shortName = NameHelpers.makeRelativeName(ownerItem.config.metadata.name, item.config.metadata.name);
-                    createK8sItem(ownerItem, { name: shortName });
+                    var logicItem = createK8sItem(ownerItem, { name: shortName });
+                    itemScope.registerItem(logicItem);
                 }
             }
         }
 
         if (!hasCreatedItems()) {
             var rawContainer = scope.fetchRawContainer(item, "Pods");
-            createK8sItem(rawContainer);
+            logicItem = createK8sItem(rawContainer);
+            itemScope.registerItem(logicItem);
+
             createAlert('MissingController', 'warn', 'Controller not found.');
         }
 

@@ -8,7 +8,9 @@ module.exports = [
             "Service",
             "ConfigMap",
             "Pod",
-            "ServiceAccount"
+            "ServiceAccount",
+            "PersistentVolumeClaim",
+            "PersistentVolume"
         ]
     },
     {
