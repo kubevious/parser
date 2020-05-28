@@ -78,7 +78,7 @@ class LogicProcessor
         const parserModule = require('./' + location + '/' + name);
 
         var targets = [];
-        if (parserModule.target) {
+        if (!_.isUndefined(parserModule.target)) {
             if (_.isArray(parserModule.target)) {
                 targets = parserModule.target;
             } else {

@@ -129,7 +129,7 @@ module.exports = {
         bindingScope.data.rules = helpers.roles.optimizeRulesMap(bindingScope.data.rules);
 
         var propsConfig = helpers.roles.buildRoleMatrix(bindingScope.data.rules);
-        bindingScope.addProperties(propsConfig);
+        bindingScope.addPropertyGroup(propsConfig);
 
         determineSharedFlag(bindingScope);
     }

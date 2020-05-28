@@ -27,6 +27,6 @@ module.exports = {
         itemScope.data.rules = helpers.roles.optimizeRulesMap(itemScope.data.rules);
 
         var propsConfig = helpers.roles.buildRoleMatrix(itemScope.data.rules);
-        itemScope.addProperties(propsConfig);
+        itemScope.addPropertyGroup(propsConfig);
     }
 }

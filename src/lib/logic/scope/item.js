@@ -113,14 +113,6 @@ class ItemScope
         this._appScopes[appScope.name] = appScope;
     }
 
-    addProperties(props)
-    {
-        for(var item of this.items)
-        {
-            item.addProperties(props);
-        }
-    }
-
     setFlag(flag, params)
     {
         for(var item of this.items)
