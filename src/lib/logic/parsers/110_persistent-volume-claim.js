@@ -12,7 +12,7 @@ module.exports = {
 
     needNamespaceScope: true,
 
-    handler: ({logger, scope, item, createK8sItem, createAlert, namespaceScope, determineSharedFlag}) =>
+    handler: ({logger, scope, item, createK8sItem, createAlert, namespaceScope, determineSharedFlag, propertiesBuilder}) =>
     {
         var pvcScope = namespaceScope.items.get(item.config);
 
@@ -25,5 +25,15 @@ module.exports = {
             createAlert('Unused', 'warn', 'PersistentVolumeClaim not attached.');
             pvcScope.registerItem(pvcItem);
         }
+
+        pvcScope.buildProperties()
+            .fromConfig('StorageClass', 'spec.storageClassName')
+            .fromConfig('Status', 'status.phase')
+            .fromConfig('Finalizers', 'metadata.finalizers')
+            .fromConfig('Capacity Requested', 'spec.resources.requests.storage')
+            .fromConfig('Capacity Provided', 'status.capacity.storage')
+            .fromConfig('Access Modes', 'spec.accessModes')
+            .fromConfig('Volume Mode', 'spec.volumeMode')
+            .build()
     }
 }

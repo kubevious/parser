@@ -1,4 +1,5 @@
 const _ = require('the-lodash');
+const PropertiesBuilder = require('../properties-builder');
 
 class ItemScope
 {
@@ -135,7 +136,39 @@ class ItemScope
             item.setPropagatableFlag(flag);
         }
     }
+
+    addPropertyGroup(groupConfig)
+    {
+        for(var item of this.items)
+        {
+            item.addProperties(groupConfig);
+        }
+    }
     
+    addProperties(configOrBuilder)
+    {
+        if (configOrBuilder instanceof PropertiesBuilder) {
+            configOrBuilder = configOrBuilder.build();
+        }
+
+        var groupConfig = {
+            kind: "key-value",
+            id: "properties",
+            title: "Properties",
+            order: 5,
+            config: configOrBuilder
+        }
+        this.addPropertyGroup(groupConfig);
+    }
+
+    buildProperties()
+    {
+        var builder = new PropertiesBuilder(this, (props) => {
+            this.addProperties(props);
+            return;
+        });
+        return builder;
+    }
 }
 
 module.exports = ItemScope;

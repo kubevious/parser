@@ -39,5 +39,14 @@ module.exports = {
             itemScope.registerItem(pvItem);
         }
 
+        itemScope.buildProperties()
+            .fromConfig('StorageClass', 'spec.storageClassName')
+            .fromConfig('Status', 'status.phase')
+            .fromConfig('Finalizers', 'metadata.finalizers')
+            .fromConfig('Capacity', 'status.capacity.storage')
+            .fromConfig('Access Modes', 'spec.accessModes')
+            .fromConfig('Volume Mode', 'spec.volumeMode')
+            .fromConfig('Reclaim Policy', 'spec.persistentVolumeReclaimPolicy')
+            .build()
     }
 }

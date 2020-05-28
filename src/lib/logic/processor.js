@@ -2,6 +2,7 @@ const _ = require("the-lodash");
 const fs = require("fs");
 const path = require("path");
 const Scope = require("./scope");
+const PropertiesBuilder = require('./properties-builder');
 
 class LogicProcessor 
 {
@@ -193,6 +194,10 @@ class LogicProcessor
         }
 
         _.defaults(handlerArgs, target);
+
+        handlerArgs.propertiesBuilder = () => {
+            return new PropertiesBuilder(handlerArgs.item);
+        }
 
         handlerArgs.hasCreatedItems = () => {
             return handlerArgs.createdItems.length > 0;
