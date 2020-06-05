@@ -1,3 +1,9 @@
+process.stdin.resume();
+process.on('SIGINT', () => {
+  console.log('Received SIGINT. Press Control-D to exit.');
+  process.exit(0);
+});
+
 const Promise = require('the-promise');
 const K8sParser = require('./parsers/k8s');
 const ConcreteRegistry = require('./concrete/registry');
