@@ -19,7 +19,7 @@ class Server
     {
         this._loadRouter('top');
 
-        const port = 4500;
+        const port = 4002;
         this._app.listen(port, () => {
             this.logger.info("listening on port %s", port);
         });

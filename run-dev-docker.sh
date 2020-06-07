@@ -7,7 +7,7 @@ docker run \
     -it \
     --rm \
     --name 'kubevious-parser' \
-    -p 4002:4000 \
+    -p 4002:4002 \
     --network kubevious \
     -e KUBEVIOUS_COLLECTOR=http://kubevious-backend:4001/api/v1/collect \
     -v ${MY_DIR}/src:/src \
