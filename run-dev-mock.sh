@@ -5,5 +5,5 @@ cd $MY_DIR
 
 export LOG_TO_FILE=true
 export NODE_ENV=development
-export KUBEVIOUS_COLLECTOR=http://localhost:4000/api/v1/collect
+export KUBEVIOUS_COLLECTOR=http://localhost:4001/api/v1/collect
 node mock/index-mock

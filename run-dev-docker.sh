@@ -9,7 +9,7 @@ docker run \
     --name 'kubevious-parser' \
     -p 4002:4000 \
     --network kubevious \
-    -e KUBEVIOUS_COLLECTOR=http://kubevious-backend:4000/api/v1/collect \
+    -e KUBEVIOUS_COLLECTOR=http://kubevious-backend:4001/api/v1/collect \
     -v ${MY_DIR}/src:/src \
     -v ${MY_DIR}/mock:/mock \
     --entrypoint="node" \

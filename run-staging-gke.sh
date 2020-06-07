@@ -7,5 +7,5 @@ export NODE_ENV=production
 export GKE_CREDENTIALS_PATH=credentials.json
 export GKE_REGION=us-west1-c
 export GKE_K8S_CLUSTER=gprod-uswest1c
-export KUBEVIOUS_COLLECTOR=http://localhost:4000/api/v1/collect
+export KUBEVIOUS_COLLECTOR=http://localhost:4001/api/v1/collect
 node mock/index-gke
