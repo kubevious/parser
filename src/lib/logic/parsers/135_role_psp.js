@@ -25,12 +25,9 @@ module.exports = {
         {
             if (pspRuleItem.verbs['use'])
             {
-
                 var pspScope = infraScope.items.get('PodSecurityPolicy', pspRuleItem.name);
                 if (pspScope)
                 {
-                    logger.error("*** FOUND %s :: %s", itemScope.kind, itemScope.name, pspRuleItem);
-                    
                     for(var roleItem of itemScope.items)
                     {
                         var psp = roleItem.fetchByNaming("psp", pspScope.name);
