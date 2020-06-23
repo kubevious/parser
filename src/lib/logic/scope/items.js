@@ -61,6 +61,17 @@ class ItemsScope
         return [];
     }
 
+    finalize()
+    {
+        for(var kindDict of _.values(this._itemsDict))
+        {
+            for(var scopeItem of _.values(kindDict))
+            {
+                scopeItem.finalize();
+            }
+        }
+    }
+
     count(kind)
     {
         return this.getAll(kind).length;

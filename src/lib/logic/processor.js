@@ -113,6 +113,7 @@ class LogicProcessor
             var scope = new Scope(this._context);
     
             this._processParsers(scope);
+            this._finalizeScope(scope);
             this._propagete(scope);
     
             this._logger.info("[process] READY");
@@ -342,6 +343,15 @@ class LogicProcessor
             {
                 this._visitTree(child, index + 1, path, cb);
             }
+        }
+    }
+
+    _finalizeScope(scope)
+    {
+        scope.getInfraScope().items.finalize();
+        for(var nsScope of scope.getNamespaceScopes())
+        {
+            nsScope.items.finalize();
         }
     }
 

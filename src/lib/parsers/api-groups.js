@@ -48,5 +48,11 @@ module.exports = [
             "ClusterRole",
             "ClusterRoleBinding",
         ]
+    },
+    {
+        api: "policy",
+        kinds: [
+            "PodSecurityPolicy"
+        ]
     }
 ]
