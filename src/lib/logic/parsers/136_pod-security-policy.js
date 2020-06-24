@@ -12,7 +12,7 @@ module.exports = {
 
     order: 136,
 
-    handler: ({scope, itemScope, createK8sItem, createAlert }) =>
+    handler: ({scope, itemScope, createK8sItem, createAlert, determineSharedFlag }) =>
     {
         if (itemScope.isNotUsed)
         {
@@ -32,5 +32,8 @@ module.exports = {
             .fromConfig('ReadOnlyRootFS', 'spec.readOnlyRootFilesystem', false)
             .fromConfig('Volumes', 'spec.volumes', [])
             .build()
+
+        determineSharedFlag(itemScope);
+        
     }
 }
