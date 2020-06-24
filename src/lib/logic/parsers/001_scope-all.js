@@ -7,7 +7,6 @@ module.exports = {
 
     handler: ({logger, scope, item, createK8sItem, infraScope, helpers}) =>
     {
-        // logger.info("****** ", item.id);
         var itemScope = null;
 
         if (item.id.api == 'v1' && item.id.kind == 'Namespace')

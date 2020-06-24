@@ -196,14 +196,13 @@ class LogicItem
 
     addAlert(kind, severity, msg)
     {
-        var id = kind;
-
         var info = {
-            id: id,
+            id: kind,
             severity: severity,
             msg: msg
         }
-        this._alerts[id] = info;
+        var key = _.stableStringify(info);
+        this._alerts[key] = info;
     }
 
     cloneAlertsFrom(other)

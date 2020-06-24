@@ -14,6 +14,7 @@ class ItemScope
         this._data = {};
         this._items = [];
         this._appScopes = {};
+        this._createdAlerts = [];
     }
 
     get parent() {
@@ -59,7 +60,6 @@ class ItemScope
     get isUsedByMany() {
         return this.usedByCount > 1;
     }
-
 
     get owners() {
         return _.values(this._owners);
@@ -161,6 +161,26 @@ class ItemScope
         });
         return builder;
     }
+
+    createAlert(kind, severity, msg) {
+        this._createdAlerts.push({
+            kind,
+            severity,
+            msg
+        });
+    }
+
+    finalize()
+    {
+        for(var alertInfo of this._createdAlerts)
+        {
+            for(var item of this.items)
+            {
+                item.addAlert(alertInfo.kind, alertInfo.severity, alertInfo.msg);
+            }
+        }
+    }
+
 }
 
 module.exports = ItemScope;

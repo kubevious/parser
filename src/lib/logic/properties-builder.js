@@ -9,14 +9,19 @@ class PropertiesBuilder
         this._postBuildAction = postBuildAction;
     }
 
-    fromConfig(name, valuePath)
+    fromConfig(name, valuePath, defaultValue)
     {
-        return this.fromObject(this._item.config, name, valuePath);
+        return this.fromObject(this._item.config, name, valuePath, defaultValue);
     }
 
-    fromObject(obj, name, valuePath)
+    fromObject(obj, name, valuePath, defaultValue)
     {
         var value = _.get(obj, valuePath);
+        if (_.isUndefined(value)) {
+            if (!_.isUndefined(defaultValue)) {
+                value = defaultValue;
+            }
+        }
         if (!_.isUndefined(value)) {
             this.add(name, value);
         }

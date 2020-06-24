@@ -88,7 +88,13 @@ class LogicScope
 
     fetchRawContainer(item, name)
     {
-        var namespace = this.root.fetchByNaming("ns", item.config.metadata.namespace);
+        var nsName = item.config.metadata.namespace;
+        return this.fetchNamespaceRawContainer(nsName, name)
+    }
+
+    fetchNamespaceRawContainer(nsName, name)
+    {
+        var namespace = this.root.fetchByNaming("ns", nsName);
         var rawContainer = namespace.fetchByNaming("raw", "Raw Configs");
         rawContainer.order = 1000;
         var container = rawContainer.fetchByNaming("raw", name);

@@ -242,10 +242,13 @@ module.exports.buildRoleMatrix = function(rulesMap) {
 
 function makeKey(api, resource)
 {
+    var key;
     if (api) {
-        return api + '/' + resource;
+        key = api + '/' + resource;
+    } else {
+        key = resource;
     }
-    return resource;
+    return key.toLowerCase();
 }
 
 

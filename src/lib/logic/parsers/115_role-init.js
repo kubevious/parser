@@ -31,7 +31,7 @@ module.exports = {
         throw new Error();
     },
 
-    handler: ({ item, namespaceScope, helpers}) =>
+    handler: ({ item, namespaceScope, helpers }) =>
     {
         var roleScope = namespaceScope.items.register(item.config);
 

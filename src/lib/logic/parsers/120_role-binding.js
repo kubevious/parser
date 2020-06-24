@@ -29,7 +29,7 @@ module.exports = {
         throw new Error();
     },
 
-    handler: ({ scope, item, namespaceScope, namespaceName, createK8sItem, createAlert, determineSharedFlag, helpers }) =>
+    handler: ({ scope, item, namespaceScope, createK8sItem, createAlert, determineSharedFlag, helpers }) =>
     {
         var bindingScope = namespaceScope.items.register(item.config);
 
