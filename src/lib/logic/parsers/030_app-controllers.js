@@ -55,6 +55,8 @@ module.exports = {
             order: 5,
             config: appScope.properties
         });  
+
+        app.addProperties(launcher.getProperties('labels'));
     }
 }
 

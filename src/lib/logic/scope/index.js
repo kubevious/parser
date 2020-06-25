@@ -69,14 +69,52 @@ class LogicScope
 
     setK8sConfig(logicItem, config)
     {
-        logicItem.setConfig(config);
+        {
+            logicItem.setConfig(config);
+            logicItem.addProperties({
+                kind: "yaml",
+                id: "config",
+                title: "Config",
+                order: 10,
+                config: config
+            });
+        }
 
-        logicItem.addProperties({
-            kind: "yaml",
-            id: "config",
-            title: "Config",
-            config: config
-        });
+        {
+            var labels = _.get(config, 'metadata.labels');
+            labels = this._normalizeDict(labels);
+            logicItem.addProperties({
+                kind: "key-value",
+                id: "labels",
+                title: "Labels",
+                order: 8,
+                config: labels
+            });
+        }
+
+        {
+            var annotations = _.get(config, 'metadata.annotations');
+            annotations = this._normalizeDict(annotations);
+            logicItem.addProperties({
+                kind: "key-value",
+                id: "annotations",
+                title: "Annotations",
+                order: 9,
+                config: annotations
+            });
+        }
+    }
+
+    _normalizeDict(dict)
+    {
+        dict = dict || {};
+
+        var res = {};
+        for(var key of _.sortBy(_.keys(dict)))
+        {
+            res[key] = dict[key];
+        }
+        return res;
     }
 
     fetchInfraRawContainer()
