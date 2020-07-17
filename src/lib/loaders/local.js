@@ -28,13 +28,15 @@ class LocalLoader
     
     run()
     {
-        var endpoint = 'https://' + process.env.KUBERNETES_SERVICE_HOST + ':' + process.env.KUBERNETES_SERVICE_PORT_HTTPS;
         var k8sConfig = {
+            server: 'https://' + process.env.KUBERNETES_SERVICE_HOST + ':' + process.env.KUBERNETES_SERVICE_PORT_HTTPS,
             token: fs.readFileSync('/var/run/secrets/kubernetes.io/serviceaccount/token', 'utf8'),
-            caData: fs.readFileSync('/var/run/secrets/kubernetes.io/serviceaccount/ca.crt', 'utf8')
+            httpAgent: {
+                ca: fs.readFileSync('/var/run/secrets/kubernetes.io/serviceaccount/ca.crt', 'utf8')
+            }
         };
 
-        return Promise.resolve(K8sClient.connect(this._logger, endpoint, k8sConfig))
+        return Promise.resolve(K8sClient.connect(this._logger, k8sConfig))
             .then(client => {
                 var info = {
                     infra: "local"
