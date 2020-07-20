@@ -25,7 +25,7 @@
     "express-promise-router": "^3.0.3",
     "flexsearch": "^0.6.32",
     "js-yaml": "^3.13.1",
-    "k8s-super-client": "^1.1.7",
+    "k8s-super-client": "^1.1.11",
     "kubevious-helpers": "git+https://github.com/kubevious/helpers.git",
     "moment": "^2.24.0",
     "mysql2": "^2.1.0",
