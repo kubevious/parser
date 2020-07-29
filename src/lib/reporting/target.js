@@ -1,5 +1,6 @@
 const Promise = require('the-promise');
 const _ = require('lodash');
+const fs = require('fs').promises;
 const axios = require('axios');
 const JobDampener = require('../utils/job-dampener');
 const SnapshotReporter = require('./snapshot-reporter');
@@ -7,16 +8,21 @@ const HandledError = require('kubevious-helpers').HandledError;
 
 class ReporterTarget
 {
-    constructor(logger, collector)
+    constructor(logger, config)
     {
         this._logger = logger.sublogger("ReporterTarget");
         this._snapshotLogger = logger.sublogger("SnapshotReporter");
 
-        this._baseUrl = collector.url;
-        this._axios = axios.create({
-            baseURL: this._baseUrl,
-            timeout: 10 * 1000,
-        });
+        this._config = config;
+        this._baseUrl = config.url;
+        this._createCollectorClient();
+
+        if (config.authUrl) {
+            this._axiosAuth = axios.create({
+                baseURL: config.authUrl,
+                timeout: 10 * 1000,
+            });
+        }
 
         this._jobDampener = new JobDampener(this._logger.sublogger("ReporterDampener"), this._processSnapshot.bind(this));
 
@@ -75,10 +81,9 @@ class ReporterTarget
     {
         this.logger.verbose("[request] url: %s%s", this._baseUrl, url);
         this.logger.silly("[request] url: %s%s, data: ", this._baseUrl, url, data);
-        return this._axios.post(url, data)
-            .then(res => {
-                return res.data;
-            })
+        return this._prepareRequest()
+            .then(() => this._axiosCollector.post(url, data))
+            .then(res => res.data)
             .catch(reason => {
                 if (reason.response) {
                     this.logger.error('[request] URL: %s, RESPONSE STATUS: %s', url, reason.response.status)
@@ -96,8 +101,55 @@ class ReporterTarget
                     this.logger.error('[request] URL: %s. Reason: ', url, reason)
                     throw new HandledError("Unknown error " + reason.message);
                 }
-                // throw reason;
             });
+    }
+
+    _prepareRequest()
+    {
+        if (!this._axiosAuth) {
+            return Promise.resolve();
+        }
+        if (this._token) {
+            return Promise.resolve();
+        }
+
+        return Promise.resolve()
+            .then(() => this._getApiKey())
+            .then(data => {
+                this.logger.silly('[_prepareRequest] ', data);
+                return this._axiosAuth.post('/', data)
+            })
+            .then(result => {
+                this.logger.silly('[_prepareRequest] JWT: ', result.data);
+                this._token = result.data.token;
+                this._createCollectorClient();
+            })
+    }
+
+    _getApiKey()
+    {
+        if (this._apiKeyData) {
+            return Promise.resolve(this._apiKeyData);
+        }
+        return fs.readFile(this._config.keyPath, { encoding: 'utf8' })
+            .then(data => {
+                this._apiKeyData = JSON.parse(data);
+                this._token = null;
+                return this._apiKeyData;
+            });
+    }
+
+    _createCollectorClient()
+    {
+        var options = {
+            baseURL: this._baseUrl,
+            timeout: 10 * 1000,
+            headers: {}
+        };
+        if (this._token) {
+            options.headers['Authorization'] = 'Bearer ' + this._token;
+        }
+        this._axiosCollector = axios.create(options);
     }
 
 }
