@@ -23,15 +23,13 @@
     "axios": "^0.19.2",
     "express": "^4.17.1",
     "express-promise-router": "^3.0.3",
-    "flexsearch": "^0.6.32",
     "js-yaml": "^3.13.1",
-    "k8s-super-client": "^1.1.11",
+    "k8s-super-client": "^1.1.15",
     "kubevious-helpers": "git+https://github.com/kubevious/helpers.git",
     "moment": "^2.24.0",
-    "mysql2": "^2.1.0",
     "the-lodash": "^1.1.1",
     "the-logger": "^1.1.22",
-    "the-promise": "^1.2.1",
+    "the-promise": "^1.2.3",
     "yargs": "^15.0.2"
   },
   "devDependencies": {
