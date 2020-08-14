@@ -13,7 +13,7 @@ class SnapshotReporter
 
         for(var collector of this._collectors)
         {
-            collector.target = new ReporterTarget(this._logger, collector);
+            collector.target = new ReporterTarget(this._logger, collector.config);
         }
     }
 
@@ -28,12 +28,30 @@ class SnapshotReporter
         {
             if (_.startsWith(x, 'KUBEVIOUS_COLLECTOR'))
             {
-                this._collectors.push({
-                    url: process.env[x]
-                })
+                var namePart = x.replace('KUBEVIOUS_COLLECTOR', '');
+                if (!namePart.includes('_'))
+                {
+                    this._loadCollector(x);
+                }
             }
         }
         this.logger.info("[_determineCollectors] Collectors: ", this._collectors);
+    }
+
+    _loadCollector(urlEnvName)
+    {
+        var collectorConfig = {
+            url: process.env[urlEnvName]
+        }
+        var authEnvName = urlEnvName + '_AUTH';
+        var keyPathEnvName = urlEnvName + '_KEY_PATH';
+        if (process.env[authEnvName] && process.env[keyPathEnvName]) {
+            collectorConfig.authUrl = process.env[authEnvName];
+            collectorConfig.keyPath = process.env[keyPathEnvName];
+        }
+        this._collectors.push({
+            config: collectorConfig
+        })
     }
 
     acceptLogicItems(date, items)
