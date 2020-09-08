@@ -54,5 +54,11 @@ module.exports = [
         kinds: [
             "PodSecurityPolicy"
         ]
+    },
+    {
+        api: "networking.k8s.io", 
+        kinds: [
+            "NetworkPolicy"
+        ]
     }
 ]

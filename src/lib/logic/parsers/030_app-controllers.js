@@ -29,10 +29,7 @@ module.exports = {
 
         var labelsMap = _.get(item.config, 'spec.template.metadata.labels');
         if (labelsMap) {
-            namespaceScope.appLabels.push({
-                labels: labelsMap,
-                appScope: appScope
-            });
+            namespaceScope.registerAppScopeLabels(appScope, labelsMap);
         }
 
         var launcher = app.fetchByNaming("launcher", item.config.kind);

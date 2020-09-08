@@ -16,7 +16,7 @@ class NamespaceScope
 
         this._items = new ItemsScope(this);
 
-        this.appLabels = [];
+        this._appLabels = [];
         this.appControllers = {};
         this.appOwners = {};
     }
@@ -83,10 +83,18 @@ class NamespaceScope
         return this.appOwners[kind][name];
     }
 
+    registerAppScopeLabels(appScope, labelsMap)
+    {
+        this._appLabels.push({
+            labels: labelsMap,
+            appScope: appScope
+        });
+    }
+
     findAppScopesByLabels(selector)
     {
         var result = [];
-        for(var appLabelInfo of this.appLabels)
+        for(var appLabelInfo of this._appLabels)
         {
             if (labelsMatch(appLabelInfo.labels, selector))
             {

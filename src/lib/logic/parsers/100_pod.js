@@ -34,7 +34,7 @@ module.exports = {
         {
             for(var ref of item.config.metadata.ownerReferences)
             {
-                var ownerItems =  namespaceScope.getAppOwners(ref.kind, ref.name);
+                var ownerItems = namespaceScope.getAppOwners(ref.kind, ref.name);
                 for(var ownerItem of ownerItems) 
                 {
                     var shortName = NameHelpers.makeRelativeName(ownerItem.config.metadata.name, item.config.metadata.name);
