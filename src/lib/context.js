@@ -11,12 +11,15 @@ const FacadeRegistry = require('./facade/registry');
 const LogicProcessor = require('./logic/processor');
 const Reporter = require('./reporting/reporter');
 const DebugObjectLogger = require('./utils/debug-object-logger');
+const ProcessingTracker = require("kubevious-helpers").ProcessingTracker;
 
 class Context
 {
     constructor(logger)
     {
         this._logger = logger.sublogger("Context");
+        this._tracker = new ProcessingTracker(logger.sublogger("Tracker"));
+
         this._loaders = [];
         this._concreteRegistry = new ConcreteRegistry(this);
         this._k8sParser = new K8sParser(this);
@@ -36,6 +39,10 @@ class Context
 
     get logger() {
         return this._logger;
+    }
+
+    get tracker() {
+        return this._tracker;
     }
 
     get concreteRegistry() {
@@ -94,6 +101,15 @@ class Context
 
     run()
     {
+        if (process.env.NODE_ENV == 'development')
+        {
+            this.tracker.enablePeriodicDebugOutput(10);
+        }
+        else
+        {
+            this.tracker.enablePeriodicDebugOutput(30);
+        }
+        
         return Promise.resolve()
             .then(() => this._processLoaders())
             .then(() => this._runServer())

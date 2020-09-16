@@ -7,7 +7,7 @@ class ConcreteItem
         this._registry = registry;
         this._id = id;
         this._config = config;
-        this._indexKey = null;
+        this._groupKey = `${id.api}:${id.kind}`;
     }
 
     get logger() {
@@ -20,6 +20,10 @@ class ConcreteItem
     
     get id() {
         return this._id;
+    }
+    
+    get groupKey() {
+        return this._groupKey;
     }
     
     get config() {
@@ -64,7 +68,6 @@ class ConcreteItem
         }
 
         writer.unindent();
-
     }
 
     dump() {

@@ -19,14 +19,7 @@ class K8sParser
         var id = this._extractId(obj);
 
         if (isPresent) {
-            var indexBy = {
-                kind: id.kind,
-                name: id.name
-            }
-            if (id.namespace) {
-                indexBy.namespace = id.namespace;
-            }
-            this._context.concreteRegistry.add(id, obj, indexBy);
+            this._context.concreteRegistry.add(id, obj);
         } else {
             this._context.concreteRegistry.remove(id);
         }

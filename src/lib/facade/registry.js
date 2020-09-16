@@ -33,11 +33,15 @@ class FacadeRegistry
     {
         this._logger.info("[_handleConcreteRegistryChange] BEGIN");
 
-        if (this._context.areLoadersReady) {
-            this._context.logicProcessor.process();
-        }
-
-        this._logger.info("[_handleConcreteRegistryChange] END");
+        return Promise.resolve()
+            .then(() => {
+                if (this._context.areLoadersReady) {
+                    this._context.logicProcessor.process();
+                }
+            })
+            .then(() => {
+                this._logger.info("[_handleConcreteRegistryChange] END");
+            })
     }
 
     handleAreLoadersReadyChange()
