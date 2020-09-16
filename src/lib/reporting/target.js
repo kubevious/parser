@@ -5,7 +5,7 @@ const axios = require('axios');
 const JobDampener = require('../utils/job-dampener');
 const SnapshotReporter = require('./snapshot-reporter');
 const HandledError = require('kubevious-helpers').HandledError;
-const RetryableAction = require('./retryable-action');
+const RetryableAction = require('kubevious-helpers').RetryableAction;
 
 class ReporterTarget
 {
@@ -82,6 +82,10 @@ class ReporterTarget
     {
         let action = new RetryableAction(this.logger, () => {
             return this._rawRequest(url, data);
+        }, {
+            initalDelay: 2 * 1000,
+            maxDelay: 10 * 1000,
+            retryCount: 5
         })
         action.canRetry((reason) => {
             return reason instanceof RetryableError;

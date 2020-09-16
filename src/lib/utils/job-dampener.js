@@ -13,7 +13,7 @@ class JobDampener
         this._isScheduled = false;
         this._handlerCb = handler;
 
-        this._queueSize = 10;
+        this._queueSize = 5;
         this._rescheduleTimeoutMs = 5000;
     }
 
