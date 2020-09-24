@@ -112,11 +112,11 @@ class ConcreteRegistry
     extractCapacity()
     {
         var cap = [];
-        for(var id of _.keys(this._itemsKindDict))
+        for(var groupKey of _.keys(this._itemsKindDict))
         {
             cap.push({
-                id: id,
-                count: _.keys(this._itemsKindDict[id]).length
+                id: groupKey,
+                count: _.keys(this._itemsKindDict[groupKey]).length
             });
         }
         cap = _.orderBy(cap, ['count', 'id'], ['desc', 'asc']);
