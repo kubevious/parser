@@ -12,6 +12,9 @@ const LogicProcessor = require('./logic/processor');
 const Reporter = require('./reporting/reporter');
 const DebugObjectLogger = require('./utils/debug-object-logger');
 const ProcessingTracker = require("kubevious-helpers").ProcessingTracker;
+const { WorldviousClient } = require('kubevious-worldvious-client');
+
+const VERSION = require('../version');
 
 class Context
 {
@@ -28,8 +31,9 @@ class Context
 
         this._facadeRegistry = new FacadeRegistry(this);
 
-
         this._debugObjectLogger = new DebugObjectLogger(this);
+
+        this._worldvious = new WorldviousClient(logger, 'parser', VERSION);
 
         this._areLoadersReady = false;
 
@@ -73,6 +77,10 @@ class Context
         return this._debugObjectLogger;
     }
 
+    get worldvious() {
+        return this._worldvious;
+    }
+
     addLoader(loader)
     {
         var loaderInfo = {
@@ -101,6 +109,25 @@ class Context
 
     run()
     {
+        this._setupTracker();
+        
+        return Promise.resolve()
+            .then(() => this._worldvious.init())
+            .then(() => this._processLoaders())
+            .then(() => this._runServer())
+            .catch(reason => {
+                console.log("***** ERROR *****");
+                console.log(reason);
+                this.logger.error(reason);
+                return Promise.resolve(this.worldvious.acceptError(reason))
+                    .then(() => {
+                        process.exit(1);
+                    })
+            });
+    }
+
+    _setupTracker()
+    {
         if (process.env.NODE_ENV == 'development')
         {
             this.tracker.enablePeriodicDebugOutput(10);
@@ -109,16 +136,10 @@ class Context
         {
             this.tracker.enablePeriodicDebugOutput(30);
         }
-        
-        return Promise.resolve()
-            .then(() => this._processLoaders())
-            .then(() => this._runServer())
-            .catch(reason => {
-                console.log("***** ERROR *****");
-                console.log(reason);
-                this.logger.error(reason);
-                process.exit(1);
-            });
+
+        this.tracker.registerListener(extractedData => {
+            this._worldvious.acceptMetrics(extractedData);
+        })
     }
 
     _processLoaders()
