@@ -12,7 +12,7 @@ const LogicProcessor = require('./logic/processor');
 const Reporter = require('./reporting/reporter');
 const DebugObjectLogger = require('./utils/debug-object-logger');
 const ProcessingTracker = require("kubevious-helpers").ProcessingTracker;
-const { WorldviousClient } = require('kubevious-worldvious-client');
+const { WorldviousClient } = require('@kubevious/worldvious-client');
 
 const VERSION = require('../version');
 
