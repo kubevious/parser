@@ -115,11 +115,11 @@ class ConcreteRegistry
         for(var groupKey of _.keys(this._itemsKindDict))
         {
             cap.push({
-                id: groupKey,
+                name: groupKey,
                 count: _.keys(this._itemsKindDict[groupKey]).length
             });
         }
-        cap = _.orderBy(cap, ['count', 'id'], ['desc', 'asc']);
+        cap = _.orderBy(cap, ['count', 'name'], ['desc', 'asc']);
         return cap;
     }
 
@@ -128,14 +128,17 @@ class ConcreteRegistry
         this.logger.info("[concreteRegistry] >>>>>>>");
         this.logger.info("[concreteRegistry] Total Count: %s", _.keys(this._flatItemsDict).length);
 
-        const caps = this.extractCapacity();
-        for(let x of caps)
+        const counters = this.extractCapacity();
+        for(let x of counters)
         {
-            this.logger.info("[concreteRegistry] %s :: %s", x.id, x.count);
+            this.logger.info("[concreteRegistry] %s :: %s", x.name, x.count);
         }
 
         this.logger.info("[concreteRegistry] <<<<<<<");
+
+        this._context.worldvious.acceptCounters(counters);
     }
+
 
     debugOutputToFile()
     {
