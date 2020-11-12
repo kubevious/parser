@@ -14,38 +14,44 @@ module.exports = {
 
     handler: ({scope, item, createK8sItem, createAlert, hasCreatedItems, namespaceScope}) =>
     {
-        var serviceScope = namespaceScope.items.register(item.config);
+        let serviceScope = namespaceScope.items.register(item.config);
 
-        var appSelector = _.get(item.config, 'spec.selector');
-        if (appSelector)
+        const serviceType = _.get(item.config, 'spec.type');
+        if (serviceType == 'ClusterIP' || 
+            serviceType == 'NodePort' ||
+            serviceType == 'LoadBalancer')
         {
-            var appScopes = namespaceScope.findAppScopesByLabels(appSelector);
-            for(var appScope of appScopes)
+            let appSelector = _.get(item.config, 'spec.selector');
+            if (appSelector)
             {
-                serviceScope.associateAppScope(appScope);
+                let appScopes = namespaceScope.findAppScopesByLabels(appSelector);
+                for(let appScope of appScopes)
+                {
+                    serviceScope.associateAppScope(appScope);
 
-                appScope.properties['Exposed'] = 'With Service';
+                    appScope.properties['Exposed'] = 'With Service';
 
-                var appItem = appScope.item;
+                    let appItem = appScope.item;
 
-                var serviceItemName = item.config.spec.type;
-                var serviceCount = appItem.getChildrenByKind('service')
-                    .filter(x => x.config.spec.type == serviceItemName)
-                    .length;
-                if (serviceCount != 0) {
-                    serviceItemName += " " + (serviceCount + 1);
-                }
-                createService(appItem, { name: serviceItemName, order: 200 });
-                
-                var portsConfig = _.get(item.config, 'spec.ports');
-                if (portsConfig) {
-                    for(var portConfig of portsConfig) {      
-                        var appPort = portConfig.targetPort;                   
-                        var appPortInfo = appScope.ports[appPort];
-                        if (appPortInfo) {
-                            createService(appPortInfo.portItem, { name: serviceItemName })
-                        } else {
-                            createAlert('Port-' + appPort, 'warn', 'Missing port ' + appPort + ' definition.');
+                    let serviceItemName = serviceType;
+                    let serviceCount = appItem.getChildrenByKind('service')
+                        .filter(x => serviceType == serviceItemName)
+                        .length;
+                    if (serviceCount != 0) {
+                        serviceItemName += " " + (serviceCount + 1);
+                    }
+                    createService(appItem, { name: serviceItemName, order: 200 });
+                    
+                    let portsConfig = _.get(item.config, 'spec.ports');
+                    if (portsConfig) {
+                        for(let portConfig of portsConfig) {      
+                            let appPort = portConfig.targetPort;                   
+                            let appPortInfo = appScope.ports[appPort];
+                            if (appPortInfo) {
+                                createService(appPortInfo.portItem, { name: serviceItemName })
+                            } else {
+                                createAlert('Port-' + appPort, 'warn', 'Missing port ' + appPort + ' definition.');
+                            }
                         }
                     }
                 }
@@ -57,20 +63,16 @@ module.exports = {
                 createAlert('MultipleApps', 'warn', 'More than one apps matched selector.');
             }
         }
-        else
-        {
-            // createAlert('MissingSelector', 'error', 'Missing selector.');
-        }
 
         if (!hasCreatedItems()) {
-            var rawContainer = scope.fetchRawContainer(item, "Services");
+            let rawContainer = scope.fetchRawContainer(item, "Services");
             createService(rawContainer);
         }
 
         /*** HELPERS ***/
         function createService(parent, params)
         {
-            var k8sService = createK8sItem(parent, params);
+            let k8sService = createK8sItem(parent, params);
             serviceScope.registerItem(k8sService);
             return k8sService;
         }
