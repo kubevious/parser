@@ -55,12 +55,12 @@ module.exports = {
                         }
                     }
                 }
-            }
 
-            if (appScopes.length == 0) {
-                createAlert('MissingApp', 'error', 'Could not find apps matching selector.');
-            } else if (appScopes.length > 1) {
-                createAlert('MultipleApps', 'warn', 'More than one apps matched selector.');
+                if (appScopes.length == 0) {
+                    createAlert('MissingApp', 'error', 'Could not find apps matching selector.');
+                } else if (appScopes.length > 1) {
+                    createAlert('MultipleApps', 'warn', 'More than one apps matched selector.');
+                }
             }
         }
 
