@@ -11,12 +11,18 @@ const FacadeRegistry = require('./facade/registry');
 const LogicProcessor = require('./logic/processor');
 const Reporter = require('./reporting/reporter');
 const DebugObjectLogger = require('./utils/debug-object-logger');
+const ProcessingTracker = require("kubevious-helpers").ProcessingTracker;
+const { WorldviousClient } = require('@kubevious/worldvious-client');
+
+const VERSION = require('../version');
 
 class Context
 {
     constructor(logger)
     {
         this._logger = logger.sublogger("Context");
+        this._tracker = new ProcessingTracker(logger.sublogger("Tracker"));
+
         this._loaders = [];
         this._concreteRegistry = new ConcreteRegistry(this);
         this._k8sParser = new K8sParser(this);
@@ -25,8 +31,9 @@ class Context
 
         this._facadeRegistry = new FacadeRegistry(this);
 
-
         this._debugObjectLogger = new DebugObjectLogger(this);
+
+        this._worldvious = new WorldviousClient(logger, 'parser', VERSION);
 
         this._areLoadersReady = false;
 
@@ -36,6 +43,10 @@ class Context
 
     get logger() {
         return this._logger;
+    }
+
+    get tracker() {
+        return this._tracker;
     }
 
     get concreteRegistry() {
@@ -66,6 +77,10 @@ class Context
         return this._debugObjectLogger;
     }
 
+    get worldvious() {
+        return this._worldvious;
+    }
+
     addLoader(loader)
     {
         var loaderInfo = {
@@ -94,15 +109,37 @@ class Context
 
     run()
     {
+        this._setupTracker();
+        
         return Promise.resolve()
+            .then(() => this._worldvious.init())
             .then(() => this._processLoaders())
             .then(() => this._runServer())
             .catch(reason => {
                 console.log("***** ERROR *****");
                 console.log(reason);
                 this.logger.error(reason);
-                process.exit(1);
+                return Promise.resolve(this.worldvious.acceptError(reason))
+                    .then(() => {
+                        process.exit(1);
+                    })
             });
+    }
+
+    _setupTracker()
+    {
+        if (process.env.NODE_ENV == 'development')
+        {
+            this.tracker.enablePeriodicDebugOutput(10);
+        }
+        else
+        {
+            this.tracker.enablePeriodicDebugOutput(30);
+        }
+
+        this.tracker.registerListener(extractedData => {
+            this._worldvious.acceptMetrics(extractedData);
+        })
     }
 
     _processLoaders()

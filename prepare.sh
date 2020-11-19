@@ -11,4 +11,4 @@ cd ..
 cd src
 rm -rf node_modules/
 npm install
-npm update kubevious-helpers k8s-super-client the-lodash the-logger the-promise
+npm update kubevious-helpers k8s-super-client the-lodash the-logger the-promise @kubevious/worldvious-client

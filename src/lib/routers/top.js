@@ -4,7 +4,7 @@ module.exports = ({router, app, logger, context}) => {
         res.send({});
     });
 
-    router.get('/version', function (req, res) {
+    router.get('/api/v1/version', function (req, res) {
         res.send({
             version: require('../../version')
         });

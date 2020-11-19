@@ -1,10 +1,11 @@
 const Promise = require('the-promise');
-const _ = require('lodash');
+const _ = require('the-lodash');
 const fs = require('fs').promises;
 const axios = require('axios');
 const JobDampener = require('../utils/job-dampener');
 const SnapshotReporter = require('./snapshot-reporter');
 const HandledError = require('kubevious-helpers').HandledError;
+const RetryableAction = require('kubevious-helpers').RetryableAction;
 
 class ReporterTarget
 {
@@ -79,6 +80,21 @@ class ReporterTarget
 
     request(url, data)
     {
+        let action = new RetryableAction(this.logger, () => {
+            return this._rawRequest(url, data);
+        }, {
+            initalDelay: 2 * 1000,
+            maxDelay: 10 * 1000,
+            retryCount: 5
+        })
+        action.canRetry((reason) => {
+            return reason instanceof RetryableError;
+        })
+        return action.run();
+    }
+
+    _rawRequest(url, data)
+    {
         this.logger.verbose("[request] url: %s%s", this._baseUrl, url);
         this.logger.silly("[request] url: %s%s, data: ", this._baseUrl, url, data);
         return this._prepareRequest()
@@ -96,7 +112,7 @@ class ReporterTarget
                     }
                 } else if (reason.request) {
                     this.logger.error('[request] URL: %s, ERROR: %s', url, reason.message)
-                    throw new HandledError("Could not connect");
+                    throw new RetryableError("Could not connect");
                 } else {
                     this.logger.error('[request] URL: %s. Reason: ', url, reason)
                     throw new HandledError("Unknown error " + reason.message);
@@ -152,6 +168,14 @@ class ReporterTarget
         this._axiosCollector = axios.create(options);
     }
 
+}
+
+class RetryableError extends HandledError {  
+    constructor (message) {
+      super(message)
+  
+      this.name = this.constructor.name
+    }
 }
 
 module.exports = ReporterTarget;

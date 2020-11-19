@@ -1,5 +1,5 @@
 const Promise = require('the-promise');
-const _ = require('lodash');
+const _ = require('the-lodash');
 
 class SnapshotReporter
 {
@@ -70,6 +70,7 @@ class SnapshotReporter
     {
         this.logger.info("[_createSnapshot]");
         var body = {
+            version: require('../../version'),
             date: this._snapshot.date.toISOString()
         }
         return this._request('/snapshot', body)

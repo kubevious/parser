@@ -10,7 +10,8 @@ class LogicScope
         this._context = context;
         this._logger = context.logger.sublogger("LogicScope");
 
-        this._itemMap = {}
+        this._itemsMap = {}
+        this._itemKindMap = {}
         this._root = LogicItem.constructTop(this);
 
         this._namespaceScopes = {};
@@ -31,21 +32,27 @@ class LogicScope
 
     _acceptItem(item) 
     {
-        this._itemMap[item.dn] = item;
+        this._itemsMap[item.dn] = item;
+
+        if (!this._itemKindMap[item.kind]) {
+            this._itemKindMap[item.kind] = {};
+        }
+        this._itemKindMap[item.kind][item.dn] = item;
     }
 
     _dropItem(item) 
     {
-        delete this._itemMap[item.dn];
+        delete this._itemsMap[item.dn];
+        delete this._itemKindMap[item.kind][item.dn];
     }
 
     extractItems() {
-        return _.values(this._itemMap);
+        return _.values(this._itemsMap);
     }
 
     findItem(dn)
     {
-        var item = this._itemMap[dn];
+        var item = this._itemsMap[dn];
         if (!item) {
             item = null;
         }
@@ -163,6 +170,34 @@ class LogicScope
             }
         }
         return item;
+    }
+
+    extractCapacity()
+    {
+        var cap = [];
+        for(var kind of _.keys(this._itemKindMap))
+        {
+            cap.push({
+                kind: kind,
+                count: _.keys(this._itemKindMap[kind]).length
+            });
+        }
+        cap = _.orderBy(cap, ['count', 'kind'], ['desc', 'asc']);
+        return cap;
+    }
+
+    debugOutputCapacity()
+    {
+        this.logger.info("[Scope] >>>>>>>");
+        this.logger.info("[Scope] Total Count: %s", _.keys(this._itemsMap).length);
+
+        const caps = this.extractCapacity();
+        for(let x of caps)
+        {
+            this.logger.info("[Scope] %s :: %s", x.kind, x.count);
+        }
+
+        this.logger.info("[Scope] <<<<<<<");
     }
 }
 

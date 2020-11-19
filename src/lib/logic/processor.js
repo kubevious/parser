@@ -106,28 +106,39 @@ class LogicProcessor
 
     process()
     {
-        try
-        {
-            this._logger.info("[process] BEGIN");
+        return this._context.tracker.scope("Logic::process", (tracker) => {
 
             var scope = new Scope(this._context);
-    
+
+            return Promise.resolve()
+                .then(() => this._runLogic(scope, tracker))
+                .then(() => this._report(scope, tracker))
+                .then(() => this._dumpToFile(scope, tracker))
+
+        })
+        .catch(reason => {
+            this._logger.error("[process] ", reason);
+        });
+    }
+
+    _runLogic(scope, tracker)
+    {
+        return tracker.scope("runLogic", () => {
+            this._context.concreteRegistry.debugOutputCapacity();
+
             this._processParsers(scope);
             this._finalizeScope(scope);
             this._propagete(scope);
-    
-            this._logger.info("[process] READY");
-    
-            this._context.facadeRegistry.acceptLogicItems(scope.extractItems());
-    
-            this._logger.info("[process] END");
-    
-            return this._dumpToFile(scope);
-        }
-        catch(reason)
-        {
-            this._logger.error("[process] ", reason);
-        }
+
+            scope.debugOutputCapacity();
+        })
+    }
+
+    _report(scope, tracker)
+    {
+        return tracker.scope("report", () => {
+            return this._context.facadeRegistry.acceptLogicItems(scope.extractItems());
+        });
     }
 
     _processParsers(scope)
