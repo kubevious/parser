@@ -34,18 +34,24 @@ class K8sMockLoader
     run()
     {
         var dirName = Path.resolve(__dirname, this._name);
-        for(var name of fs.readdirSync(dirName))
+        var files = this._getAllFiles(dirName);
+        for(var fullPath of files)
         {
-            var fname = Path.join(dirName, name);
-            var contents = fs.readFileSync(fname);
+            var contents = fs.readFileSync(fullPath);
             var obj = null;
-            if (fname.endsWith('.json')) {
+            if (fullPath.endsWith('.json')) {
                 obj = JSON.parse(contents);
-            } else if (fname.endsWith('.yaml')) {
-                obj = yaml.safeLoad(contents);
+            } else if (fullPath.endsWith('.yaml')) {
+                obj = yaml.safeLoadAll(contents);
             }
             if (obj) {
-                this._handle(true, obj);
+                if (_.isArray(obj)) {
+                    for(let x of obj) {
+                        this._handle(true, x);
+                    }
+                } else {
+                    this._handle(true, obj);
+                }
             }
         }
 
@@ -53,6 +59,23 @@ class K8sMockLoader
             this._isReady = true;
             this._readyHandler(true);
         }, 3000);
+    }
+
+    _getAllFiles(dirPath, arrayOfFiles) {
+        let files = fs.readdirSync(dirPath)
+      
+        arrayOfFiles = arrayOfFiles || []
+      
+        files.forEach((file) => {
+            const childPath = Path.join(dirPath, file);
+            if (fs.statSync(childPath).isDirectory()) {
+                arrayOfFiles = this._getAllFiles(childPath, arrayOfFiles)
+            } else {
+                arrayOfFiles.push(childPath)
+            }
+        })
+      
+        return arrayOfFiles
     }
 
     _handle(isPresent, obj)
