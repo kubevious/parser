@@ -27,9 +27,6 @@ module.exports = {
             
         };
 
-        policyProperties['Ingress'] = _.includes(policyTypes, 'Ingress');
-        policyProperties['Egress'] = _.includes(policyTypes, 'Egress');
-
         var appSelector = _.get(itemScope.config, 'spec.podSelector.matchLabels');
         if (!appSelector)
         {
@@ -66,6 +63,8 @@ module.exports = {
                 return;
             }
 
+            policyProperties[policyTypes] = true;
+
             var trafficTable = {
                 headers: [
                     {
@@ -73,7 +72,19 @@ module.exports = {
                         label: 'Application',
                         kind: 'shortcut'
                     },
-                    "ports"
+                    "ports",
+                    "access"
+                ],
+                rows: []
+            }
+
+            var cidrTrafficTable = {
+                headers: [
+                    {
+                        id: 'target'
+                    },
+                    "ports",
+                    "access"
                 ],
                 rows: []
             }
@@ -99,10 +110,27 @@ module.exports = {
                     {
                         for(var rule of rules)
                         {
-                            let ipBlock = _.get(rule, 'ipBlock');
+                            const ipBlock = _.get(rule, 'ipBlock');
                             if (ipBlock)
                             {
+                                cidrTrafficTable.rows.push({
+                                    target: _.get(ipBlock, 'cidr'),
+                                    ports: portsInfo,
+                                    access: 'allow'
+                                })
 
+                                const cidrExcept = _.get(ipBlock, 'except');
+                                if (cidrExcept)
+                                {
+                                    for(let ip of cidrExcept)
+                                    {
+                                        cidrTrafficTable.rows.push({
+                                            target: ip,
+                                            ports: portsInfo,
+                                            access: 'deny'
+                                        })
+                                    }
+                                }
                             }
                             else
                             {
@@ -126,25 +154,41 @@ module.exports = {
                                     {
                                         trafficTable.rows.push({
                                             dn: fromAppScope.item.dn,
-                                            ports: portsInfo
+                                            ports: portsInfo,
+                                            access: 'allow'
                                         })
                                     }
                                 }
                             }
-                            
+
                         }
                     }
                 }
             }
 
-            k8sNetworkPolicy.addProperties({
-                kind: "table",
-                id: `${policyType.toLowerCase()}-traffic`,
-                title: `${policyType} Traffic Allowed`,
-                order: 8,
-                config: trafficTable
-            });
+            if (trafficTable.rows.length > 0) {
+                k8sNetworkPolicy.addProperties({
+                    kind: "table",
+                    id: `${policyType.toLowerCase()}-app`,
+                    title: `${policyType} Application Rules`,
+                    order: 8,
+                    config: trafficTable
+                });
+            }
 
+            if (cidrTrafficTable.rows.length > 0) {
+                k8sNetworkPolicy.addProperties({
+                    kind: "table",
+                    id: `${policyType.toLowerCase()}-cidr`,
+                    title: `${policyType} CIDR Rules`,
+                    order: 8,
+                    config: cidrTrafficTable
+                });
+            }
+
+            if ((trafficTable.rows.length + cidrTrafficTable.rows.length) > 0) {
+                policyProperties[policyType + ' Blocked'] = true;
+            }
         }
     }
 }
