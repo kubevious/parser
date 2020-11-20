@@ -87,6 +87,23 @@ spec:
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
+  name: logger-ingress-allow
+  namespace: test-webapp-backend
+spec:
+  podSelector:
+    matchLabels: 
+      app: logger
+  policyTypes:
+  - Ingress
+  ingress:
+    - from:
+      - podSelector:
+          matchLabels: {}
+
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
   name: backend-ingress-allow
   namespace: test-webapp-backend
 spec:

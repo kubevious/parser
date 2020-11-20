@@ -18,90 +18,133 @@ module.exports = {
     {
         namespaceScope = itemScope.parent;
 
+        let policyTypes = _.get(itemScope.config, 'spec.policyTypes');
+        if (!policyTypes || policyTypes.length == 0) {
+            policyTypes = ['Ingress'];
+        }
+
+        let policyProperties = {
+            
+        };
+
+        policyProperties['Ingress'] = _.includes(policyTypes, 'Ingress');
+        policyProperties['Egress'] = _.includes(policyTypes, 'Egress');
+
         var appSelector = _.get(itemScope.config, 'spec.podSelector.matchLabels');
-        if (appSelector)
+        if (!appSelector)
         {
-            var appScopes = namespaceScope.findAppScopesByLabels(appSelector);
-            for(var appScope of appScopes)
-            {
-                var container = appScope.item.fetchByNaming("netpols", "NetworkPolicies");
+            appSelector = {};
+        }
 
-                var k8sNetworkPolicy = createK8sItem(container, 
-                    { });
-                itemScope.registerItem(k8sNetworkPolicy);
+        var appScopes = namespaceScope.findAppScopesByLabels(appSelector);
+        for(var appScope of appScopes)
+        {
+            var container = appScope.item.fetchByNaming("netpols", "NetworkPolicies");
 
-                var ingressTrafficTable = {
-                    headers: [
-                        {
-                            id: 'dn',
-                            label: 'Application',
-                            kind: 'shortcut'
-                        },
-                        "ports"
-                    ],
-                    rows: []
-                }
+            var k8sNetworkPolicy = createK8sItem(container, 
+                { });
+            itemScope.registerItem(k8sNetworkPolicy);
 
-                var ingressConfig = _.get(itemScope.config, 'spec.ingress');
+            processRules(k8sNetworkPolicy, 
+                'Ingress',
+                'spec.ingress',
+                'from');
+            
+            processRules(k8sNetworkPolicy, 
+                'Egress',
+                'spec.egress',
+                'to');
+        }
 
-                if (ingressConfig)
-                {
-                    for(var ingressItem of ingressConfig)
+        itemScope.addProperties(policyProperties);
+
+        ///
+
+        function processRules(k8sNetworkPolicy, policyType, specPath, rulesPath)
+        {
+            if (!_.includes(policyTypes, policyType)) {
+                return;
+            }
+
+            var trafficTable = {
+                headers: [
                     {
-                        var portsInfo = "*";
-                        if (ingressItem.ports)
-                        {
-                            portsInfo = ingressItem.ports.map(x => {
-                                var items = [x.port, x.name, x.protocol];
-                                items = _.filter(items, x => _.isNotNullOrUndefined(x));
-                                return items.join('/');
-                            })
-                            .join(', ');
-                        }
+                        id: 'dn',
+                        label: 'Application',
+                        kind: 'shortcut'
+                    },
+                    "ports"
+                ],
+                rows: []
+            }
 
-                        if (ingressItem.from)
+            var policyConfig = _.get(itemScope.config, specPath);
+            if (policyConfig)
+            {
+                for(var policyItem of policyConfig)
+                {
+                    var portsInfo = "*";
+                    if (policyItem.ports)
+                    {
+                        portsInfo = policyItem.ports.map(x => {
+                            var items = [x.port, x.name, x.protocol];
+                            items = _.filter(items, x => _.isNotNullOrUndefined(x));
+                            return items.join('/');
+                        })
+                        .join(', ');
+                    }
+
+                    let rules = _.get(policyItem, rulesPath);
+                    if (rules)
+                    {
+                        for(var rule of rules)
                         {
-                            for(var fromItem of ingressItem.from)
+                            let ipBlock = _.get(rule, 'ipBlock');
+                            if (ipBlock)
                             {
-                                var labelsConfig = _.get(fromItem, 'podSelector.matchLabels');
-                                // logger.error("ZZZZZ fromApp Labels: ", labelsConfig);
-                                if (labelsConfig)
+
+                            }
+                            else
+                            {
+                                var podSelectorLabels = _.get(rule, 'podSelector.matchLabels');
+                                if (!podSelectorLabels)
                                 {
-                                    var fromAppScopes = namespaceScope.findAppScopesByLabels(labelsConfig);
+                                    podSelectorLabels = {};
+                                }
+    
+                                let targetNamespaceScopes = [namespaceScope];
+                                let namespaceSelectorLabels = _.get(rule, 'namespaceSelector.matchLabels');
+                                if (namespaceSelectorLabels)
+                                {
+                                    targetNamespaceScopes = scope.findNamespaceScopesByLabels(namespaceSelectorLabels);
+                                }
+    
+                                for(let targetNamespaceScope of targetNamespaceScopes)
+                                {
+                                    var fromAppScopes = targetNamespaceScope.findAppScopesByLabels(podSelectorLabels);
                                     for(var fromAppScope of fromAppScopes)
                                     {
-                                        ingressTrafficTable.rows.push({
+                                        trafficTable.rows.push({
                                             dn: fromAppScope.item.dn,
                                             ports: portsInfo
                                         })
                                     }
-                                    // logger.error("ZZZZZ fromAppScopes: ", fromAppScopes.map(x => x.name));
                                 }
                             }
+                            
                         }
                     }
                 }
-                // if (fromList)
-                // {
-                //     for(var from of fromList)
-                //     {
-                //         var fromAppScopes = namespaceScope.findAppScopesByLabels(appSelector);
-                //         {
-
-                //         }
-                //     }
-                // }
-
-                k8sNetworkPolicy.addProperties({
-                    kind: "table",
-                    id: "ingress-traffic",
-                    title: "Ingress Traffic",
-                    order: 8,
-                    config: ingressTrafficTable
-                });
-
             }
-        }
 
+            k8sNetworkPolicy.addProperties({
+                kind: "table",
+                id: `${policyType.toLowerCase()}-traffic`,
+                title: `${policyType} Traffic Allowed`,
+                order: 8,
+                config: trafficTable
+            });
+
+        }
     }
 }
