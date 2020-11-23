@@ -186,7 +186,7 @@ module.exports = {
                 });
             }
 
-            if ((trafficTable.rows.length + cidrTrafficTable.rows.length) > 0) {
+            if ((trafficTable.rows.length + cidrTrafficTable.rows.length) == 0) {
                 policyProperties[policyType + ' Blocked'] = true;
             }
         }
