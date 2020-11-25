@@ -13,4 +13,9 @@ kubectl get pvc --all-namespaces -o yaml > data-role-pvc.yaml
 kubectl get pv --all-namespaces -o yaml > data-role-pv.yaml
 kubectl get nodes -o yaml > data-node.yaml
 kubectl get PodSecurityPolicy -o yaml > data-pod-security-policy.yaml
+
+kubectl get NetworkPolicy --all-namespaces -o yaml > mock/data/data-network-policy.yaml
+kubectl get NetworkPolicy --all-namespaces -o yaml > mock/data-big/data-network-policy.yaml
+kubectl get deployment -n net-policy-sample -o yaml > mock/data/data-deployment-net-policy-sample.yaml
+kubectl get deployment -n net-policy-sample -o yaml > mock/data-big/data-deployment-net-policy-sample.yaml
 ```

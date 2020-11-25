@@ -2,6 +2,7 @@ const _ = require('the-lodash');
 const InfraScope = require('./infra');
 const NamespaceScope = require('./namespace');
 const LogicItem = require('../item');
+const LabelMatcher = require('./label-matcher');
 
 class LogicScope
 {
@@ -16,6 +17,8 @@ class LogicScope
 
         this._namespaceScopes = {};
         this._infraScope = new InfraScope(this);
+
+        this._namespaceLabelMatcher = new LabelMatcher();
     }
 
     get logger() {
@@ -72,6 +75,17 @@ class LogicScope
 
     getNamespaceScopes() {
         return _.values(this._namespaceScopes);
+    }
+    
+    registerNamespaceLabels(name, labelsMap)
+    {
+        let namespaceScope = this.getNamespaceScope(name);
+        this._namespaceLabelMatcher.register(labelsMap, namespaceScope);
+    }
+
+    findNamespaceScopesByLabels(selector)
+    {
+        return this._namespaceLabelMatcher.match(selector);
     }
 
     setK8sConfig(logicItem, config)

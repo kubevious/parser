@@ -1,6 +1,7 @@
 const _ = require('the-lodash');
 const ItemsScope = require('./items');
 const AppScope = require('./app');
+const LabelMatcher = require('./label-matcher');
 
 class NamespaceScope
 {
@@ -16,7 +17,7 @@ class NamespaceScope
 
         this._items = new ItemsScope(this);
 
-        this.appLabels = [];
+        this._appLabelMatcher = new LabelMatcher();
         this.appControllers = {};
         this.appOwners = {};
     }
@@ -83,28 +84,15 @@ class NamespaceScope
         return this.appOwners[kind][name];
     }
 
+    registerAppScopeLabels(appScope, labelsMap)
+    {
+        this._appLabelMatcher.register(labelsMap, appScope);
+    }
+
     findAppScopesByLabels(selector)
     {
-        var result = [];
-        for(var appLabelInfo of this.appLabels)
-        {
-            if (labelsMatch(appLabelInfo.labels, selector))
-            {
-                result.push(appLabelInfo.appScope);
-            }
-        }
-        return result;
+        return this._appLabelMatcher.match(selector);
     }
-}
-
-function labelsMatch(labels, selector)
-{
-    for(var key of _.keys(selector)) {
-        if (selector[key] != labels[key]) {
-            return false;
-        }
-    }
-    return true;
 }
 
 module.exports = NamespaceScope;
