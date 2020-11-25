@@ -7,11 +7,9 @@ module.exports = {
         path: ["ns", "app", "netpols"]
     },
 
-    order: 111,
+    order: 112,
 
     kind: "netpols",
-
-    // needNamespaceScope: true,
 
     handler: ({logger, scope, item, itemScope, createK8sItem}) =>
     {
@@ -75,6 +73,15 @@ module.exports = {
 
             for(let child of item.getChildren())
             {
+                let childProperties = child.getProperties('properties');
+                if (childProperties)
+                {
+                    if (childProperties.config[direction])
+                    {
+                        properties[direction] = true;
+                    }
+                }
+
                 let childTrafficTable = child.getProperties(`${direction.toLowerCase()}-app`);
                 if (childTrafficTable)
                 {
@@ -118,6 +125,12 @@ module.exports = {
                 });
             }
 
+            if (properties[direction])
+            {
+                if ((trafficTable.rows.length + cidrTrafficTable.rows.length) == 0) {
+                    properties[direction + ' Blocked'] = true;
+                }
+            }
         }
 
     }

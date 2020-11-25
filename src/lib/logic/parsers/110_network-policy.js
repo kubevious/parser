@@ -12,8 +12,6 @@ module.exports = {
 
     kind: "netpol",
 
-    // needNamespaceScope: true,
-
     handler: ({logger, scope, itemScope, createK8sItem}) =>
     {
         namespaceScope = itemScope.parent;
@@ -41,6 +39,7 @@ module.exports = {
             var k8sNetworkPolicy = createK8sItem(container, 
                 { });
             itemScope.registerItem(k8sNetworkPolicy);
+            itemScope.markUsedBy(k8sNetworkPolicy);
 
             processRules(k8sNetworkPolicy, 
                 'Ingress',
