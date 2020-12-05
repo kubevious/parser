@@ -3,12 +3,13 @@ MY_PATH="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/$(basename "${BASH_SOURCE
 MY_DIR="$(dirname $MY_PATH)"
 cd $MY_DIR
 
-cd mock
-rm -rf node_modules/
-npm install
-cd ..
+# cd mock
+# rm -rf node_modules/
+# npm install
+# cd ..
 
-cd src
+# cd src
 rm -rf node_modules/
-npm install
-npm update kubevious-helpers k8s-super-client the-lodash the-logger the-promise @kubevious/worldvious-client
+npm install --ignore-scripts
+npm install --only=dev --ignore-scripts
+npm update kubevious-helpers k8s-super-client the-lodash the-logger the-promise @kubevious/worldvious-client @kubevious/helper-backend

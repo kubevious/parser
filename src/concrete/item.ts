@@ -1,8 +1,15 @@
-const _ = require('the-lodash');
+import _ from 'the-lodash';
+import { ILogger, DumpWriter } from 'the-logger';
+import { ConcreteRegistry } from './registry';
 
-class ConcreteItem
+export class ConcreteItem
 {
-    constructor(registry, id, config)
+    private _registry : ConcreteRegistry;
+    private _id : Record<string, any>;
+    private _config : any;
+    private _groupKey : string;
+
+    constructor(registry: ConcreteRegistry, id: Record<string, any>, config : any)
     {
         this._registry = registry;
         this._id = id;
@@ -10,47 +17,52 @@ class ConcreteItem
         this._groupKey = `${id.api}:${id.kind}`;
     }
 
-    get logger() {
+    get logger() : ILogger {
         return this._registry.logger;
     }
 
-    get registry() {
+    get registry() : ConcreteRegistry{
         return this._registry;
     }
     
-    get id() {
+    get id() : Record<string, any>{
         return this._id;
     }
     
-    get groupKey() {
+    get groupKey() : string {
         return this._groupKey;
     }
     
-    get config() {
+    get config() : any {
         return this._config;
     }
 
-    matchesFilter(idFilter)
+    matchesFilter(idFilter? : Record<string, any>) : boolean
     {
-        if (!_.isObject(this.id)) {
+        if (!this.id) {
             return false;
         }
+        // if (!_.isObject(this.id)) {
+        //     return false;
+        // }
         if (!idFilter) {
             return true;
         }
-        if (!_.isObject(idFilter)) {
-            return false;
-        }
-        for(var key of _.keys(idFilter)) {
-            var val = idFilter[key];
-            if (!_.isEqual(val, this.id[key])) {
+        // TODO: VALIDATE THIS!
+        // if (!_.isObject(idFilter)) {
+        //     return false;
+        // }
+        for(let key of _.keys(idFilter!)) {
+            let filterVal = idFilter[key];
+            let idVal = this.id[key];
+            if (!_.isEqual(filterVal, idVal)) {
                 return false;
             }
         }
         return true;
     }
 
-    debugOutputToFile(writer)
+    debugOutputToFile(writer : DumpWriter)
     {
         writer.indent();
 
@@ -71,7 +83,7 @@ class ConcreteItem
     }
 
     dump() {
-        var result = {
+        var result : Record<any, any> = {
             id: this.id
         }
         if (this.config) {
@@ -80,5 +92,3 @@ class ConcreteItem
         return result;
     }
 }
-
-module.exports = ConcreteItem;

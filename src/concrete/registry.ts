@@ -1,25 +1,35 @@
-const Promise = require('the-promise');
-const _ = require('the-lodash');
+import { ILogger } from 'the-logger';
+import { Promise } from 'the-promise';
+import _ from 'the-lodash';
+
+import { Context } from '../context';
+
 const EventDampener = require('kubevious-helpers').EventDampener;
 const ConcreteItem = require('./item');
 
-class ConcreteRegistry
+export class ConcreteRegistry
 {
-    constructor(context)
-    {
-        this._context = context;
-        this._logger = context.logger.sublogger("ConcreteRegistry");
-        this._flatItemsDict = {};
-        this._itemsKindDict = {};
+    private _context : Context;
+    private _logger : ILogger;
 
-        this._changeEvent = new EventDampener(this._logger);
+    private _flatItemsDict : Record<any, any> = {};
+    private _itemsKindDict : Record<any, any> = {};
+
+    private _changeEvent : any;
+
+    constructor(context : Context)
+    {
+        this._logger = context.logger.sublogger("ConcreteRegistry");
+        this._context = context;
+
+        this._changeEvent = new EventDampener(this.logger);
 
         this.onChanged(() => {
             return this.debugOutputToFile();
         })
     }
 
-    get logger() {
+    get logger() : ILogger {
         return this._logger;
     }
 
@@ -34,12 +44,12 @@ class ConcreteRegistry
         this._triggerChange();
     }
 
-    add(id, obj)
+    add(id: any, obj: any)
     {
         this.logger.verbose("[add] ", id);
 
-        var rawId = this._makeDictId(id);
-        var item = new ConcreteItem(this, id, obj);
+        let rawId = this._makeDictId(id);
+        let item = new ConcreteItem(this, id, obj);
 
         this._flatItemsDict[rawId] = item;
 
@@ -51,16 +61,16 @@ class ConcreteRegistry
         this._triggerChange();
     }
 
-    remove(id)
+    remove(id: any)
     {
         this.logger.verbose("[remove] %s", id);
 
-        var rawId = this._makeDictId(id);
+        let rawId = this._makeDictId(id);
 
-        var item = this._flatItemsDict[rawId];
+        let item = this._flatItemsDict[rawId];
         if (item) {
             delete this._itemsKindDict[item.groupKey][rawId];
-            if (!_.keys(this._itemsKindDict[item.groupKey]).length == 0)
+            if (_.keys(this._itemsKindDict[item.groupKey]).length !== 0)
             {
                 delete this._itemsKindDict[item.groupKey];
             }
@@ -77,19 +87,19 @@ class ConcreteRegistry
         this._changeEvent.trigger();
     }
 
-    findById(id)
+    findById(id: any)
     {
-        var rawId = this._makeDictId(id);
-        var item = this._flatItemsDict[rawId];
+        let rawId = this._makeDictId(id);
+        let item = this._flatItemsDict[rawId];
         if (item) {
             return item;
         }
         return null;
     }
 
-    filterItems(idFilter) {
-        var result = [];
-        for(var item of this.allItems) {
+    filterItems(idFilter: any) {
+        let result = [];
+        for(let item of this.allItems) {
             if (item.matchesFilter(idFilter)) {
                 result.push(item);
             }
@@ -97,22 +107,22 @@ class ConcreteRegistry
         return result;
     }
 
-    _makeDictId(id) {
+    _makeDictId(id: any) {
         if (_.isString(id)) {
             return id;
         }
         return _.stableStringify(id);
     }
 
-    onChanged(cb)
+    onChanged(cb: any)
     {
         return this._changeEvent.on(cb);
     }
     
     extractCapacity()
     {
-        var cap = [];
-        for(var groupKey of _.keys(this._itemsKindDict))
+        let cap = [];
+        for(let groupKey of _.keys(this._itemsKindDict))
         {
             cap.push({
                 name: groupKey,
@@ -142,29 +152,29 @@ class ConcreteRegistry
 
     debugOutputToFile()
     {
-        var writer = this.logger.outputStream("dump-concrete-registry");
+        let writer = this.logger.outputStream("dump-concrete-registry");
         if (!writer) {
             return Promise.resolve();
         }
 
         this.logger.info("[debugOutputToFile] BEGIN");
 
-        var ids = _.keys(this._flatItemsDict);
+        let ids = _.keys(this._flatItemsDict);
         ids.sort();
-        for(var id of ids) {
+        for(let id of ids) {
             writer.write('-) ' + id);
-            var item = this._flatItemsDict[id];
+            let item = this._flatItemsDict[id];
             item.debugOutputToFile(writer);
-            writer.write();
+            writer.newLine();
         }
 
-        writer.write();
-        writer.write();
+        writer.newLine();
+        writer.newLine();
         writer.write("******************************************");
         writer.write("******************************************");
         writer.write("******************************************");
-        writer.write();
-        writer.write();
+        writer.newLine();
+        writer.newLine();
 
         return Promise.resolve(writer.close())
             .then(() => {
@@ -173,15 +183,13 @@ class ConcreteRegistry
     }
 
     dump() {
-        var result = {};
-        var ids = _.keys(this._flatItemsDict);
+        let result : Record<any, any> = {};
+        let ids = _.keys(this._flatItemsDict);
         ids.sort();
-        for(var id of ids) {
-            var item = this._flatItemsDict[id];
+        for(let id of ids) {
+            let item = this._flatItemsDict[id];
             result[id] = item.dump();
         }
         return result;
     }
 }
-
-module.exports = ConcreteRegistry;

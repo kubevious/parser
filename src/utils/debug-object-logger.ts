@@ -1,13 +1,17 @@
-const _ = require('the-lodash');
+import _ from 'the-lodash';
+import { ILogger } from 'the-logger';
+import { Context } from '../context';
 
-class DebugObjectLogger
+export class DebugObjectLogger
 {
-    constructor(context)
+    private _logger : ILogger;
+    
+    constructor(context : Context)
     {
         this._logger = context.logger;
     }
 
-    dump(name, iteration, obj)
+    dump(name: string, iteration: number, obj: any)
     {
         try
         {
@@ -31,5 +35,3 @@ class DebugObjectLogger
         }
     }
 }
-
-module.exports = DebugObjectLogger;

@@ -1,29 +1,45 @@
-process.stdin.resume();
-process.on('SIGINT', () => {
-  console.log('Received SIGINT. Press Control-D to exit.');
-  process.exit(0);
-});
+import { ILogger } from 'the-logger';
+import { Promise } from 'the-promise';
 
-const Promise = require('the-promise');
+import { Backend, TimerFunction } from '@kubevious/helper-backend'
+
+import { ConcreteRegistry } from './concrete/registry';
+
+const ProcessingTracker = require("kubevious-helpers").ProcessingTracker;
+const { WorldviousClient } = require('@kubevious/worldvious-client');
 const K8sParser = require('./parsers/k8s');
-const ConcreteRegistry = require('./concrete/registry');
 const FacadeRegistry = require('./facade/registry');
 const LogicProcessor = require('./logic/processor');
 const Reporter = require('./reporting/reporter');
-const DebugObjectLogger = require('./utils/debug-object-logger');
-const ProcessingTracker = require("kubevious-helpers").ProcessingTracker;
-const { WorldviousClient } = require('@kubevious/worldvious-client');
+import { DebugObjectLogger } from './utils/debug-object-logger';
+const Server = require("./server");
 
-const VERSION = require('../version');
+import * as VERSION from './version'
 
-class Context
+export class Context
 {
-    constructor(logger)
-    {
-        this._logger = logger.sublogger("Context");
-        this._tracker = new ProcessingTracker(logger.sublogger("Tracker"));
+    private backend : Backend;
+    private _logger : ILogger;
+    private _tracker: any;
+    private _loaders: any[] = [];
+    private _concreteRegistry: ConcreteRegistry;
+    private _k8sParser: any;
+    private _logicProcessor: any;
+    private _reporter: any;
+    private _facadeRegistry: any;
+    private _debugObjectLogger: DebugObjectLogger;
+    private _worldvious: any;
+    private _server: any;
+    private _k8sClient: any;
+    private _areLoadersReady = false;
 
-        this._loaders = [];
+    constructor(backend : Backend)
+    {
+        this.backend = backend;
+        this._logger = backend.logger.sublogger('Context');
+
+        this._tracker = new ProcessingTracker(this.logger.sublogger("Tracker"));
+
         this._concreteRegistry = new ConcreteRegistry(this);
         this._k8sParser = new K8sParser(this);
         this._logicProcessor = new LogicProcessor(this);
@@ -32,16 +48,14 @@ class Context
         this._facadeRegistry = new FacadeRegistry(this);
 
         this._debugObjectLogger = new DebugObjectLogger(this);
-
-        this._worldvious = new WorldviousClient(logger, 'parser', VERSION);
-
-        this._areLoadersReady = false;
+        
+        this._worldvious = new WorldviousClient(this._logger, 'parser', VERSION);
 
         this._server = null;
         this._k8sClient = null;
     }
 
-    get logger() {
+    get logger() : ILogger {
         return this._logger;
     }
 
@@ -49,7 +63,7 @@ class Context
         return this._tracker;
     }
 
-    get concreteRegistry() {
+    get concreteRegistry() : ConcreteRegistry {
         return this._concreteRegistry;
     }
 
@@ -73,7 +87,7 @@ class Context
         return this._areLoadersReady;
     }
 
-    get debugObjectLogger() {
+    get debugObjectLogger() : DebugObjectLogger {
         return this._debugObjectLogger;
     }
 
@@ -81,12 +95,12 @@ class Context
         return this._worldvious;
     }
 
-    addLoader(loader)
+    addLoader(loader : any)
     {
         var loaderInfo = {
             loader: loader,
             isReady: false,
-            readyHandler: (value) => {
+            readyHandler: (value : any) => {
                 loaderInfo.isReady = value;
                 this._logger.debug("[readyHandler] %s", value);
                 this._checkLoadersReady();
@@ -98,11 +112,10 @@ class Context
 
     setupServer()
     {
-        const Server = require("./server");
         this._server = new Server(this);
     }
 
-    setupK8sClient(client)
+    setupK8sClient(client : any)
     {
         this._k8sClient = client;
     }
@@ -137,7 +150,7 @@ class Context
             this.tracker.enablePeriodicDebugOutput(30);
         }
 
-        this.tracker.registerListener(extractedData => {
+        this.tracker.registerListener((extractedData : any) => {
             this._worldvious.acceptMetrics(extractedData);
         })
     }
@@ -184,4 +197,4 @@ class Context
     }
 }
 
-module.exports = Context;
+module.exports.Context = Context;
