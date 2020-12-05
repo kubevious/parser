@@ -1,20 +1,26 @@
-const Promise = require('the-promise');
-const _ = require('the-lodash');
+import _ from 'the-lodash';
+import { ILogger } from 'the-logger';
 
-class K8sParser
+import { Context } from '../context';
+
+import { ApiGroup, API_GROUPS } from './api-groups'
+
+export class K8sParser
 {
-    constructor(context)
+    private _context : Context;
+    private _logger : ILogger;
+
+    constructor(context : Context)
     {
         this._context = context;
         this._logger = context.logger.sublogger("K8sParser");
-        this._groups = require("./api-groups.js");
     }
 
-    getAPIGroups() {
-        return _.cloneDeep(this._groups);
+    getAPIGroups() : ApiGroup[] {
+        return _.cloneDeep(API_GROUPS);
     }
 
-    parse(isPresent, obj)
+    parse(isPresent: boolean, obj: any)
     {
         var id = this._extractId(obj);
 
@@ -25,9 +31,9 @@ class K8sParser
         }
     }
 
-    _extractId(obj)
+    _extractId(obj: any)
     {
-        var id = {};
+        let id : Record<any, any> = {};
         id.infra = "k8s";
         id.api = obj.apiVersion.split('/')[0];
         id.kind = obj.kind;
@@ -39,5 +45,3 @@ class K8sParser
     }
 
 }
-
-module.exports = K8sParser;

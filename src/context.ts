@@ -5,14 +5,15 @@ import { Backend, TimerFunction } from '@kubevious/helper-backend'
 
 import { ConcreteRegistry } from './concrete/registry';
 
+import { K8sParser } from './parsers/k8s';
+import { FacadeRegistry } from './facade/registry';
+
 const ProcessingTracker = require("kubevious-helpers").ProcessingTracker;
 const { WorldviousClient } = require('@kubevious/worldvious-client');
-const K8sParser = require('./parsers/k8s');
-const FacadeRegistry = require('./facade/registry');
 const LogicProcessor = require('./logic/processor');
 const Reporter = require('./reporting/reporter');
 import { DebugObjectLogger } from './utils/debug-object-logger';
-const Server = require("./server");
+import { WebServer } from './server';
 
 import * as VERSION from './version'
 
@@ -23,13 +24,13 @@ export class Context
     private _tracker: any;
     private _loaders: any[] = [];
     private _concreteRegistry: ConcreteRegistry;
-    private _k8sParser: any;
+    private _k8sParser: K8sParser;
     private _logicProcessor: any;
     private _reporter: any;
-    private _facadeRegistry: any;
+    private _facadeRegistry: FacadeRegistry;
     private _debugObjectLogger: DebugObjectLogger;
     private _worldvious: any;
-    private _server: any;
+    private _server: WebServer;
     private _k8sClient: any;
     private _areLoadersReady = false;
 
@@ -51,7 +52,8 @@ export class Context
         
         this._worldvious = new WorldviousClient(this._logger, 'parser', VERSION);
 
-        this._server = null;
+        this._server = new WebServer(this);
+
         this._k8sClient = null;
     }
 
@@ -67,11 +69,11 @@ export class Context
         return this._concreteRegistry;
     }
 
-    get facadeRegistry() {
+    get facadeRegistry() : FacadeRegistry {
         return this._facadeRegistry;
     }
 
-    get k8sParser() {
+    get k8sParser() : K8sParser {
         return this._k8sParser;
     }
 
@@ -83,7 +85,7 @@ export class Context
         return this._reporter;
     }
 
-    get areLoadersReady() {
+    get areLoadersReady() : boolean {
         return this._areLoadersReady;
     }
 
@@ -110,11 +112,6 @@ export class Context
         this._loaders.push(loaderInfo);
     }
 
-    setupServer()
-    {
-        this._server = new Server(this);
-    }
-
     setupK8sClient(client : any)
     {
         this._k8sClient = client;
@@ -127,7 +124,7 @@ export class Context
         return Promise.resolve()
             .then(() => this._worldvious.init())
             .then(() => this._processLoaders())
-            .then(() => this._runServer())
+            .then(() => this._server.run())
             .catch(reason => {
                 console.log("***** ERROR *****");
                 console.log(reason);
@@ -185,15 +182,6 @@ export class Context
             }
         }
         return true;
-    }
-
-    _runServer()
-    {
-        if (!this._server) {
-            return;
-        }
-
-        this._server.run()
     }
 }
 

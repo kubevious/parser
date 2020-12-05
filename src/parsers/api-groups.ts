@@ -1,4 +1,9 @@
-module.exports = [
+export interface ApiGroup {
+    api: string | null,
+    kinds: string[]
+};
+
+export const API_GROUPS : ApiGroup[] = [
     {
         api: null,
         kinds: [
@@ -61,4 +66,6 @@ module.exports = [
             "NetworkPolicy"
         ]
     }
-]
+];
+
+// export const API_GROUPS;

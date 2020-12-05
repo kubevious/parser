@@ -1,13 +1,23 @@
-const Promise = require('the-promise');
-const _ = require('the-lodash');
+import _ from 'the-lodash';
+import { Promise } from 'the-promise';
+import { ILogger } from 'the-logger';
+
+import { Context } from '../context';
+
 const JobDampener = require('../utils/job-dampener');
 
-class FacadeRegistry
+export class FacadeRegistry
 {
-    constructor(context)
+    private _context : Context;
+    private _logger : ILogger;
+
+    private _jobDampener : any;
+
+    constructor(context : Context)
     {
         this._context = context;
         this._logger = context.logger.sublogger("FacadeRegistry");
+
         this._jobDampener = new JobDampener(this._logger.sublogger("FacadeDampener"), this._processItems.bind(this));
 
         this._context.concreteRegistry.onChanged(this._handleConcreteRegistryChange.bind(this));
@@ -17,13 +27,13 @@ class FacadeRegistry
         return this._logger;
     }
 
-    acceptLogicItems(items)
+    acceptLogicItems(items: any)
     {
         this._logger.info("[acceptLogicItems] item count: %s", items.length);
         this._jobDampener.acceptJob(new Date(), items);
     }
 
-    _processItems(date, items)
+    _processItems(date: any, items: any)
     {
         this._logger.info("[_processItems] Date: %s. item count: %s", date.toISOString(), items.length);
         return this._context.reporter.acceptLogicItems(date, items);
@@ -50,5 +60,3 @@ class FacadeRegistry
         this._handleConcreteRegistryChange();
     }
 }
-
-module.exports = FacadeRegistry;

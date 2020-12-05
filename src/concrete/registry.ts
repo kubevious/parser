@@ -1,6 +1,6 @@
-import { ILogger } from 'the-logger';
-import { Promise } from 'the-promise';
 import _ from 'the-lodash';
+import { Promise } from 'the-promise';
+import { ILogger } from 'the-logger';
 
 import { Context } from '../context';
 
@@ -118,7 +118,7 @@ export class ConcreteRegistry
     {
         return this._changeEvent.on(cb);
     }
-    
+
     extractCapacity()
     {
         let cap = [];
