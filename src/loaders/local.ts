@@ -1,24 +1,35 @@
-const Promise = require('the-promise');
-const fs = require('fs');
-const K8sClient = require('k8s-super-client');
-const K8sLoader = require('./k8s');
+import { Promise } from 'the-promise';
+import { ILogger } from 'the-logger';
 
-class LocalLoader 
+import { Context } from '../context';
+
+import { K8sLoader, ReadyHandler } from './k8s';
+
+import * as fs from 'fs';
+
+const K8sClient = require('k8s-super-client');
+
+export class LocalLoader 
 {
-    constructor(context)
+    private _context : Context;
+    private _logger : ILogger;
+
+    private _loader : any;
+    private _readyHandler? : ReadyHandler;
+
+    constructor(context  : Context)
     {
         this._context = context;
         this._logger = context.logger.sublogger("LocalLoader");
-        this._loader = null;
-
+        
         this.logger.info("Constructed");
     }
 
-    get logger() {
+    get logger() : ILogger {
         return this._logger;
     }
 
-    setupReadyHandler(handler)
+    setupReadyHandler(handler : ReadyHandler)
     {
         this._readyHandler = handler;
         if (this._loader) {
@@ -26,9 +37,9 @@ class LocalLoader
         }
     }
     
-    run()
+    run() : Promise<any>
     {
-        var k8sConfig = {
+        let k8sConfig = {
             server: 'https://' + process.env.KUBERNETES_SERVICE_HOST + ':' + process.env.KUBERNETES_SERVICE_PORT_HTTPS,
             token: fs.readFileSync('/var/run/secrets/kubernetes.io/serviceaccount/token', 'utf8'),
             httpAgent: {
@@ -38,7 +49,7 @@ class LocalLoader
 
         return Promise.resolve(K8sClient.connect(this._logger, k8sConfig))
             .then(client => {
-                var info = {
+                let info = {
                     infra: "local"
                 }
                 this._loader = new K8sLoader(this._context, client, info);
@@ -47,5 +58,3 @@ class LocalLoader
             })
     }
 }
-
-module.exports = LocalLoader;

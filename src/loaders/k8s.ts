@@ -1,16 +1,31 @@
-const Promise = require('the-promise');
-const _ = require('the-lodash');
-const moment = require('moment');
+import _ from 'the-lodash';
+import { Promise } from 'the-promise';
+import { ILogger } from 'the-logger';
 
-class K8sLoader 
+import { Context } from '../context';
+
+import moment from 'moment';
+
+export type ReadyHandler = (isReady : boolean) => void;
+
+
+export class K8sLoader 
 {
-    constructor(context, client, info)
+    private _context : Context;
+    private _logger : ILogger;
+
+    private _client : any;
+    private _info : any;
+    private _apiTargets : Record<string, any> = {};
+    private _readyHandler? : ReadyHandler;
+
+    constructor(context : Context, client : any, info : any)
     {
+        this._logger = context.logger.sublogger("ConcreteRegistry");
         this._context = context;
-        this._logger = context.logger.sublogger("K8sLoader");
+
         this._client = client;
         this._info = info;
-        this._apiTargets = {};
 
         this._context.setupK8sClient(client);
 
@@ -32,9 +47,9 @@ class K8sLoader
     
     _setupApiTargets()
     {
-        for(var targetAccessor of this._getTargets())
+        for(let targetAccessor of this._getTargets())
         {
-            var targetInfo = {
+            let targetInfo = {
                 id: [targetAccessor.apiName, targetAccessor.kindName].join('-'),
                 accessor: targetAccessor,
                 allFetched: false,
@@ -45,18 +60,18 @@ class K8sLoader
         }
     }
 
-    setupReadyHandler(handler)
+    setupReadyHandler(handler : ReadyHandler)
     {
         this._readyHandler = handler;
         this._reportReady();
     }
 
-    _getTargets() {
-        var groups = this._context.k8sParser.getAPIGroups();
-        var targetInfos = [];
-        for(var group of groups)
+    _getTargets() : any[] {
+        let groups = this._context.k8sParser.getAPIGroups();
+        let targetInfos : { api: string | null, kind : string}[] = [];
+        for(let group of groups)
         {
-            for(var kind of group.kinds)
+            for(let kind of group.kinds)
             {
                 targetInfos.push({
                     api: group.api,
@@ -66,7 +81,7 @@ class K8sLoader
         }
         this.logger.info("Targets: ", targetInfos);
 
-        var targets = targetInfos.map(x => {
+        let targets = targetInfos.map(x => {
             return this._client.client(x.kind, x.api);
         });
 
@@ -75,7 +90,7 @@ class K8sLoader
         return targets;
     }
 
-    run()
+    run() : Promise<any>
     {
         setInterval(() => {
             this._reportReady()
@@ -86,14 +101,14 @@ class K8sLoader
         })
     }
 
-    _watch(targetInfo)
+    _watch(targetInfo : any)
     {
         this.logger.info("Watching %s...", targetInfo.id);
-        return targetInfo.accessor.watchAll(null, (action, obj) => {
+        return targetInfo.accessor.watchAll(null, (action : string, obj : any) => {
             this._logger.verbose("[_watch] %s ::: %s %s", targetInfo.id, action, obj.kind);
             this._logger.verbose("%s %s", action, obj.kind);
             this._logger.silly("%s %s :: ", action, obj.kind, obj);
-            var isPresent = this._parseAction(action);
+            let isPresent = this._parseAction(action);
 
             // this._debugSaveToMock(isPresent, obj);
             this._handle(isPresent, obj);
@@ -101,7 +116,7 @@ class K8sLoader
             this._logger.info("[_watch] Connected: %s", targetInfo.id);
             targetInfo.connectDate = new Date();
             this._reportReady();
-        }, (resourceAccessor, data) => {
+        }, (resourceAccessor : any, data: any) => {
             this._logger.info("[_watch] Disconnected: %s", targetInfo.id);
             targetInfo.connectDate = null;
             if (data.status) {
@@ -111,7 +126,7 @@ class K8sLoader
         });
     }
 
-    _isTargetReady(targetInfo)
+    _isTargetReady(targetInfo : any) : boolean
     {
         this.logger.verbose("[_isTargetReady] %s", targetInfo.id);
 
@@ -126,10 +141,10 @@ class K8sLoader
         }
 
         this.logger.silly("[_isTargetReady] %s, date: %s", targetInfo.id, targetInfo.connectDate);
-        var now = moment(new Date());
-        var connectDate = moment(targetInfo.connectDate);
-        var duration = moment.duration(now.diff(connectDate));
-        var seconds = duration.asSeconds();
+        let now = moment(new Date());
+        let connectDate = moment(targetInfo.connectDate);
+        let duration = moment.duration(now.diff(connectDate));
+        let seconds = duration.asSeconds();
         this.logger.silly("[_isTargetReady] %s, seconds: %s", targetInfo.id, seconds);
 
         if (seconds > 5) {
@@ -142,11 +157,11 @@ class K8sLoader
         return false;
     }
 
-    _isReady()
+    _isReady() : boolean
     {
-        for(var targetInfo of _.values(this._apiTargets))
+        for(let targetInfo of _.values(this._apiTargets))
         {
-            var isReady = this._isTargetReady(targetInfo);
+            let isReady = this._isTargetReady(targetInfo);
             if (!isReady)
             {
                 return false;
@@ -155,21 +170,21 @@ class K8sLoader
         return true;
     }
 
-    _reportReady()
+    _reportReady() : void
     {
         if (!this._readyHandler) {
             return;
         }
-        this._readyHandler(this._isReady());
+        this._readyHandler!(this._isReady());
     }
 
-    _handle(isPresent, obj)
+    _handle(isPresent: boolean, obj: any) : void
     {
         this._logger.verbose("Handle: %s, present: %s", obj.kind, isPresent);
         this._context.k8sParser.parse(isPresent, obj);
     }
 
-    _parseAction(action)
+    _parseAction(action: string) : boolean
     {
         if (action == 'ADDED' || action == 'MODIFIED') {
             return true;
@@ -180,16 +195,16 @@ class K8sLoader
         return false;
     }
     
-    _debugSaveToMock(isPresent, obj)
+    _debugSaveToMock(isPresent: boolean, obj : any)
     {
         const Path = require('path');
         const fs = require('fs');
 
         if (isPresent) {
 
-            var parts = [obj.apiVersion, obj.kind, obj.namespace, obj.metadata.name];
+            let parts = [obj.apiVersion, obj.kind, obj.namespace, obj.metadata.name];
             parts = parts.filter(x => x);
-            var fileName =  parts.join('-');
+            let fileName =  parts.join('-');
             fileName = fileName.replace(/\./g, "-");
             fileName = fileName.replace(/\//g, "-");
             fileName = fileName.replace(/\\/g, "-");
@@ -201,5 +216,3 @@ class K8sLoader
     }
 
 }
-
-module.exports = K8sLoader;
