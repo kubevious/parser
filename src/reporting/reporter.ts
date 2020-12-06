@@ -1,11 +1,20 @@
-const Promise = require('the-promise');
-const _ = require('the-lodash');
-const Snapshot = require('./snapshot');
-const ReporterTarget = require('./target');
+import _ from 'the-lodash';
+import { Promise } from 'the-promise';
+import { ILogger } from 'the-logger';
 
-class SnapshotReporter
+import { Context } from '../context';
+
+import { Snapshot } from './snapshot'
+import { ReporterTarget } from './target'
+
+export class SnapshotReporter
 {
-    constructor(context)
+    private _context : Context;
+    private _logger : ILogger;
+
+    private _collectors : any[] = [];
+
+    constructor(context : Context)
     {
         this._context = context;
         this._logger = context.logger.sublogger("Reporter");
@@ -38,10 +47,12 @@ class SnapshotReporter
         this.logger.info("[_determineCollectors] Collectors: ", this._collectors);
     }
 
-    _loadCollector(urlEnvName)
+    _loadCollector(urlEnvName: string)
     {
         var collectorConfig = {
-            url: process.env[urlEnvName]
+            url: process.env[urlEnvName],
+            authUrl: <any>null,
+            keyPath: <any>null,
         }
         var authEnvName = urlEnvName + '_AUTH';
         var keyPathEnvName = urlEnvName + '_KEY_PATH';
@@ -54,7 +65,7 @@ class SnapshotReporter
         })
     }
 
-    acceptLogicItems(date, items)
+    acceptLogicItems(date: string, items: any[])
     {
         this._logger.info("[acceptLogicItems] item count: %s", items.length);
         var snapshot = this._transforItems(date, items);
@@ -67,7 +78,7 @@ class SnapshotReporter
         return Promise.serial(this._collectors, x => x.target.report(snapshot));
     }
 
-    _transforItems(date, items)
+    _transforItems(date: string, items: any[])
     {
         var snapshot = new Snapshot(date);
 
@@ -108,5 +119,3 @@ class SnapshotReporter
     }
 
 }
-
-module.exports = SnapshotReporter;

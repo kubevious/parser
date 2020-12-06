@@ -4,7 +4,7 @@ import { ILogger } from 'the-logger';
 
 import { Context } from '../context';
 
-const JobDampener = require('../utils/job-dampener');
+import { JobDampener } from '../utils/job-dampener';
 
 export class FacadeRegistry
 {

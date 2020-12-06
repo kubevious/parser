@@ -1,27 +1,35 @@
-const Promise = require('the-promise');
-const _ = require('the-lodash');
+import _ from 'the-lodash';
+import { Promise } from 'the-promise';
+import { ILogger } from 'the-logger';
+
 const DateUtils = require("kubevious-helpers").DateUtils;
 const HandledError = require('kubevious-helpers').HandledError;
 
-class JobDampener
+export type JobDampenerHandler = (date : any, data : any) => void;
+
+export class JobDampener
 {
-    constructor(logger, handler)
+    private _logger : ILogger;
+
+    private _handlerCb : JobDampenerHandler;
+
+    private _jobQueue : any[] = [];
+    private _isProcessing = false;
+    private _isScheduled = false;
+    private _queueSize = 5;
+    private _rescheduleTimeoutMs = 5000;
+
+    constructor(logger: ILogger, handler : JobDampenerHandler)
     {
         this._logger = logger;
-        this._jobQueue = [];
-        this._isProcessing = false;
-        this._isScheduled = false;
         this._handlerCb = handler;
-
-        this._queueSize = 5;
-        this._rescheduleTimeoutMs = 5000;
     }
 
     get logger() {
         return this._logger;
     }
 
-    acceptJob(date, data)
+    acceptJob(date : any, data : any)
     {
         this._jobQueue.push({ date: date, data: data});
         this._logger.info("[acceptJob] job date: %s. queue size: %s", date.toISOString(), this._jobQueue.length);
@@ -58,7 +66,7 @@ class JobDampener
         }
     }
 
-    _processJob(job)
+    _processJob(job: any)
     {
         this.logger.info("[_processJob] BEGIN. Date: %s", job.date.toISOString());
 
@@ -137,5 +145,3 @@ class JobDampener
     }
 
 }
-
-module.exports = JobDampener;

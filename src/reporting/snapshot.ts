@@ -1,15 +1,18 @@
-const _ = require('the-lodash');
+import _ from 'the-lodash';
+
 const crypto = require('crypto');
 
-class Snapshot
+export class Snapshot
 {
-    constructor(date)
+    private _date : any;
+    private _items : Record<string, any> = {};
+
+    constructor(date : any)
     {
         this._date = date;
-        this._items = {};
     }
 
-    get date() {
+    get date() : any {
         return this._date;
     }
 
@@ -25,28 +28,28 @@ class Snapshot
         return _.values(this._items);
     }
 
-    hasKey(id) {
+    hasKey(id : string) {
         if (this._items[id]) {
             return true;
         }
         return false;
     }
 
-    getById(id) {
-        var item = this._items[id];
+    getById(id: string) {
+        let item = this._items[id];
         if (item) {
             return item;
         }
         return null;
     }
 
-    setDate(date) {
+    setDate(date: any) {
         this._date = date;
     }
     
-    addItem(item)
+    addItem(item: any)
     {
-        var hash = this._makeHash(item);
+        let hash = this._makeHash(item);
         this._items[hash] = item;
     }
 
@@ -58,11 +61,11 @@ class Snapshot
         }))
     }
 
-    extractDiff(snapshot)
+    extractDiff(snapshot : Snapshot)
     {
-        var result = [];
+        let result = [];
 
-        for(var newKey of this.keys)
+        for(let newKey of this.keys)
         {
             if (!snapshot.hasKey(newKey))
             {
@@ -74,7 +77,7 @@ class Snapshot
             }
         }
 
-        for(var oldKey of snapshot.keys)
+        for(let oldKey of snapshot.keys)
         {
             if (!this.hasKey(oldKey))
             {
@@ -88,16 +91,14 @@ class Snapshot
         return result;
     }
 
-    _makeHash(item)
+    _makeHash(item: any)
     {
-        var str = _.stableStringify(item);
+        let str = _.stableStringify(item);
 
         const sha256 = crypto.createHash('sha256');
         sha256.update(str);
-        var value = sha256.digest('hex');
+        let value = sha256.digest('hex');
         return value;
     }
 
 }
-
-module.exports = Snapshot;
