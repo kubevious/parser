@@ -1,20 +1,28 @@
-const _ = require('the-lodash');
+import _ from 'the-lodash';
 
-class PropertiesBuilder
+import { LogicItem } from './item'
+
+export type PostBuildActionFunc = (props: Record<string, any>) => Record<string, any>;
+
+export class PropertiesBuilder
 {
-    constructor(item, postBuildAction)
+    private _item: LogicItem;
+    private _properties : Record<string, any> = {};
+    private _postBuildAction : PostBuildActionFunc;
+
+    constructor(item: LogicItem, postBuildAction: PostBuildActionFunc)
     {
         this._item = item;
         this._properties = {};
         this._postBuildAction = postBuildAction;
     }
 
-    fromConfig(name, valuePath, defaultValue)
+    fromConfig(name: string, valuePath: string, defaultValue?: any) : PropertiesBuilder
     {
         return this.fromObject(this._item.config, name, valuePath, defaultValue);
     }
 
-    fromObject(obj, name, valuePath, defaultValue)
+    fromObject(obj: any, name: string, valuePath: string, defaultValue?: any) : PropertiesBuilder
     {
         var value = _.get(obj, valuePath);
         if (_.isUndefined(value)) {
@@ -28,13 +36,13 @@ class PropertiesBuilder
         return this;
     }
 
-    add(name, value)
+    add(name: string, value: any) : PropertiesBuilder
     {
         this._properties[name] = value;
         return this;
     }
 
-    build()
+    build() : Record<string, any>
     {
         if (this._postBuildAction) {
             return this._postBuildAction(this._properties);
@@ -42,5 +50,3 @@ class PropertiesBuilder
         return this._properties;
     }
 }
-
-module.exports = PropertiesBuilder;

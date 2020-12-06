@@ -1,10 +1,31 @@
-const _ = require('the-lodash');
+import _ from 'the-lodash';
+
 const resourcesHelper = require("./helpers/resources");
 const DocsHelper = require("kubevious-helpers").Docs;
 
-class LogicItem
+import { DumpWriter } from 'the-logger';
+
+export class LogicItem
 {
-    constructor(logicScope, parent, kind, naming)
+    private _logicScope : any;
+    private _parent : any;
+    private _kind : string;
+    private _naming : any;
+
+    private _scope : any;
+    private _rn : any;
+    private _config : Record<string, any> = {};
+    private _order = 100;
+    private _children : Record<string, any> = {};
+    private _properties : Record<string, any> = {};
+    private _alerts : Record<string, any> = {};
+    private _flags : Record<string, any> = {};
+    private _usedBy : Record<string, any> = {};
+    private _dn : string;
+
+    private _namingArray : string[] = [];
+
+    constructor(logicScope: any, parent: any, kind: any, naming: any)
     {
         this._logicScope = logicScope;
         this._scope = null;
@@ -90,16 +111,16 @@ class LogicItem
         return this._scope;
     }
 
-    associateScope(scope) {
+    associateScope(scope: any) {
         this._scope = scope;
     }
 
-    setPropagatableFlag(name)
+    setPropagatableFlag(name: string)
     {
         return this.setFlag(name, { propagatable: true });
     }
 
-    setFlag(name, params)
+    setFlag(name: string, params: any)
     {
         if (params) {
             params = _.clone(params);
@@ -110,7 +131,7 @@ class LogicItem
         this._flags[name] = params;
     }
 
-    hasFlag(name)
+    hasFlag(name: string)
     {
         if (this._flags[name])
             return true;
@@ -122,12 +143,12 @@ class LogicItem
         return _.values(this._flags);
     }
 
-    setUsedBy(dn)
+    setUsedBy(dn: string)
     {
         this._usedBy[dn] = true;
     }
 
-    setConfig(value) 
+    setConfig(value: any) 
     {
         this._config = value;
     }    
@@ -136,7 +157,7 @@ class LogicItem
         return _.values(this._children);
     }
 
-    getChildrenByKind(kind) {
+    getChildrenByKind(kind: string) {
         return _.values(this._children).filter(x => x.kind == kind);
     }
 
@@ -149,13 +170,13 @@ class LogicItem
         this._parent = null;
     }
 
-    findByNaming(kind, naming)
+    findByNaming(kind: string, naming: any)
     {
         var rn = LogicItem._makeRn(kind, naming);
         return this.findByRn(rn);
     }
 
-    findByRn(rn)
+    findByRn(rn: string)
     {
         var child = this._children[rn];
         if (child) {
@@ -164,7 +185,7 @@ class LogicItem
         return null;
     }
 
-    fetchByNaming(kind, naming, skipCreateMissing)
+    fetchByNaming(kind: string, naming: any, skipCreateMissing: string)
     {
         var rn = LogicItem._makeRn(kind, naming);
         var child = this._children[rn];
@@ -178,7 +199,7 @@ class LogicItem
         return child;
     }
 
-    addProperties(params)
+    addProperties(params: any)
     {
         if (!params) {
             params.order = 10;
@@ -186,7 +207,7 @@ class LogicItem
         this._properties[params.id] = params;
     }
 
-    getProperties(id)
+    getProperties(id: string)
     {
         if (this._properties[id]) {
             return this._properties[id];
@@ -194,7 +215,7 @@ class LogicItem
         return null;
     }
 
-    addAlert(kind, severity, msg)
+    addAlert(kind: string, severity: string, msg: string)
     {
         var info = {
             id: kind,
@@ -205,7 +226,7 @@ class LogicItem
         this._alerts[key] = info;
     }
 
-    cloneAlertsFrom(other)
+    cloneAlertsFrom(other: LogicItem)
     {
         for(var x of _.values(other._alerts)) {
             this._alerts[x.id] = x;
@@ -240,14 +261,16 @@ class LogicItem
             var props = myProps[i];
             props = _.clone(props);
 
-            var tooltip = DocsHelper.propertyGroupTooltip(props.id);
-            if (tooltip) {
-                if (_.isObject(tooltip)) {
-                    var str = _.get(tooltip, 'owner.' + this.kind);
+            let tooltip : string | null = null;
+
+            let tooltipInfo : any = DocsHelper.propertyGroupTooltip(props.id);
+            if (tooltipInfo) {
+                if (_.isObject(tooltipInfo)) {
+                    let str = _.get(tooltipInfo, 'owner.' + this.kind);
                     if (str) {
                         tooltip = str;
                     } else {
-                        tooltip = tooltip.default;
+                        tooltip = _.get(tooltipInfo, 'default');
                     }
                 }
             }
@@ -298,7 +321,7 @@ class LogicItem
         return alerts;
     }
 
-    debugOutputToFile(writer, options)
+    debugOutputToFile(writer : DumpWriter, options : any)
     {
         writer.write('-) ' + this.dn);
        
@@ -325,20 +348,20 @@ class LogicItem
         }
     }
 
-    exportNode()
+    exportNode() : any
     {
-        var node = {};
-        node.rn = this.rn;
-        node.name = this.naming;
-        node.kind = this.kind;
-        node.order = this.order;
-        node.flags = this._flags;
-        node.hasChildren = this.hasChildren;
-        node = _.deepClean(node);
-        return node;
+        let node = {
+            rn: this.rn,
+            name: this.naming,
+            kind: this.kind,
+            order: this.order,
+            flags: this._flags,
+            // hasChildren: this.hasChildren
+        };
+        return _.deepClean(node);
     }
 
-    exportTree()
+    exportTree() : object[]
     {
         var node = this.exportNode();
         node.children = [];
@@ -349,11 +372,11 @@ class LogicItem
         return node;
     }
 
-    static constructTop(scope) {
-        return new LogicItem(scope, null, "root");
+    static constructTop(scope: any) : LogicItem {
+        return new LogicItem(scope, null, "root", null);
     }
 
-    static _makeRn(kind, naming) {
+    static _makeRn(kind: string, naming: any) {
         if (naming && naming.length > 0)  {
             return kind + '-[' + naming + ']'; 
         }
@@ -361,7 +384,3 @@ class LogicItem
     }
 }
 
-module.exports = LogicItem;
-
-module.exports.ALERT_ERROR = 'error';
-module.exports.ALERT_WARN = 'warn';

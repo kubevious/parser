@@ -3,15 +3,16 @@ import { Promise } from 'the-promise';
 
 import { Backend, TimerFunction } from '@kubevious/helper-backend'
 
+const ProcessingTracker = require("kubevious-helpers").ProcessingTracker;
+const { WorldviousClient } = require('@kubevious/worldvious-client');
+
 import { ConcreteRegistry } from './concrete/registry';
 
 import { K8sParser } from './parsers/k8s';
 import { FacadeRegistry } from './facade/registry';
 
-const ProcessingTracker = require("kubevious-helpers").ProcessingTracker;
-const { WorldviousClient } = require('@kubevious/worldvious-client');
 const LogicProcessor = require('./logic/processor');
-const Reporter = require('./reporting/reporter');
+import { SnapshotReporter } from './reporting/reporter';
 import { DebugObjectLogger } from './utils/debug-object-logger';
 import { WebServer } from './server';
 
@@ -44,7 +45,7 @@ export class Context
         this._concreteRegistry = new ConcreteRegistry(this);
         this._k8sParser = new K8sParser(this);
         this._logicProcessor = new LogicProcessor(this);
-        this._reporter = new Reporter(this);
+        this._reporter = new SnapshotReporter(this);
 
         this._facadeRegistry = new FacadeRegistry(this);
 
