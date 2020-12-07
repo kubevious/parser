@@ -120,7 +120,7 @@ export class LogicItem
         return this.setFlag(name, { propagatable: true });
     }
 
-    setFlag(name: string, params: any)
+    setFlag(name: string, params?: any)
     {
         if (params) {
             params = _.clone(params);
@@ -185,15 +185,12 @@ export class LogicItem
         return null;
     }
 
-    fetchByNaming(kind: string, naming: any, skipCreateMissing?: string)
+    fetchByNaming(kind: string, naming: any) : LogicItem
     {
         var rn = LogicItem._makeRn(kind, naming);
         var child = this._children[rn];
         if (child) {
             return child;
-        }
-        if (skipCreateMissing) {
-            return null;
         }
         child = new LogicItem(this._logicScope, this, kind, naming);
         return child;

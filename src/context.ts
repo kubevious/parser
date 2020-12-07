@@ -11,7 +11,7 @@ import { ConcreteRegistry } from './concrete/registry';
 import { K8sParser } from './parsers/k8s';
 import { FacadeRegistry } from './facade/registry';
 
-const LogicProcessor = require('./logic/processor');
+import { LogicProcessor } from './logic/processor';
 import { SnapshotReporter } from './reporting/reporter';
 import { DebugObjectLogger } from './utils/debug-object-logger';
 import { WebServer } from './server';

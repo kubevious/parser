@@ -3,6 +3,9 @@ import { Context } from './context'
 
 const backend = new Backend("parser");
 
+
+try{
+
 const context = new Context(backend);
 
 // const LocalLoader = require('./lib/loaders/local');
@@ -10,4 +13,8 @@ const context = new Context(backend);
 // context.addLoader(loader);
 
 context.run();
-  
+
+}
+catch(reason) {
+    console.log(reason);
+}

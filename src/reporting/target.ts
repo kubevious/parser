@@ -199,5 +199,3 @@ class RetryableError extends HandledError {
       this.name = this.constructor.name
     }
 }
-
-module.exports = ReporterTarget;

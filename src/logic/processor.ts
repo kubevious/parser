@@ -13,6 +13,20 @@ import { PropertiesBuilder } from './properties-builder';
 import { Helpers } from './helpers';
 import { LogicItem } from './item';
 
+import { BaseParserBuilder, BaseParserInfo } from './parser-builder'
+
+class ProcessorInfo 
+{
+    public path : string;
+    public parserInfo : BaseParserInfo;
+
+    constructor(path : string, parserInfo : BaseParserInfo)
+    {
+        this.path = path;
+        this.parserInfo = parserInfo;
+    }
+}
+
 
 export class LogicProcessor 
 {
@@ -20,7 +34,7 @@ export class LogicProcessor
     private _logger : ILogger;
 
     private _helpers : Helpers = new Helpers();
-    private _processors : any[] = [];
+    private _processors : ProcessorInfo[] = [];
 
     constructor(context : Context)
     {
@@ -37,68 +51,83 @@ export class LogicProcessor
     }
 
     // TODO: FIX!
-    _extractProcessors(location : string, targetKind : string)
+    _extractProcessors(location : string, defaultTargetKind : string)
     {
-        this.logger.info('[_extractProcessors] location: %s, targetKind: %s', location, targetKind);
-        var files = fs.readdirSync(path.join(__dirname, location));
-        files = _.filter(files, x => x.endsWith('.js'));
+        this.logger.info('[_extractProcessors] location: %s, defaultTargetKind: %s', location, defaultTargetKind);
+        let files : string[] = fs.readdirSync(path.join(__dirname, location));
+        files = _.filter(files, x => x.endsWith('.d.ts'));
 
-        var processors : any[] = []
-        for(var x of files)
+        let processors : ProcessorInfo[] = []
+        for(var fileName of files)
         {
-            this.logger.info('[_extractProcessors] %s', x);
-            this._loadProcessor(x, location, targetKind, processors);
+            this.logger.info('[_extractProcessors] %s', fileName);
+            let moduleName = fileName.replace('.d.ts', '');
+            this._loadProcessor(moduleName, location, defaultTargetKind, processors);
         }
 
-        processors = _.orderBy(processors, [
-            x => x.order,
-            x => _.stableStringify(x.target)
+        this._processors = _.orderBy(processors, [
+            x => x.parserInfo.order,
+            x => x.path,
+            // x => _.stableStringify(x.target)
         ]);
 
-        for(var x of processors)
-        {
-            this._processors.push(x);
-        }
-
-        for(var handlerInfo of processors)
+        for(var processorInfo of this._processors)
         {
             this._logger.info("[_extractProcessors] HANDLER: %s -> %s, target:", 
-                handlerInfo.order, 
-                handlerInfo.name, 
-                handlerInfo.target)
+                processorInfo.parserInfo.order, 
+                processorInfo.path);
+            // /processorInfo.target)
         }
     }
 
-    _loadProcessor(name : string, location : string, targetKind : string, list : any[])
+    _loadProcessor(name : string, location : string, defaultTargetKind : string, list : ProcessorInfo[])
     {
         this.logger.info('[_loadProcessor] %s...', name);
-        const parserModule = require('./' + location + '/' + name);
+        const moduleName = location + '/' + name;
+        const modulePath = './' + moduleName;
+        const parserModule = require(modulePath);
 
-        var targets = [];
-        if (!_.isUndefined(parserModule.target)) {
-            if (_.isArray(parserModule.target)) {
-                targets = parserModule.target;
-            } else {
-                targets = [parserModule.target];
-            }
+        let defaultExport = parserModule.default;
+        if (!defaultExport) {
+            this.logger.error("Invalid Parser: %s", modulePath);
+            throw new Error("Invalid Parser: " + modulePath);
+            return;
         }
 
-        for(var target of targets)
-        {
-            this.logger.info('[_loadProcessor] Adding %s...', name, target);
+        let baseParserBuilder = <BaseParserBuilder>defaultExport;
+        let baseParserInfo = baseParserBuilder._extract();
 
-            var parser = _.clone(parserModule);
-            parser.name = location + '/' + name;
+        let processorInfo = new ProcessorInfo(moduleName, baseParserInfo);
+        list.push(processorInfo);
+
+        // console.log(baseParserInfo);
+
+        // TODO: Fix ME;
+        // var targets = [];
+        // if (!_.isUndefined(parserModule.target)) {
+        //     if (_.isArray(parserModule.target)) {
+        //         targets = parserModule.target;
+        //     } else {
+        //         targets = [parserModule.target];
+        //     }
+        // }
+
+        // for(var target of targets)
+        // {
+        //     this.logger.info('[_loadProcessor] Adding %s...', name, target);
+
+        //     var parser = _.clone(parserModule);
+        //     parser.name = location + '/' + name;
             
-            if (_.isNullOrUndefined(parser.order)) {
-                parser.order = 0;
-            }
-            if (!parser.targetKind) {
-                parser.targetKind = targetKind;
-            }
-            parser.target = target;
-            list.push(parser);
-        }
+        //     if (_.isNullOrUndefined(parser.order)) {
+        //         parser.order = 0;
+        //     }
+        //     if (!parser.targetKind) {
+        //         parser.targetKind = defaultTargetKind;
+        //     }
+        //     parser.target = target;
+        //     list.push(parser);
+        // }
     }
 
     process()

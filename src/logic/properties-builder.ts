@@ -6,9 +6,9 @@ export class PropertiesBuilder
 {
     private _itemConfig: any;
     private _properties : Record<string, any> = {};
-    private _postBuildAction : PostBuildActionFunc;
+    private _postBuildAction? : PostBuildActionFunc;
 
-    constructor(itemConfig: any, postBuildAction: PostBuildActionFunc)
+    constructor(itemConfig: any, postBuildAction?: PostBuildActionFunc)
     {
         this._itemConfig = itemConfig;
         this._properties = {};
