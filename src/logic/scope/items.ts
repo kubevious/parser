@@ -1,26 +1,30 @@
-const _ = require('the-lodash');
-const ItemScope = require('./item');
+import _ from 'the-lodash';
+import { ILogger } from 'the-logger';
+import { ItemScope } from './item';
 
-class ItemsScope
+export class ItemsScope
 {
-    constructor(parent)
+    private _parent : any;
+    private _logger : ILogger;
+
+    private _itemsDict : Record<string, Record<string, ItemScope> > = {}
+
+    constructor(parent: any)
     {
         this._parent = parent;
         this._logger = parent.logger;
-
-        this._itemsDict = {}
     }
 
     get logger() {
         return this._logger;
     }
     
-    register(config)
+    register(config : any)
     {
         return this._register(config.kind, config.metadata.name, config);
     }
 
-    _register(kind, name, config)
+    _register(kind: string, name: string, config: any)
     {
         if (!this._itemsDict[kind])
         {
@@ -31,20 +35,22 @@ class ItemsScope
         return item;
     }
     
-    fetch(kind, name, config)
+    fetch(kind: string, name: string, config: any) : ItemScope
     {
-        var item = this._get(kind, name);
+        let item = this._get(kind, name);
         if (!item) {
             item = this._register(kind, name, config);
         }
         return item;
     }
 
-    get(kind, name)
+    get(kind: string, name: string) : ItemScope | null
     {
         if (_.isPlainObject(kind))
         {
-            return this._get(kind.kind, kind.metadata.name);
+            // TODO: FIx Me. 
+            return null;
+            // return this._get(kind.kind, kind.metadata.name);
         }
         else
         {
@@ -52,7 +58,7 @@ class ItemsScope
         }
     }
 
-    getAll(kind)
+    getAll(kind: string) : ItemScope[]
     {
         if (this._itemsDict[kind])
         {
@@ -72,12 +78,12 @@ class ItemsScope
         }
     }
 
-    count(kind)
+    count(kind: string)
     {
         return this.getAll(kind).length;
     }
 
-    _get(kind, name)
+    _get(kind: string, name: string) : ItemScope | null
     {
         if (this._itemsDict[kind])
         {
@@ -90,5 +96,3 @@ class ItemsScope
         return null;
     }
 }
-
-module.exports = ItemsScope;

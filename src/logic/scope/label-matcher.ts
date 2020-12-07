@@ -1,13 +1,14 @@
-const _ = require('the-lodash');
+import _ from 'the-lodash';
 
-class LabelMatcher
+export class LabelMatcher
 {
+    private _labels : { labels : any, target : any }[] = [];
+
     constructor()
     {
-        this._labels = [];
     }
 
-    register(labels, target)
+    register(labels : Record<string, any>, target : any)
     {
         if (!labels) {
             labels = {};
@@ -18,7 +19,7 @@ class LabelMatcher
         });
     }
 
-    match(selector)
+    match(selector: Record<string, any>)
     {
         var result = [];
         for(var item of this._labels)
@@ -32,7 +33,7 @@ class LabelMatcher
     }
 }
 
-function labelsMatch(labels, selector)
+function labelsMatch(labels: Record<string, any>, selector: Record<string, any>)
 {
     for(var key of _.keys(selector)) {
         if (selector[key] != labels[key]) {
@@ -42,4 +43,3 @@ function labelsMatch(labels, selector)
     return true;
 }
 
-module.exports = LabelMatcher;

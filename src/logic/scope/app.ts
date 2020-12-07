@@ -1,8 +1,16 @@
-const _ = require('the-lodash');
+import _ from 'the-lodash';
+import { LogicItem } from '../item';
 
-class AppScope
+export class AppScope
 {
-    constructor(parent, name)
+    private _parent : any;
+    private _name : string;
+    private _item : LogicItem;
+
+    private _ports : Record<string, any> = {};
+    private _properties : Record<string, any> = {};
+
+    constructor(parent : any, name : string)
     {
         this._parent = parent; 
 
@@ -56,5 +64,3 @@ class AppScope
         return _.union(this.initContainerItems, this.containerItems);
     }
 }
-
-module.exports = AppScope;

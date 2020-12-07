@@ -1,9 +1,20 @@
-const _ = require('the-lodash');
-const ItemsScope = require('./items');
+import _ from 'the-lodash';
+import { ILogger } from 'the-logger';
 
-class InfraScope
+import { ItemsScope } from './items';
+
+export class InfraScope
 {
-    constructor(parent)
+    private _parent : any;
+    private _logger : ILogger;
+
+    private _items : ItemsScope;
+
+    private _nodeCount = 0;
+    private _nodeResources : Record<string, any> = {};
+    private _clusterResources : Record<string, any> = {};
+
+    constructor(parent: any)
     {
         this._parent = parent;
         this._logger = parent.logger;
@@ -39,15 +50,13 @@ class InfraScope
         this._nodeCount += 1;
     }
 
-    setClusterResources(value)
+    setClusterResources(value: Record<string, any>)
     {
         this._clusterResources = value;
     }
 
-    setNodeResources(value)
+    setNodeResources(value: Record<string, any>)
     {
         this._nodeResources = value;
     }
 }
-
-module.exports = InfraScope;

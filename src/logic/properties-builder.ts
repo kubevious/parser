@@ -1,25 +1,23 @@
 import _ from 'the-lodash';
 
-import { LogicItem } from './item'
-
 export type PostBuildActionFunc = (props: Record<string, any>) => Record<string, any>;
 
 export class PropertiesBuilder
 {
-    private _item: LogicItem;
+    private _itemConfig: any;
     private _properties : Record<string, any> = {};
     private _postBuildAction : PostBuildActionFunc;
 
-    constructor(item: LogicItem, postBuildAction: PostBuildActionFunc)
+    constructor(itemConfig: any, postBuildAction: PostBuildActionFunc)
     {
-        this._item = item;
+        this._itemConfig = itemConfig;
         this._properties = {};
         this._postBuildAction = postBuildAction;
     }
 
     fromConfig(name: string, valuePath: string, defaultValue?: any) : PropertiesBuilder
     {
-        return this.fromObject(this._item.config, name, valuePath, defaultValue);
+        return this.fromObject(this._itemConfig, name, valuePath, defaultValue);
     }
 
     fromObject(obj: any, name: string, valuePath: string, defaultValue?: any) : PropertiesBuilder

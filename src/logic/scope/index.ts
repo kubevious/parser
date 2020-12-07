@@ -1,18 +1,32 @@
-const _ = require('the-lodash');
-const InfraScope = require('./infra');
-const NamespaceScope = require('./namespace');
-const LogicItem = require('../item');
-const LabelMatcher = require('./label-matcher');
+import _ from 'the-lodash';
+import { ILogger } from 'the-logger';
 
-class LogicScope
+import { Context } from '../../context';
+
+import { InfraScope } from './infra';
+import { NamespaceScope } from './namespace';
+import { LogicItem } from '../item';
+import { LabelMatcher } from './label-matcher';
+
+export class LogicScope
 {
-    constructor(context)
+    private _context : Context;
+    private _logger : ILogger;
+
+    private _root : LogicItem;
+    private _itemsMap : Record<string, LogicItem> = {};
+    private _itemKindMap : Record<string, Record<string, LogicItem> > = {};
+
+    private _namespaceScopes : Record<string, NamespaceScope> = {};
+    private _infraScope : InfraScope;
+
+    private _namespaceLabelMatcher : LabelMatcher;
+
+    constructor(context : Context)
     {
         this._context = context;
         this._logger = context.logger.sublogger("LogicScope");
 
-        this._itemsMap = {}
-        this._itemKindMap = {}
         this._root = LogicItem.constructTop(this);
 
         this._namespaceScopes = {};
@@ -33,7 +47,7 @@ class LogicScope
         return this._root;
     }
 
-    _acceptItem(item) 
+    _acceptItem(item : LogicItem) 
     {
         this._itemsMap[item.dn] = item;
 
@@ -43,7 +57,7 @@ class LogicScope
         this._itemKindMap[item.kind][item.dn] = item;
     }
 
-    _dropItem(item) 
+    _dropItem(item : LogicItem) 
     {
         delete this._itemsMap[item.dn];
         delete this._itemKindMap[item.kind][item.dn];
@@ -53,11 +67,11 @@ class LogicScope
         return _.values(this._itemsMap);
     }
 
-    findItem(dn)
+    findItem(dn : string) : LogicItem | null
     {
-        var item = this._itemsMap[dn];
+        let item = this._itemsMap[dn];
         if (!item) {
-            item = null;
+            return null;
         }
         return item;
     }
@@ -66,7 +80,7 @@ class LogicScope
         return this._infraScope;
     }
 
-    getNamespaceScope(name) {
+    getNamespaceScope(name : string) {
         if (!this._namespaceScopes[name]) {
             this._namespaceScopes[name] = new NamespaceScope(this, name);
         }
@@ -77,18 +91,18 @@ class LogicScope
         return _.values(this._namespaceScopes);
     }
     
-    registerNamespaceLabels(name, labelsMap)
+    registerNamespaceLabels(name: string, labelsMap : Record<string, any>)
     {
         let namespaceScope = this.getNamespaceScope(name);
         this._namespaceLabelMatcher.register(labelsMap, namespaceScope);
     }
 
-    findNamespaceScopesByLabels(selector)
+    findNamespaceScopesByLabels(selector : Record<string, any> )
     {
         return this._namespaceLabelMatcher.match(selector);
     }
 
-    setK8sConfig(logicItem, config)
+    setK8sConfig(logicItem : LogicItem, config : any)
     {
         {
             logicItem.setConfig(config);
@@ -126,11 +140,11 @@ class LogicScope
         }
     }
 
-    _normalizeDict(dict)
+    _normalizeDict(dict : Record<string, any>) : Record<string, any>
     {
         dict = dict || {};
 
-        var res = {};
+        let res : Record<string, any> = {};
         for(var key of _.sortBy(_.keys(dict)))
         {
             res[key] = dict[key];
@@ -138,20 +152,20 @@ class LogicScope
         return res;
     }
 
-    fetchInfraRawContainer()
+    fetchInfraRawContainer() : LogicItem
     {
-        var infra = this.root.fetchByNaming("infra", "Infrastructure");
+        let infra = this.root.fetchByNaming("infra", "Infrastructure");
         infra.order = 1000;
         return infra;
     }
 
-    fetchRawContainer(item, name)
+    fetchRawContainer(item : LogicItem, name : string) : LogicItem
     {
         var nsName = item.config.metadata.namespace;
         return this.fetchNamespaceRawContainer(nsName, name)
     }
 
-    fetchNamespaceRawContainer(nsName, name)
+    fetchNamespaceRawContainer(nsName : string, name : string) : LogicItem
     {
         var namespace = this.root.fetchByNaming("ns", nsName);
         var rawContainer = namespace.fetchByNaming("raw", "Raw Configs");
@@ -160,7 +174,7 @@ class LogicScope
         return container;
     }
     
-    findAppItem(namespace, name)
+    findAppItem(namespace : string, name : string) : LogicItem | null
     {
         return this._findItem([
             {
@@ -174,7 +188,7 @@ class LogicScope
         ]);
     }
 
-    _findItem(itemPath)
+    _findItem(itemPath : { kind: string, name: string}[]) : LogicItem | null
     {
         var item = this.root;
         for(var x of itemPath) {
@@ -214,5 +228,3 @@ class LogicScope
         this.logger.info("[Scope] <<<<<<<");
     }
 }
-
-module.exports = LogicScope;

@@ -185,7 +185,7 @@ export class LogicItem
         return null;
     }
 
-    fetchByNaming(kind: string, naming: any, skipCreateMissing: string)
+    fetchByNaming(kind: string, naming: any, skipCreateMissing?: string)
     {
         var rn = LogicItem._makeRn(kind, naming);
         var child = this._children[rn];
@@ -321,7 +321,7 @@ export class LogicItem
         return alerts;
     }
 
-    debugOutputToFile(writer : DumpWriter, options : any)
+    debugOutputToFile(writer : DumpWriter, options? : any)
     {
         writer.write('-) ' + this.dn);
        
@@ -355,8 +355,7 @@ export class LogicItem
             name: this.naming,
             kind: this.kind,
             order: this.order,
-            flags: this._flags,
-            // hasChildren: this.hasChildren
+            flags: this._flags
         };
         return _.deepClean(node);
     }

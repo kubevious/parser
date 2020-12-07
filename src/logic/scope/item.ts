@@ -1,16 +1,34 @@
-const _ = require('the-lodash');
-const PropertiesBuilder = require('../properties-builder');
+import _ from 'the-lodash';
 
-class ItemScope
+import { PropertiesBuilder } from '../properties-builder';
+import { LogicItem } from '../item';
+import { AppScope } from './app'
+
+export class ItemScope
 {
-    constructor(parent, kind, name, config)
+    private _parent : any;
+    private _kind : string;
+    private _name : string;
+    private _config : any;
+
+    private _usedBy : Record<string, LogicItem> = {};
+    private _owners : Record<string, LogicItem> = {};
+    private _data = {};
+    private _items : LogicItem[] = [];
+    private _appScopes : Record<string, AppScope> = {};
+    private _createdAlerts : {kind : string,
+        severity : string,
+        msg : string }[] = [];
+
+    constructor(parent : any, kind: string, name: string, config : any)
     {
         this._parent = parent;
         this._kind = kind;
         this._name = name;
+        this._config = config;
+
         this._usedBy = {};
         this._owners = {};
-        this._config = config;
         this._data = {};
         this._items = [];
         this._appScopes = {};
@@ -93,27 +111,27 @@ class ItemScope
         return _.values(this._appScopes);
     }
 
-    markUsedBy(item)
+    markUsedBy(item : LogicItem)
     {
         this._usedBy[item.dn] = item;
     }
     
-    registerItem(item)
+    registerItem(item : LogicItem)
     {
         this._items.push(item);
     }
 
-    registerOwnerItem(item)
+    registerOwnerItem(item : LogicItem)
     {
         this._owners[item.dn] = item;
     }
 
-    associateAppScope(appScope)
+    associateAppScope(appScope : AppScope)
     {
         this._appScopes[appScope.name] = appScope;
     }
 
-    setFlag(flag, params)
+    setFlag(flag: string, params: any)
     {
         for(var item of this.items)
         {
@@ -121,7 +139,7 @@ class ItemScope
         }
     }
 
-    setPropagatableFlag(flag)
+    setPropagatableFlag(flag: string)
     {
         for(var item of this.items)
         {
@@ -129,7 +147,7 @@ class ItemScope
         }
     }
 
-    addPropertyGroup(groupConfig)
+    addPropertyGroup(groupConfig: any)
     {
         for(var item of this.items)
         {
@@ -137,32 +155,35 @@ class ItemScope
         }
     }
     
-    addProperties(configOrBuilder)
+    // TODO: Separated from addProperties.
+    addPropBuilder(builder: PropertiesBuilder)
     {
-        if (configOrBuilder instanceof PropertiesBuilder) {
-            configOrBuilder = configOrBuilder.build();
-        }
+        let config = builder.build();
+        this.addProperties(config);
+    }
 
+    addProperties(config: Record<string, any>)
+    {
         var groupConfig = {
             kind: "key-value",
             id: "properties",
             title: "Properties",
             order: 5,
-            config: configOrBuilder
+            config: config
         }
         this.addPropertyGroup(groupConfig);
     }
 
     buildProperties()
     {
-        var builder = new PropertiesBuilder(this, (props) => {
+        var builder = new PropertiesBuilder(this.config, (props: Record<string, any>) => {
             this.addProperties(props);
-            return;
+            return props;
         });
         return builder;
     }
 
-    createAlert(kind, severity, msg) {
+    createAlert(kind: string, severity: string, msg: string) {
         this._createdAlerts.push({
             kind,
             severity,
@@ -182,5 +203,3 @@ class ItemScope
     }
 
 }
-
-module.exports = ItemScope;
