@@ -1,17 +1,15 @@
-const _ = require("the-lodash");
+import _ from 'the-lodash';
+import { ConcreteParser } from '../parser-builder';
 
-module.exports = {
-    target: {
+export default ConcreteParser()
+    .order(5)
+    .target({
         api: "v1",
         kind: "Node"
-    },
+    })
+    .kind('node')
+    .handler(({ scope, item, createK8sItem, infraScope, helpers }) => {
 
-    kind: 'node',
-
-    order: 10,
-
-    handler: ({scope, item, createK8sItem, infraScope, helpers}) =>
-    {
         infraScope.increaseNodeCount();
         
         var infra = scope.fetchInfraRawContainer();
@@ -20,7 +18,7 @@ module.exports = {
 
         var node = createK8sItem(nodes);
 
-        var resourcesProps = {
+        var resourcesProps : Record<string, Record<string, any>> = {
         }
         for(var metric of helpers.resources.METRICS) {
             collectResourceMetric(metric);
@@ -36,7 +34,7 @@ module.exports = {
 
         /********/
 
-        function collectResourceMetric(metric)
+        function collectResourceMetric(metric: string)
         {
             if (!resourcesProps[metric]) {
                 resourcesProps[metric] = {};
@@ -45,7 +43,7 @@ module.exports = {
             collectResourceMetricCounter(metric, 'allocatable');
         }
 
-        function collectResourceMetricCounter(metric, counter)
+        function collectResourceMetricCounter(metric: string, counter: string)
         {
             var rawValue = _.get(item.config, 'status.' + counter + '.' + metric);
             if (!rawValue) {
@@ -53,5 +51,6 @@ module.exports = {
             }
             resourcesProps[metric][counter] = helpers.resources.parse(metric, rawValue);
         }
-    }
-}
+
+    })
+    ;

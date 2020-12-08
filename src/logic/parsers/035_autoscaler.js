@@ -27,6 +27,7 @@ module.exports = {
             return null;
         }
 
+        // TODO: replace with appScope or app
         if (!appInfo) {
             var rawContainer = scope.fetchRawContainer(item, "Autoscalers");
             createK8sItem(rawContainer);

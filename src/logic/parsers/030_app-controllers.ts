@@ -1,31 +1,32 @@
-const _ = require("the-lodash");
+import _ from 'the-lodash';
+import { ConcreteParser } from '../parser-builder';
 
-module.exports = {
-    target: [{
+export default ConcreteParser()
+    .order(30)
+    .target({
         api: "apps",
         kind: "Deployment"
-    }, {
+    })
+    .target({
         api: "apps",
         kind: "DaemonSet"
-    }, {
+    })
+    .target({
         api: "apps",
         kind: "StatefulSet"
-    }, {
+    })
+    .target({
         api: "batch",
         kind: "Job"
-    }],
-
-    order: 30,
-
-    needAppScope: true,
-    canCreateAppIfMissing: true,
-    appNameCb: (item) => {
+    })
+    .needAppScope(true)
+    .canCreateAppIfMissing(true)
+    .appNameCb((item) => {
         return item.config.metadata.name; 
-    },
+    })
+    .handler(({ logger, scope, item, app, appScope, namespaceScope }) => {
 
-    handler: ({logger, scope, item, app, appScope, namespaceScope}) =>
-    {
-        app.associateScope(appScope);
+        app.associateAppScope(appScope);
 
         var labelsMap = _.get(item.config, 'spec.template.metadata.labels');
         if (labelsMap) {
@@ -35,7 +36,7 @@ module.exports = {
         var launcher = app.fetchByNaming("launcher", item.config.kind);
         scope.setK8sConfig(launcher, item.config);
         namespaceScope.registerAppOwner(launcher);
-        launcher.associateScope(appScope);
+        launcher.associateAppScope(appScope);
 
         appScope.properties['Launcher'] = item.config.kind;
 
@@ -54,7 +55,6 @@ module.exports = {
         });  
 
         app.addProperties(launcher.getProperties('labels'));
-    }
-}
 
-
+    })
+    ;

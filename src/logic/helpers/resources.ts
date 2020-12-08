@@ -21,6 +21,10 @@ const MEMORY_SIZES = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
 
 export class ResourceHelpers {
 
+    get METRICS() {
+        return METRICS;
+    }
+
     parseCpu(value : any) : number
     {
         let valueStr = value.toString();

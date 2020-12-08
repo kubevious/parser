@@ -1,5 +1,10 @@
 import _ from 'the-lodash';
 
+import { LogicScope } from './scope';
+import { NamespaceScope } from './scope/namespace';
+import { AppScope } from './scope/app';
+import { ItemScope } from './scope/item';
+
 const resourcesHelper = require("./helpers/resources");
 const DocsHelper = require("kubevious-helpers").Docs;
 
@@ -7,12 +12,15 @@ import { DumpWriter } from 'the-logger';
 
 export class LogicItem
 {
-    private _logicScope : any;
+    private _logicScope : LogicScope;
     private _parent : any;
     private _kind : string;
     private _naming : any;
 
-    private _scope : any;
+    private _itemScope? : ItemScope;
+    private _namespaceScope? : NamespaceScope;
+    private _appScope? : AppScope;
+
     private _rn : any;
     private _config : Record<string, any> = {};
     private _order = 100;
@@ -25,15 +33,13 @@ export class LogicItem
 
     private _namingArray : string[] = [];
 
-    constructor(logicScope: any, parent: any, kind: any, naming: any)
+    constructor(logicScope: LogicScope, parent: any, kind: any, naming: any)
     {
         this._logicScope = logicScope;
-        this._scope = null;
         this._kind = kind;
         this._naming = naming;
         this._rn = LogicItem._makeRn(kind, naming);
         this._config = {};
-        this._order = 100;
         this._children = {};
         this._properties = {};
         this._alerts = {};
@@ -107,12 +113,20 @@ export class LogicItem
         this._order = value;
     }
 
-    get scope() {
-        return this._scope;
+    get scope() : ItemScope {
+        return this._itemScope!;
     }
 
-    associateScope(scope: any) {
-        this._scope = scope;
+    associateScope(scope: ItemScope) {
+        this._itemScope = scope;
+    }
+
+    associateNamespaceScope(scope: NamespaceScope) {
+        this._namespaceScope = scope;
+    }
+
+    associateAppScope(scope: AppScope) {
+        this._appScope = scope;
     }
 
     setPropagatableFlag(name: string)
@@ -368,7 +382,7 @@ export class LogicItem
         return node;
     }
 
-    static constructTop(scope: any) : LogicItem {
+    static constructTop(scope: LogicScope) : LogicItem {
         return new LogicItem(scope, null, "root", null);
     }
 

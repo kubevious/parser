@@ -7,27 +7,33 @@ import { ConcreteItem } from '../concrete/item';
 import { Helpers } from './helpers';
 import { PropertiesBuilder } from './properties-builder'
 import { ItemScope } from './scope/item';
+import { NamespaceScope } from './scope/namespace';
+import { AppScope } from './scope/app';
+import { Context } from '../context';
 
 export interface BaseParserBuilder {
-    _extract() : BaseParserInfo
+    _extract() : BaseParserInfo[]
 }
 
 export interface BaseParserInfo
 {
     targetKind: string;
     order: number;
+    target?: any;
 }
 
-export interface ParserInfo extends BaseParserInfo
+export interface ConcreteParserInfo extends BaseParserInfo
 {
-    target?: null | ConcreteTarget | ConcreteTarget[];
+    target: null | ConcreteTarget;
 
     needAppScope?: boolean;
     canCreateAppIfMissing? : boolean;
-    appNameCb?: (item : LogicItem) => string;
+    appNameCb?: (item : ConcreteItem) => string;
 
     kind?: string,
+
     needNamespaceScope?: boolean,
+    namespaceNameCb? : (item : ConcreteItem) => string;
 
     handler? : (args : ConcreteHandler) => void;
 }
@@ -41,94 +47,107 @@ export interface ConcreteHandler {
     logger : ILogger;
     scope : LogicScope;
     item : ConcreteItem;
-    createK8sItem : (parent : LogicItem, params : any) => void;
+    createK8sItem : (parent : LogicItem, params? : any) => LogicItem;
     infraScope : InfraScope;
     helpers : Helpers;
+
+    namespaceScope: NamespaceScope;
+
+    app: LogicItem;
+    appScope: AppScope;
 }
 
-export class ConcreteParserExecutor
-{
-    private _parserInfo : ParserInfo;
-    private _item : ConcreteItem;
-    private _scope : LogicScope;
+// export class ConcreteParserExecutor
+// {
+//     private _parserInfo : ConcreteParserInfo;
+//     private _item : ConcreteItem;
+//     private _scope : LogicScope;
 
-    private _createdItems : LogicItem[] = [];
-    private _createdAlerts : {kind : string,
-        severity : string,
-        msg : string }[] = [];
+//     private _createdItems : LogicItem[] = [];
+//     private _createdAlerts : {kind : string,
+//         severity : string,
+//         msg : string }[] = [];
 
-    constructor(parserInfo : ParserInfo, targetItem: ConcreteItem, scope: LogicScope)
-    {
-        this._parserInfo = parserInfo;
-        this._item = targetItem;
-        this._scope = scope;
-    }
+//     constructor(parserInfo : ConcreteParserInfo, targetItem: ConcreteItem, scope: LogicScope)
+//     {
+//         this._parserInfo = parserInfo;
+//         this._item = targetItem;
+//         this._scope = scope;
+//     }
 
-    get item() : ConcreteItem {
-        return this._item;
-    }
+//     get logger() : ILogger {
+//         return this._scope.logger;
+//     }
 
-    propertiesBuilder() {
-        return new PropertiesBuilder(this.item.config);
-    }
+//     get scope() : LogicScope {
+//         return this._scope;
+//     }
 
-    hasCreatedItems() {
-        return this._createdItems.length > 0;
-    }
+//     get item() : ConcreteItem {
+//         return this._item;
+//     }
 
-    createItem(parent : LogicItem, name : string, params : any)
-    {
-        params = params || {};
-        params.kind = params.kind || this._parserInfo.kind;
-        if (_.isFunction(params.kind)) {
-            params.kind = params.kind(this._item);
-        }
-        if (!params.kind) {
-            throw new Error("Missing handler or params kind.")
-        }
-        let newObj = parent.fetchByNaming(params.kind, name);
-        if (params.order) {
-            newObj.order = params.order;
-        }
-        this._createdItems.push(newObj);
-        return newObj;
-    }
+//     propertiesBuilder() {
+//         return new PropertiesBuilder(this.item.config);
+//     }
 
-    createK8sItem(parent : LogicItem, params : any)
-    {
-        params = params || {};
-        var name = params.name || this._item.config.metadata.name;
-        var newObj = this.createItem(parent, name, params);
-        this._scope.setK8sConfig(newObj, this.item.config);
-        return newObj;
-    }
+//     hasCreatedItems() {
+//         return this._createdItems.length > 0;
+//     }
 
-    createAlert(kind : string, severity : string, msg : string) {
-        this._createdAlerts.push({
-            kind,
-            severity,
-            msg
-        });
-    }
+//     createItem(parent : LogicItem, name : string, params : any) : LogicItem
+//     {
+//         params = params || {};
+//         params.kind = params.kind || this._parserInfo.kind;
+//         if (_.isFunction(params.kind)) {
+//             params.kind = params.kind(this._item);
+//         }
+//         if (!params.kind) {
+//             throw new Error("Missing handler or params kind.")
+//         }
+//         let newObj = parent.fetchByNaming(params.kind, name);
+//         if (params.order) {
+//             newObj.order = params.order;
+//         }
+//         this._createdItems.push(newObj);
+//         return newObj;
+//     }
 
-    determineSharedFlag(itemScope : ItemScope) 
-    {
-        if (itemScope.isUsedByMany)
-        {
-            for(let xItem of itemScope.usedBy)
-            {
-                xItem.setFlag("shared");
-                for(let otherItem of itemScope.usedBy)
-                {
-                    if (otherItem.dn != xItem.dn) {
-                        xItem.setUsedBy(otherItem.dn);
-                    }
-                }
-            }
-        } 
-    }
+//     createK8sItem(parent : LogicItem, params? : any) : LogicItem
+//     {
+//         params = params || {};
+//         var name = params.name || this._item.config.metadata.name;
+//         var newObj = this.createItem(parent, name, params);
+//         this._scope.setK8sConfig(newObj, this.item.config);
+//         return newObj;
+//     }
 
-}
+//     createAlert(kind : string, severity : string, msg : string) {
+//         this._createdAlerts.push({
+//             kind,
+//             severity,
+//             msg
+//         });
+//     }
+
+//     determineSharedFlag(itemScope : ItemScope) 
+//     {
+//         if (itemScope.isUsedByMany)
+//         {
+//             for(let xItem of itemScope.usedBy)
+//             {
+//                 xItem.setFlag("shared");
+//                 for(let otherItem of itemScope.usedBy)
+//                 {
+//                     if (otherItem.dn != xItem.dn) {
+//                         xItem.setUsedBy(otherItem.dn);
+//                     }
+//                 }
+//             }
+//         } 
+//     }
+
+// }
 
 export function ConcreteParser() : ConcreteParserBuilder
 {
@@ -137,18 +156,21 @@ export function ConcreteParser() : ConcreteParserBuilder
 
 export class ConcreteParserBuilder implements BaseParserBuilder
 {
-    private _data : ParserInfo = {
+    private _data : ConcreteParserInfo = {
         targetKind: 'concrete',
-        order: 0
+        order: 0,
+        target: null
     };
+
+    private _targets : (ConcreteTarget | null)[] = [];
 
     constructor()
     {
     }
 
-    target(value : null | ConcreteTarget | ConcreteTarget[])
+    target(value : null | ConcreteTarget)
     {
-        this._data.target = value;
+        this._targets.push(value);
         return this;
     }
 
@@ -170,7 +192,7 @@ export class ConcreteParserBuilder implements BaseParserBuilder
         return this;
     }
 
-    appNameCb(value : (item : LogicItem) => string) : ConcreteParserBuilder
+    appNameCb(value : (item : ConcreteItem) => string) : ConcreteParserBuilder
     {
         this._data.appNameCb = value;
         return this;
@@ -188,14 +210,117 @@ export class ConcreteParserBuilder implements BaseParserBuilder
         return this;
     }
 
+
+    namespaceNameCb(value : (item : ConcreteItem) => string) : ConcreteParserBuilder
+    {
+        this._data.namespaceNameCb = value;
+        return this;
+    }
+
     handler(value : (args : ConcreteHandler) => void)
     {
         this._data.handler = value;
         return this;
     }
 
-    _extract() : ParserInfo
+    _extract() : ConcreteParserInfo[]
     {
-        return this._data;
+        return this._targets.map(target => {
+            let data = _.clone(this._data);
+            data.target = target;
+            return data;
+        });
+    }
+}
+
+
+
+interface LogicTarget {
+    path: string[],
+}
+
+export function LogicParser() : LogicParserBuilder
+{
+    return new LogicParserBuilder();
+}
+
+export interface LogicHandler {
+    logger : ILogger;
+    scope : LogicScope;
+    item : LogicItem;
+    context: Context;
+    // item : ConcreteItem;
+
+    createItem(parent : LogicItem, name : string, params : any) : LogicItem;
+    createAlert(kind : string, severity : string, msg : string) : void;
+
+    // createK8sItem : (parent : LogicItem, params? : any) => LogicItem;
+    // infraScope : InfraScope;
+    // helpers : Helpers;
+
+    namespaceScope: NamespaceScope;
+
+    // app: LogicItem;
+    // appScope: AppScope;
+}
+
+export interface LogicParserInfo extends BaseParserInfo
+{
+    target?: LogicTarget;
+
+    // needAppScope?: boolean;
+    // canCreateAppIfMissing? : boolean;
+    // appNameCb?: (item : LogicItem) => string;
+
+    // kind?: string,
+    needNamespaceScope?: boolean,
+
+    handler? : (args : LogicHandler) => void;
+}
+
+export class LogicParserBuilder implements BaseParserBuilder
+{
+    private _data : LogicParserInfo = {
+        targetKind: 'logic',
+        order: 0
+    };
+
+    private _targets : (LogicTarget)[] = [];
+
+    constructor()
+    {
+    }
+
+    target(value : LogicTarget) : LogicParserBuilder
+    {
+        this._targets.push(value);
+        return this;
+    }
+
+    order(value : number) : LogicParserBuilder
+    {
+        this._data.order = value;
+        return this;
+    }
+
+    needNamespaceScope(value : boolean) : LogicParserBuilder
+    {
+        this._data.needNamespaceScope = value;
+        return this;
+    }
+
+    handler(value : (args : LogicHandler) => void) : LogicParserBuilder
+    {
+        this._data.handler = value;
+        return this;
+    }
+
+    _extract() : LogicParserInfo[]
+    {
+        return this._targets.map(target => {
+            let data = _.clone(this._data);
+            data.target = target;
+            return data;
+        });
     }
 }

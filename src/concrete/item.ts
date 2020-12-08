@@ -1,15 +1,15 @@
 import _ from 'the-lodash';
 import { ILogger, DumpWriter } from 'the-logger';
-import { ConcreteRegistry } from './registry';
+import { ConcreteRegistry, ItemId } from './registry';
 
 export class ConcreteItem
 {
     private _registry : ConcreteRegistry;
-    private _id : Record<string, any>;
+    private _id : ItemId;
     private _config : any;
     private _groupKey : string;
 
-    constructor(registry: ConcreteRegistry, id: Record<string, any>, config : any)
+    constructor(registry: ConcreteRegistry, id: ItemId, config : any)
     {
         this._registry = registry;
         this._id = id;
@@ -25,7 +25,7 @@ export class ConcreteItem
         return this._registry;
     }
     
-    get id() : Record<string, any>{
+    get id() : ItemId {
         return this._id;
     }
     
@@ -54,7 +54,7 @@ export class ConcreteItem
         // }
         for(let key of _.keys(idFilter!)) {
             let filterVal = idFilter[key];
-            let idVal = this.id[key];
+            let idVal = _.get(this.id, key);
             if (!_.isEqual(filterVal, idVal)) {
                 return false;
             }

@@ -2,31 +2,30 @@ import _ from 'the-lodash';
 import { Promise } from 'the-promise';
 import { ILogger } from 'the-logger';
 
-import { Context } from '../context';
+import { Context } from '../../context';
 
 const fs = require("fs");
 const path = require("path");
 
-import { LogicScope } from "./scope";
-import { PropertiesBuilder } from './properties-builder';
+import { LogicScope } from "../scope";
+import { InfraScope } from '../scope/infra';
+import { NamespaceScope } from '../scope/namespace';
+import { AppScope } from '../scope/app';
 
-import { Helpers } from './helpers';
-import { LogicItem } from './item';
+import { PropertiesBuilder } from '../properties-builder';
 
-import { BaseParserBuilder, BaseParserInfo } from './parser-builder'
+import { Helpers } from '../helpers';
+import { LogicItem } from '../item';
 
-class ProcessorInfo 
-{
-    public path : string;
-    public parserInfo : BaseParserInfo;
+import { ConcreteProcessorHandlerArgs } from './concrete/handler-args';
 
-    constructor(path : string, parserInfo : BaseParserInfo)
-    {
-        this.path = path;
-        this.parserInfo = parserInfo;
-    }
-}
+import { BaseParserBuilder, BaseParserInfo, LogicHandler } from '../parser-builder'
+import { ConcreteParserInfo, ConcreteHandler } from '../parser-builder'
+import { ConcreteItem } from '../../concrete/item';
 
+import { ConcreteParserExecutor } from './concrete/executor';
+
+import { BaseParserExecutor } from './base/executor';
 
 export class LogicProcessor 
 {
@@ -34,20 +33,27 @@ export class LogicProcessor
     private _logger : ILogger;
 
     private _helpers : Helpers = new Helpers();
-    private _processors : ProcessorInfo[] = [];
+    private _processors : BaseParserExecutor[] = [];
 
     constructor(context : Context)
     {
         this._context = context;
         this._logger = context.logger.sublogger("LogicProcessor");
 
-        this._processors = [];
         this._extractProcessors('parsers', 'concrete');
         this._extractProcessors('polishers', 'logic');
     }
 
     get logger() {
         return this._logger;
+    }
+
+    get context() {
+        return this._context;
+    }
+
+    get helpers() : Helpers {
+        return this._helpers;
     }
 
     // TODO: FIX!
@@ -57,30 +63,29 @@ export class LogicProcessor
         let files : string[] = fs.readdirSync(path.join(__dirname, location));
         files = _.filter(files, x => x.endsWith('.d.ts'));
 
-        let processors : ProcessorInfo[] = []
         for(var fileName of files)
         {
             this.logger.info('[_extractProcessors] %s', fileName);
             let moduleName = fileName.replace('.d.ts', '');
-            this._loadProcessor(moduleName, location, defaultTargetKind, processors);
+            this._loadProcessor(moduleName, location, defaultTargetKind);
         }
 
-        this._processors = _.orderBy(processors, [
-            x => x.parserInfo.order,
-            x => x.path,
+        this._processors = _.orderBy(this._processors, [
+            x => x.order,
+            x => x.name,
             // x => _.stableStringify(x.target)
         ]);
 
         for(var processorInfo of this._processors)
         {
             this._logger.info("[_extractProcessors] HANDLER: %s -> %s, target:", 
-                processorInfo.parserInfo.order, 
-                processorInfo.path);
+                processorInfo.order, 
+                processorInfo.name);
             // /processorInfo.target)
         }
     }
 
-    _loadProcessor(name : string, location : string, defaultTargetKind : string, list : ProcessorInfo[])
+    _loadProcessor(name : string, location : string, defaultTargetKind : string)
     {
         this.logger.info('[_loadProcessor] %s...', name);
         const moduleName = location + '/' + name;
@@ -95,10 +100,23 @@ export class LogicProcessor
         }
 
         let baseParserBuilder = <BaseParserBuilder>defaultExport;
-        let baseParserInfo = baseParserBuilder._extract();
+        let baseParserInfos = baseParserBuilder._extract();
 
-        let processorInfo = new ProcessorInfo(moduleName, baseParserInfo);
-        list.push(processorInfo);
+        for (let baseParserInfo of baseParserInfos)
+        {
+            if (baseParserInfo.targetKind == 'concrete')
+            {
+                let parserInfo = <ConcreteParserInfo>baseParserInfo;
+                let parserExecutor = new ConcreteParserExecutor(
+                    this,
+                    moduleName,
+                    parserInfo)
+                this._processors.push(parserExecutor);
+            }
+            // let processorInfo : ProcessorInfo;
+            // processorInfo = new ProcessorInfo(moduleName, baseParserInfo);
+            // list.push(processorInfo);
+        }
 
         // console.log(baseParserInfo);
 
@@ -171,18 +189,19 @@ export class LogicProcessor
     {
         for(var handlerInfo of this._processors)
         {
-            // TODO: FIX
-            // this._processParser(scope, handlerInfo);
+            this._processParser(scope, handlerInfo);
         }
     }
 
-    // _processParser(scope: LogicScope, handlerInfo)
-    // {
-    //     this._logger.debug("[_processParser] Handler: %s -> %s, target: %s :: ", 
-    //         handlerInfo.order, 
-    //         handlerInfo.name, 
-    //         handlerInfo.targetKind,
-    //         handlerInfo.target);
+    _processParser(scope: LogicScope, handlerInfo : any)
+    {
+        this._logger.debug("[_processParser] Handler: %s -> %s, target: %s :: ", 
+            handlerInfo.parserInfo.order, 
+            handlerInfo.path, 
+            handlerInfo.parserInfo.targetKind,
+            handlerInfo.parserInfo.target);
+
+        // handlerInfo.path
 
     //     var targets = [];
     //     if (handlerInfo.targetKind == 'concrete') {
@@ -214,7 +233,7 @@ export class LogicProcessor
     //             this._processHandler(scope, handlerInfo, target);
     //         }
     //     }
-    // }
+    }
 
     // _processHandler(scope : LogicScope, handlerInfo, target)
     // {
@@ -466,5 +485,5 @@ export class LogicProcessor
             // });
     }
 
-
 }
+

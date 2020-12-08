@@ -5,15 +5,24 @@ import { ILogger } from 'the-logger';
 import { Context } from '../context';
 
 const EventDampener = require('kubevious-helpers').EventDampener;
-const ConcreteItem = require('./item');
+import { ConcreteItem } from './item';
+
+// export type ItemId = string | object;
+export interface ItemId {
+    infra: string,
+    api: string,
+    kind: string,
+    namespace?: string, 
+    name: string
+};
 
 export class ConcreteRegistry
 {
     private _context : Context;
     private _logger : ILogger;
 
-    private _flatItemsDict : Record<any, any> = {};
-    private _itemsKindDict : Record<any, any> = {};
+    private _flatItemsDict : Record<any, ConcreteItem> = {};
+    private _itemsKindDict : Record<any, Record<any, ConcreteItem>> = {};
 
     private _changeEvent : any;
 
@@ -33,7 +42,7 @@ export class ConcreteRegistry
         return this._logger;
     }
 
-    get allItems() {
+    get allItems() : ConcreteItem[] {
         return _.values(this._flatItemsDict);
     }
 
@@ -44,7 +53,7 @@ export class ConcreteRegistry
         this._triggerChange();
     }
 
-    add(id: any, obj: any)
+    add(id: ItemId, obj: any)
     {
         this.logger.verbose("[add] ", id);
 
@@ -61,7 +70,7 @@ export class ConcreteRegistry
         this._triggerChange();
     }
 
-    remove(id: any)
+    remove(id: ItemId)
     {
         this.logger.verbose("[remove] %s", id);
 
@@ -87,7 +96,7 @@ export class ConcreteRegistry
         this._changeEvent.trigger();
     }
 
-    findById(id: any)
+    findById(id: ItemId) : ConcreteItem | null
     {
         let rawId = this._makeDictId(id);
         let item = this._flatItemsDict[rawId];
@@ -97,8 +106,8 @@ export class ConcreteRegistry
         return null;
     }
 
-    filterItems(idFilter: any) {
-        let result = [];
+    filterItems(idFilter: any) : ConcreteItem[] {
+        let result : ConcreteItem[] = [];
         for(let item of this.allItems) {
             if (item.matchesFilter(idFilter)) {
                 result.push(item);
@@ -107,7 +116,7 @@ export class ConcreteRegistry
         return result;
     }
 
-    _makeDictId(id: any) {
+    _makeDictId(id: ItemId) : string {
         if (_.isString(id)) {
             return id;
         }
