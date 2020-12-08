@@ -1,14 +1,14 @@
 import _ from 'the-lodash';
 
-export class LabelMatcher
+export class LabelMatcher<T>
 {
-    private _labels : { labels : any, target : any }[] = [];
+    private _labels : { labels : any, target : T }[] = [];
 
     constructor()
     {
     }
 
-    register(labels : Record<string, any>, target : any)
+    register(labels : Record<string, any>, target : T)
     {
         if (!labels) {
             labels = {};
@@ -19,10 +19,10 @@ export class LabelMatcher
         });
     }
 
-    match(selector: Record<string, any>)
+    match(selector: Record<string, any>) : T[]
     {
-        var result = [];
-        for(var item of this._labels)
+        let result : T[] = [];
+        for(let item of this._labels)
         {
             if (labelsMatch(item.labels, selector))
             {

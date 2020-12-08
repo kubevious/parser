@@ -42,6 +42,13 @@ export class ConcreteParserExecutor implements BaseParserExecutor
         return this._parserInfo.order;
     }
 
+    get targetInfo() : string {
+        if (!this._parserInfo.target) {
+            return '';
+        }
+        return _.stableStringify(this._parserInfo.target);
+    }
+
     execute(scope : LogicScope)
     {
         let items = this._context.concreteRegistry.filterItems(this.parserInfo.target);
@@ -54,7 +61,7 @@ export class ConcreteParserExecutor implements BaseParserExecutor
 
     _processHandler(scope : LogicScope, item: ConcreteItem)
     {
-        this._logger.silly("[_processHandler] Handler: %s, Item: %s", 
+        this._logger.silly("[_processHandler] ConcreteHandler: %s, Item: %s", 
             this.path, 
             item.id);
 
@@ -90,23 +97,19 @@ export class ConcreteParserExecutor implements BaseParserExecutor
         this._postProcessHandler(variableArgs, handlerArgs, runtimeData);
     }
 
-    private _preprocessHandler(variableArgs : ConcreteProcessorVariableArgs, handlerArgs : ConcreteProcessorHandlerArgs) //handlerInfo, handlerArgs
+    private _preprocessHandler(variableArgs : ConcreteProcessorVariableArgs, handlerArgs : ConcreteProcessorHandlerArgs)
     {
         variableArgs.namespaceName = null;
-        
-        if (this._parserInfo.targetKind == 'concrete' || this._parserInfo.targetKind == 'logic')
+        if (this._parserInfo.needNamespaceScope || this._parserInfo.needAppScope)
         {
-            if (this._parserInfo.needNamespaceScope || this._parserInfo.needAppScope)
+            if (this._parserInfo.namespaceNameCb) {
+                variableArgs.namespaceName = this._parserInfo.namespaceNameCb(handlerArgs.item);
+            } else {
+                variableArgs.namespaceName = handlerArgs.item.config.metadata.namespace;
+            }
+            if (_.isNotNullOrUndefined(variableArgs.namespaceName))
             {
-                if (this._parserInfo.namespaceNameCb) {
-                    variableArgs.namespaceName = this._parserInfo.namespaceNameCb(handlerArgs.item);
-                } else {
-                    variableArgs.namespaceName = handlerArgs.item.config.metadata.namespace;
-                }
-                if (_.isNotNullOrUndefined(variableArgs.namespaceName))
-                {
-                    variableArgs.namespaceScope = handlerArgs.scope.getNamespaceScope(variableArgs.namespaceName!);
-                }
+                variableArgs.namespaceScope = handlerArgs.scope.getNamespaceScope(variableArgs.namespaceName!);
             }
         }
 

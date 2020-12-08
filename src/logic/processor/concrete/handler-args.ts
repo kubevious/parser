@@ -81,6 +81,10 @@ export class ConcreteProcessorHandlerArgs
         return this._variableArgs.appName!;
     }
 
+    hasCreatedItems() {
+        return this._runtimeData.createdItems.length > 0;
+    }
+
     createItem(parent : LogicItem, name : string, params : any) : LogicItem
     {
         params = params || {};

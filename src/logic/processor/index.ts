@@ -50,8 +50,7 @@ export class LogicProcessor
         return this._helpers;
     }
 
-    // TODO: FIX!
-    _extractProcessors(location : string, defaultTargetKind : string)
+    private _extractProcessors(location : string, defaultTargetKind : string)
     {
         this.logger.info('[_extractProcessors] location: %s, defaultTargetKind: %s', location, defaultTargetKind);
         let files : string[] = fs.readdirSync(path.join(__dirname, location));
@@ -61,13 +60,13 @@ export class LogicProcessor
         {
             this.logger.info('[_extractProcessors] %s', fileName);
             let moduleName = fileName.replace('.d.ts', '');
-            this._loadProcessor(moduleName, location, defaultTargetKind);
+            this._loadProcessor(moduleName, location);
         }
 
         this._processors = _.orderBy(this._processors, [
             x => x.order,
             x => x.name,
-            // x => _.stableStringify(x.target)
+            x => x.targetInfo
         ]);
 
         for(var processorInfo of this._processors)
@@ -75,11 +74,10 @@ export class LogicProcessor
             this._logger.info("[_extractProcessors] HANDLER: %s -> %s, target:", 
                 processorInfo.order, 
                 processorInfo.name);
-            // /processorInfo.target)
         }
     }
 
-    _loadProcessor(name : string, location : string, defaultTargetKind : string)
+    private _loadProcessor(name : string, location : string)
     {
         this.logger.info('[_loadProcessor] %s...', name);
         const moduleName = location + '/' + name;
@@ -165,7 +163,7 @@ export class LogicProcessor
         });
     }
 
-    _runLogic(scope : LogicScope, tracker : any)
+    private _runLogic(scope : LogicScope, tracker : any)
     {
         return tracker.scope("runLogic", () => {
             this._context.concreteRegistry.debugOutputCapacity();
@@ -185,7 +183,7 @@ export class LogicProcessor
         });
     }
 
-    _processParsers(scope : LogicScope)
+    private _processParsers(scope : LogicScope)
     {
         for(var handlerInfo of this._processors)
         {
@@ -193,24 +191,14 @@ export class LogicProcessor
         }
     }
 
-    _processParser(scope: LogicScope, handlerInfo : any)
+    private _processParser(scope: LogicScope, handlerInfo : BaseParserExecutor)
     {
         this._logger.debug("[_processParser] Handler: %s -> %s, target: %s :: ", 
-            handlerInfo.parserInfo.order, 
-            handlerInfo.path, 
-            handlerInfo.parserInfo.targetKind,
-            handlerInfo.parserInfo.target);
+            handlerInfo.order,
+            handlerInfo.name);
 
-        // handlerInfo.path
+        handlerInfo.execute(scope);
 
-    //     var targets = [];
-    //     if (handlerInfo.targetKind == 'concrete') {
-    //         var items = this._context.concreteRegistry.filterItems(handlerInfo.target);
-    //         targets = items.map(x => ({ id: x.id, item: x }));
-    //     } else if (handlerInfo.targetKind == 'logic') {
-    //         var path = _.clone(handlerInfo.target.path);
-    //         var items = this._extractTreeItems(scope, path);
-    //         targets = items.map(x => ({ id: x.dn, item: x }));
     //     } else if (handlerInfo.targetKind == 'scope') {
     //         if (handlerInfo.target.namespaced) {
     //             var items = scope.getNamespaceScopes();
@@ -225,185 +213,9 @@ export class LogicProcessor
     //             targets = items.map(x => ({ id: 'scope-item-' + x.kind + '-' + x.name, itemScope: x, item: x }));
     //         }
     //     }
-
-    //     if (targets)
-    //     {
-    //         for(var target of targets)
-    //         {
-    //             this._processHandler(scope, handlerInfo, target);
-    //         }
-    //     }
     }
 
-    // _processHandler(scope : LogicScope, handlerInfo, target)
-    // {
-    //     this._logger.silly("[_processHandler] Handler: %s, Item: %s", 
-    //         handlerInfo.name, 
-    //         target.id);
-
-    //     var handlerArgs = {
-    //         scope: scope,
-    //         logger: this.logger,
-    //         context: this._context,
-    //         helpers: this._helpers,
-
-    //         createdItems: [],
-    //         createdAlerts: []
-    //     }
-
-    //     _.defaults(handlerArgs, target);
-
-    //     handlerArgs.propertiesBuilder = () => {
-    //         return new PropertiesBuilder(handlerArgs.item.config);
-    //     }
-
-    //     handlerArgs.hasCreatedItems = () => {
-    //         return handlerArgs.createdItems.length > 0;
-    //     }
-
-    //     handlerArgs.createItem = (parent, name, params) => {
-    //         params = params || {};
-    //         params.kind = params.kind || handlerInfo.kind;
-    //         if (_.isFunction(params.kind)) {
-    //             params.kind = params.kind(target.item);
-    //         }
-    //         if (!params.kind) {
-    //             throw new Error("Missing handler or params kind.")
-    //         }
-    //         var newObj = parent.fetchByNaming(params.kind, name);
-    //         if (params.order) {
-    //             newObj.order = params.order;
-    //         }
-    //         handlerArgs.createdItems.push(newObj);
-    //         return newObj;
-    //     }
-
-    //     handlerArgs.createK8sItem = (parent, params) => {
-    //         params = params || {};
-    //         var name = params.name || target.item.config.metadata.name;
-    //         var newObj = handlerArgs.createItem(parent, name, params);
-    //         scope.setK8sConfig(newObj, target.item.config);
-    //         return newObj;
-    //     }
-
-    //     handlerArgs.createAlert = (kind, severity, msg) => {
-    //         handlerArgs.createdAlerts.push({
-    //             kind,
-    //             severity,
-    //             msg
-    //         });
-    //     }
-
-    //     handlerArgs.determineSharedFlag = (itemScope) => {
-    //         if (itemScope.isUsedByMany)
-    //         {
-    //             for(var xItem of itemScope.usedBy)
-    //             {
-    //                 xItem.setFlag("shared");
-    //                 for(var otherItem of itemScope.usedBy)
-    //                 {
-    //                     if (otherItem.dn != xItem.dn) {
-    //                         xItem.setUsedBy(otherItem.dn);
-    //                     }
-    //                 }
-    //             }
-    //         } 
-    //     }
-
-    //     this._preprocessHandler(handlerInfo, handlerArgs);
-
-    //     try
-    //     {
-    //         handlerInfo.handler(handlerArgs);
-    //     }
-    //     catch(reason)
-    //     {
-    //         this.logger.error("Error in %s parser. ", handlerInfo.name, reason);
-    //     }
-
-    //     for(var alertInfo of handlerArgs.createdAlerts)
-    //     {
-    //         for(var createdItem of handlerArgs.createdItems)
-    //         {
-    //             createdItem.addAlert(
-    //                 alertInfo.kind, 
-    //                 alertInfo.severity, 
-    //                 alertInfo.msg);
-    //         }
-    //     }
-    // }
-
-    // _preprocessHandler(handlerInfo, handlerArgs)
-    // {
-    //     handlerArgs.infraScope = handlerArgs.scope.getInfraScope();
-
-    //     handlerArgs.namespaceName = null;
-    //     if (handlerInfo.targetKind == 'concrete' || handlerInfo.targetKind == 'logic')
-    //     {
-    //         if (handlerInfo.needNamespaceScope || handlerInfo.needAppScope)
-    //         {
-    //             if (handlerInfo.namespaceNameCb) {
-    //                 handlerArgs.namespaceName = handlerInfo.namespaceNameCb(handlerArgs.item);
-    //             } else {
-    //                 handlerArgs.namespaceName = handlerArgs.item.config.metadata.namespace;
-    //             }
-    //             if (_.isNotNullOrUndefined(handlerArgs.namespaceName))
-    //             {
-    //                 handlerArgs.namespaceScope = handlerArgs.scope.getNamespaceScope(handlerArgs.namespaceName);
-    //             }
-    //         }
-    //     }
-
-    //     handlerArgs.appName = null;
-    //     if (handlerInfo.appNameCb) {
-    //         handlerArgs.appName = handlerInfo.appNameCb(handlerArgs.item);
-    //     }
-    //     if (handlerArgs.namespaceName && handlerArgs.namespaceScope)
-    //     {
-    //         if (handlerInfo.needAppScope)
-    //         {
-    //             handlerArgs.appInfo = handlerArgs.namespaceScope.getAppAndScope(
-    //                 handlerArgs.appName,
-    //                 handlerInfo.canCreateAppIfMissing);
-
-    //             if (handlerArgs.appInfo) {
-    //                 handlerArgs.appScope = handlerArgs.appInfo;
-    //                 handlerArgs.app = handlerArgs.appInfo.item;
-    //             }
-        
-    //         }
-    //     }
-    // }
-
-    _extractTreeItems(scope : LogicScope, path : string[])
-    {
-        var items : LogicItem[] = [];
-        this._visitTree(scope.root, 0, path, item => {
-            items.push(item);
-        });
-        return items;
-    }
-
-    _visitTree(item : LogicItem, index: number, path : string[], cb : (item : LogicItem) => void)
-    {
-        this._logger.silly("[_visitTree] %s, path: %s...", item.dn, path);
-
-        if (index >= path.length)
-        {
-            cb(item);
-        }
-        else
-        {
-            var top = path[index];
-            var children = item.getChildrenByKind(top);
-            for(var child of children)
-            {
-                this._visitTree(child, index + 1, path, cb);
-            }
-        }
-    }
-
-    _finalizeScope(scope : LogicScope)
+    private _finalizeScope(scope : LogicScope)
     {
         scope.getInfraScope().items.finalize();
         for(var nsScope of scope.getNamespaceScopes())

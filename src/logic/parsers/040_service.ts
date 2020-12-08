@@ -1,19 +1,17 @@
-const _ = require("the-lodash");
+import _ from 'the-lodash';
+import { LogicItem } from '../item';
+import { ConcreteParser } from '../parser-builder';
 
-module.exports = {
-    target: {
+export default ConcreteParser()
+    .order(40)
+    .target({
         api: "v1",
         kind: "Service"
-    },
+    })
+    .kind('service')
+    .needNamespaceScope(true)
+    .handler(({ scope, item, createK8sItem, createAlert, hasCreatedItems, namespaceScope }) => {
 
-    kind: "service",
-
-    order: 40,
-
-    needNamespaceScope: true,
-
-    handler: ({scope, item, createK8sItem, createAlert, hasCreatedItems, namespaceScope}) =>
-    {
         let serviceScope = namespaceScope.items.register(item.config);
 
         const serviceType = _.get(item.config, 'spec.type');
@@ -35,7 +33,7 @@ module.exports = {
 
                     let serviceItemName = serviceType;
                     let serviceCount = appItem.getChildrenByKind('service')
-                        .filter(x => serviceType == serviceItemName)
+                        .filter(() => serviceType == serviceItemName)
                         .length;
                     if (serviceCount != 0) {
                         serviceItemName += " " + (serviceCount + 1);
@@ -70,12 +68,13 @@ module.exports = {
         }
 
         /*** HELPERS ***/
-        function createService(parent, params)
+        function createService(parent: LogicItem, params?: any)
         {
             let k8sService = createK8sItem(parent, params);
             serviceScope.registerItem(k8sService);
             return k8sService;
         }
 
-    }
-}
+
+    })
+    ;

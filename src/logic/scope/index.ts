@@ -21,7 +21,7 @@ export class LogicScope
     private _namespaceScopes : Record<string, NamespaceScope> = {};
     private _infraScope : InfraScope;
 
-    private _namespaceLabelMatcher : LabelMatcher;
+    private _namespaceLabelMatcher : LabelMatcher<NamespaceScope>;
 
     constructor(context : Context)
     {
@@ -98,7 +98,7 @@ export class LogicScope
         this._namespaceLabelMatcher.register(labelsMap, namespaceScope);
     }
 
-    findNamespaceScopesByLabels(selector : Record<string, any> )
+    findNamespaceScopesByLabels(selector : Record<string, any>) : NamespaceScope[]
     {
         return this._namespaceLabelMatcher.match(selector);
     }

@@ -1,19 +1,16 @@
-const _ = require("the-lodash");
+import _ from 'the-lodash';
+import { LogicItem } from '../item';
+import { ConcreteParser } from '../parser-builder';
 
-module.exports = {
-    target: {
+export default ConcreteParser()
+    .order(50)
+    .target({
         api: "extensions",
         kind: "Ingress"
-    },
-
-    kind: 'ingress',
-
-    order: 50,
-
-    needNamespaceScope: true,
-
-    handler: ({scope, item, createK8sItem, createAlert, hasCreatedItems, namespaceScope}) =>
-    {
+    })
+    .kind('service')
+    .needNamespaceScope(true)
+    .handler(({ scope, item, createK8sItem, createAlert, hasCreatedItems, namespaceScope }) => {
         namespaceScope.items.register(item.config);
 
         var defaultBackend = _.get(item.config, "spec.backend");
@@ -44,7 +41,7 @@ module.exports = {
         }
 
         /*** HELPERS ***/
-        function processIngressBackend(backendConfig)
+        function processIngressBackend(backendConfig: any)
         {
             if (!backendConfig.serviceName) {
                 return;
@@ -73,10 +70,11 @@ module.exports = {
             }
         }
 
-        function createIngress(parent, params)
+        function createIngress(parent : LogicItem, params?: any)
         {
             var k8sIngress = createK8sItem(parent, params);
             return k8sIngress;
         }
-    }
-}
+    })
+    ;
+    

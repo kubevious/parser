@@ -17,7 +17,7 @@ export class NamespaceScope
     private _appScopes : Record<string, AppScope> = {};
     private _items : ItemsScope;
     
-    private _appLabelMatcher : LabelMatcher;
+    private _appLabelMatcher : LabelMatcher<AppScope>;
     private _appOwners : Record<string, Record<string, LogicItem[]>> = {};
 
     constructor(parent: any, name: string)
@@ -100,7 +100,7 @@ export class NamespaceScope
         this._appLabelMatcher.register(labelsMap, appScope);
     }
 
-    findAppScopesByLabels(selector: Record<string, any>) : any[]
+    findAppScopesByLabels(selector: Record<string, any>) : AppScope[]
     {
         return this._appLabelMatcher.match(selector);
     }

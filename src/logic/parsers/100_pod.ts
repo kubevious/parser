@@ -1,20 +1,17 @@
-const _ = require("the-lodash");
-const NameHelpers = require("../../utils/name-helpers.js");
+import _ from 'the-lodash';
+import { ConcreteParser } from '../parser-builder';
+import { makeRelativeName } from "../../utils/name-helpers.js";
 
-module.exports = {
-    target: {
+export default ConcreteParser()
+    .order(100)
+    .target({
         api: "v1",
         kind: "Pod"
-    },
+    })
+    .kind('pod')
+    .needNamespaceScope(true)
+    .handler(({ scope, item, createK8sItem, createAlert, hasCreatedItems, namespaceScope }) => {
 
-    kind: 'pod',
-
-    order: 100,
-
-    needNamespaceScope: true,
-
-    handler: ({scope, item, createK8sItem, createAlert, hasCreatedItems, namespaceScope}) =>
-    {
         var itemScope = namespaceScope.items.register(item.config);
         
         var conditions = _.get(item.config, 'status.conditions');
@@ -37,7 +34,7 @@ module.exports = {
                 var ownerItems = namespaceScope.getAppOwners(ref.kind, ref.name);
                 for(var ownerItem of ownerItems) 
                 {
-                    var shortName = NameHelpers.makeRelativeName(ownerItem.config.metadata.name, item.config.metadata.name);
+                    var shortName = makeRelativeName(ownerItem.config.metadata.name, item.config.metadata.name);
                     var logicItem = createK8sItem(ownerItem, { name: shortName });
                     itemScope.registerItem(logicItem);
                 }
@@ -52,5 +49,5 @@ module.exports = {
             createAlert('MissingController', 'warn', 'Controller not found.');
         }
 
-    }
-}
+    })
+    ;

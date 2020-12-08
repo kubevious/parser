@@ -1,19 +1,19 @@
-const NameHelpers = require("../../utils/name-helpers.js");
+import _ from 'the-lodash';
+import { ConcreteParser } from '../parser-builder';
 
-module.exports = {
-    target: {
+import { makeRelativeName } from "../../utils/name-helpers.js";
+import { LogicItem } from '../item';
+
+export default ConcreteParser()
+    .order(90)
+    .target({
         api: "apps",
         kind: "ReplicaSet"
-    },
+    })
+    .kind('replicaset')
+    .needNamespaceScope(true)
+    .handler(({ scope, item, createK8sItem, createAlert, hasCreatedItems, namespaceScope }) => {
 
-    kind: 'replicaset',
-
-    order: 90,
-
-    needNamespaceScope: true,
-
-    handler: ({scope, item, createK8sItem, createAlert, hasCreatedItems, namespaceScope}) =>
-    {
         if (item.config.metadata.ownerReferences)
         {
             for(var ref of item.config.metadata.ownerReferences)
@@ -21,7 +21,7 @@ module.exports = {
                 var ownerItems = namespaceScope.getAppOwners(ref.kind, ref.name);
                 for(var ownerItem of ownerItems) 
                 {
-                    var shortName = NameHelpers.makeRelativeName(ownerItem.config.metadata.name, item.config.metadata.name);
+                    var shortName = makeRelativeName(ownerItem.config.metadata.name, item.config.metadata.name);
                     createReplicaSet(ownerItem, { name: shortName });
                 }
             }
@@ -34,11 +34,12 @@ module.exports = {
         }
 
         /*** HELPERS ***/
-        function createReplicaSet(parent, params)
+        function createReplicaSet(parent: LogicItem, params? : any)
         {
             var k8sReplicaSet = createK8sItem(parent, params);
             namespaceScope.registerAppOwner(k8sReplicaSet);
             return k8sReplicaSet;
         }
-    }
-}
+
+    })
+    ;

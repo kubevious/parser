@@ -1,4 +1,5 @@
 import _ from 'the-lodash';
+import { LogicItem } from '../../item';
 
 import { BaseParserInfo, BaseParserBuilder } from '../base/builder';
 
@@ -12,12 +13,14 @@ export interface LogicParserInfo extends BaseParserInfo
 {
     target?: LogicTarget;
 
-    // needAppScope?: boolean;
-    // canCreateAppIfMissing? : boolean;
-    // appNameCb?: (item : LogicItem) => string;
+    needAppScope?: boolean;
+    canCreateAppIfMissing? : boolean;
+    appNameCb?: (item : LogicItem) => string;
 
     kind?: string,
-    needNamespaceScope?: boolean,
+
+    needNamespaceScope?: boolean;
+    namespaceNameCb? : (item : LogicItem) => string;
 
     handler? : (args : LogicProcessorHandlerArgs) => void;
 }
