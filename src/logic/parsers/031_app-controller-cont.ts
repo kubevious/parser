@@ -12,8 +12,8 @@ export default LogicParser()
     .needNamespaceScope(true)
     .handler(({ scope, item, logger, context, createItem, createAlert, namespaceScope }) => {
 
-        var app = item.parent;
-        var appScope = app.scope;
+        var app = item.parent!;
+        var appScope = app.appScope;
 
         // Normal Containers 
         {

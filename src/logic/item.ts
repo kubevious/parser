@@ -13,7 +13,7 @@ import { DumpWriter } from 'the-logger';
 export class LogicItem
 {
     private _logicScope : LogicScope;
-    private _parent : any;
+    private _parent : LogicItem | null = null;
     private _kind : string;
     private _naming : any;
 
@@ -24,7 +24,7 @@ export class LogicItem
     private _rn : any;
     private _config : Record<string, any> = {};
     private _order = 100;
-    private _children : Record<string, any> = {};
+    private _children : Record<string, LogicItem> = {};
     private _properties : Record<string, any> = {};
     private _alerts : Record<string, any> = {};
     private _flags : Record<string, any> = {};
@@ -33,18 +33,12 @@ export class LogicItem
 
     private _namingArray : string[] = [];
 
-    constructor(logicScope: LogicScope, parent: any, kind: any, naming: any)
+    constructor(logicScope: LogicScope, parent: LogicItem | null, kind: any, naming: any)
     {
         this._logicScope = logicScope;
         this._kind = kind;
         this._naming = naming;
         this._rn = LogicItem._makeRn(kind, naming);
-        this._config = {};
-        this._children = {};
-        this._properties = {};
-        this._alerts = {};
-        this._flags = {};
-        this._usedBy = {};
 
         if (parent) {
             this._parent = parent;
@@ -93,7 +87,7 @@ export class LogicItem
         return this._flags;
     }
 
-    get parent() {
+    get parent() : LogicItem | null {
         return this._parent;
     }
 
@@ -115,6 +109,14 @@ export class LogicItem
 
     get scope() : ItemScope {
         return this._itemScope!;
+    }
+
+    get appScope() : AppScope {
+        return this._appScope!;
+    }
+
+    get namespaceScope() : NamespaceScope {
+        return this._namespaceScope!;
     }
 
     associateScope(scope: ItemScope) {
@@ -167,11 +169,11 @@ export class LogicItem
         this._config = value;
     }    
 
-    getChildren() {
+    getChildren() : LogicItem[] {
         return _.values(this._children);
     }
 
-    getChildrenByKind(kind: string) {
+    getChildrenByKind(kind: string) : LogicItem[] {
         return _.values(this._children).filter(x => x.kind == kind);
     }
 

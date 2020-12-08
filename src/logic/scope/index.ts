@@ -190,12 +190,13 @@ export class LogicScope
 
     _findItem(itemPath : { kind: string, name: string}[]) : LogicItem | null
     {
-        var item = this.root;
+        let item = this.root;
         for(var x of itemPath) {
-            item = item.findByNaming(x.kind, x.name);
+            let next = item.findByNaming(x.kind, x.name);
             if (!item) {
                 return null;
             }
+            item = next!;
         }
         return item;
     }

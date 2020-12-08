@@ -1,57 +1,53 @@
-// import _ from 'the-lodash';
-// import { ILogger } from 'the-logger';
+import _ from 'the-lodash';
+import { ILogger } from 'the-logger';
 
-// import { Context } from '../../../context';
+import { Context } from '../../../context';
 
-// import { LogicProcessor } from '../';
+import { LogicProcessor } from '../';
 
-// import { LogicScope } from "../../scope";
-// import { InfraScope } from '../../scope/infra';
-// import { NamespaceScope } from '../../scope/namespace';
-// import { AppScope } from '../../scope/app';
+import { LogicScope } from "../../scope";
+import { InfraScope } from '../../scope/infra';
+import { NamespaceScope } from '../../scope/namespace';
+import { AppScope } from '../../scope/app';
 
 
-// import { Helpers } from '../../helpers';
-// import { LogicItem } from '../../item';
+import { Helpers } from '../../helpers';
+import { LogicItem } from '../../item';
 
-// import { ConcreteParserInfo, ConcreteHandler } from '../../parser-builder'
-// import { ConcreteItem } from '../../../concrete/item';
+import { LogicParserInfo, LogicHandler } from './builder'
 
-// import { ConcreteProcessorHandlerArgs, ConcreteProcessorVariableArgs, ConcreteProcessorRuntimeData } from './handler-args';
+import { LogicProcessorHandlerArgs, LogicProcessorVariableArgs, LogicProcessorRuntimeData } from './handler-args';
 
-// import { BaseParserExecutor } from '../base/executor';
+import { BaseParserExecutor } from '../base/executor';
 
-// export class ConcreteParserExecutor implements BaseParserExecutor
-// {
-//     private _context : Context;
-//     private _processor : LogicProcessor;
-//     private _logger : ILogger;
-//     public path : string;
+export class LogicParserExecutor implements BaseParserExecutor
+{
+    private _context : Context;
+    private _processor : LogicProcessor;
+    private _logger : ILogger;
+    public path : string;
 
-//     // private _executor : ConcreteParserExecutor;
-//     private parserInfo : ConcreteParserInfo;
-//     private _parserInfo : ConcreteParserInfo;
+    private _parserInfo : LogicParserInfo;
 
-//     constructor(processor : LogicProcessor, path : string, parserInfo : ConcreteParserInfo)
-//     {
-//         this.path = path;
-//         this._processor = processor;
-//         this._logger = processor.logger;
-//         this._context = processor.context;
-//         this.parserInfo = parserInfo;
-//         this._parserInfo = parserInfo;
-//     }
+    constructor(processor : LogicProcessor, path : string, parserInfo : LogicParserInfo)
+    {
+        this.path = path;
+        this._processor = processor;
+        this._logger = processor.logger;
+        this._context = processor.context;
+        this._parserInfo = parserInfo;
+    }
 
-//     get name() : string {
-//         return this.path;
-//     }
+    get name() : string {
+        return this.path;
+    }
 
-//     get order() : number {
-//         return this._parserInfo.order;
-//     }
+    get order() : number {
+        return this._parserInfo.order;
+    }
 
-//     execute(scope : LogicScope)
-//     {
+    execute(scope : LogicScope)
+    {
 //         let items = this._context.concreteRegistry.filterItems(this.parserInfo.target);
 
 //         for(var item of items)
@@ -96,7 +92,7 @@
 //         }
 
 //         this._postProcessHandler(variableArgs, handlerArgs, runtimeData);
-//     }
+    }
 
 //     private _preprocessHandler(variableArgs : ConcreteProcessorVariableArgs, handlerArgs : ConcreteProcessorHandlerArgs) //handlerInfo, handlerArgs
 //     {
@@ -154,4 +150,4 @@
 
 //     }
 
-// }
+}

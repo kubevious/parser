@@ -52,15 +52,15 @@ export class AppScope
         return this._properties;
     }
 
-    get containerItems() {
+    get containerItems() : LogicItem[] {
         return this.item.getChildrenByKind('cont');
     }
 
-    get initContainerItems() {
+    get initContainerItems() : LogicItem[] {
         return this.item.getChildrenByKind('initcont');
     }
 
-    get allContainerItems() {
+    get allContainerItems() : LogicItem[] {
         return _.union(this.initContainerItems, this.containerItems);
     }
 }

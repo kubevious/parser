@@ -1,31 +1,28 @@
-const _ = require("the-lodash");
+import _ from 'the-lodash';
+import { LogicItem } from '../item';
+import { LogicParser } from '../parser-builder';
 
-module.exports = {
-
-    targetKind: 'logic',
-
-    target: {
+export default LogicParser()
+    .order(32)
+    .target({
         path: ["ns", "app", "launcher"]
-    },
+    })
+    .kind('vol')
+    .needNamespaceScope(true)
+    .handler(({ scope, item, logger, context, createItem, createAlert, namespaceScope }) => {
 
-    order: 32,
 
-    kind: 'vol',
-    needNamespaceScope: true,
+        var app = item.parent!;
+        var appScope = app.appScope;
 
-    handler: ({scope, item, logger, context, createItem, createAlert, namespaceScope}) =>
-    {
-        var app = item.parent;
-        var appScope = app.scope;
-
-        var volumesProperties = {
+        var volumesProperties : Record<string, any> = {
 
         }
-        var volumesConfig = _.get(item.config, 'spec.template.spec.volumes');
+        var volumesConfig : any[] = _.get(item.config, 'spec.template.spec.volumes');
         if (!volumesConfig || !_.isArray(volumesConfig)) {
             volumesConfig = [];
         }
-        var volumesMap = _.makeDict(volumesConfig, x => x.name);
+        var volumesMap = _.makeDict(volumesConfig, x => x.name, x => x);
 
         volumesProperties['Count'] = volumesConfig.length;
         appScope.properties['Volumes'] = volumesConfig.length;
@@ -55,7 +52,7 @@ module.exports = {
             }
         }
 
-        function processContainerItem(container)
+        function processContainerItem(container : LogicItem)
         {
             var volumeMounts = _.get(container.config, 'volumeMounts');
             if (!_.isArray(volumeMounts) || volumeMounts.length == 0) {
@@ -83,7 +80,7 @@ module.exports = {
 
         /** HELPERS **/
 
-        function processVolumeConfig(parent, volumeConfig, markUsedBy)
+        function processVolumeConfig(parent : LogicItem, volumeConfig: any, markUsedBy: boolean)
         {
             var volume = createItem(parent, volumeConfig.name);
             scope.setK8sConfig(volume, volumeConfig);
@@ -99,7 +96,7 @@ module.exports = {
             return volume;
         }
         
-        function findAndProcessConfigMap(parent, name, markUsedBy, isOptional)
+        function findAndProcessConfigMap(parent : LogicItem, name: string, markUsedBy: boolean, isOptional: boolean)
         {
             var configMapScope = namespaceScope.items.get('ConfigMap', name);
             if (configMapScope)
@@ -119,13 +116,14 @@ module.exports = {
             return configMapScope;
         }
 
-        function findAndProcessSecret(parent, name, markUsedBy)
+        function findAndProcessSecret(parent : LogicItem, name: string, markUsedBy: boolean)
         {
             var secret = parent.fetchByNaming("secret", name);
             if (markUsedBy) {
-                var secretScope = namespaceScope.items.fetch('Secret', name);
+                var secretScope = namespaceScope.items.fetch('Secret', name, null);
                 secretScope.markUsedBy(secret);
             }
         }
-    }
-}
+
+    })
+    ;

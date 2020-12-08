@@ -21,7 +21,6 @@ export class ConcreteParserExecutor implements BaseParserExecutor
     private _logger : ILogger;
     public path : string;
 
-    // private _executor : ConcreteParserExecutor;
     private parserInfo : ConcreteParserInfo;
     private _parserInfo : ConcreteParserInfo;
 

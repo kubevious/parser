@@ -22,7 +22,7 @@ export interface LogicHandler {
     context: Context;
     // item : ConcreteItem;
 
-    createItem(parent : LogicItem, name : string, params : any) : LogicItem;
+    createItem(parent : LogicItem, name : string, params? : any) : LogicItem;
     createAlert(kind : string, severity : string, msg : string) : void;
 
     // createK8sItem : (parent : LogicItem, params? : any) => LogicItem;
@@ -43,7 +43,7 @@ export interface LogicParserInfo extends BaseParserInfo
     // canCreateAppIfMissing? : boolean;
     // appNameCb?: (item : LogicItem) => string;
 
-    // kind?: string,
+    kind?: string,
     needNamespaceScope?: boolean,
 
     handler? : (args : LogicHandler) => void;
@@ -77,6 +77,12 @@ export class LogicParserBuilder implements BaseParserBuilder
     needNamespaceScope(value : boolean) : LogicParserBuilder
     {
         this._data.needNamespaceScope = value;
+        return this;
+    }
+
+    kind(value : string) : LogicParserBuilder
+    {
+        this._data.kind = value;
         return this;
     }
 

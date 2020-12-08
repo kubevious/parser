@@ -14,10 +14,12 @@ import { LogicItem } from '../item';
 
 import { BaseParserBuilder } from './base/builder'
 import { ConcreteParserInfo } from './concrete/builder'
-
-import { ConcreteParserExecutor } from './concrete/executor';
+import { LogicParserInfo } from './logic/builder'
 
 import { BaseParserExecutor } from './base/executor';
+import { ConcreteParserExecutor } from './concrete/executor';
+import { LogicParserExecutor } from './logic/executor';
+
 
 export class LogicProcessor 
 {
@@ -105,9 +107,15 @@ export class LogicProcessor
                     parserInfo)
                 this._processors.push(parserExecutor);
             }
-            // let processorInfo : ProcessorInfo;
-            // processorInfo = new ProcessorInfo(moduleName, baseParserInfo);
-            // list.push(processorInfo);
+            else if (baseParserInfo.targetKind == 'logic')
+            {
+                let parserInfo = <LogicParserInfo>baseParserInfo;
+                let parserExecutor = new LogicParserExecutor(
+                    this,
+                    moduleName,
+                    parserInfo)
+                this._processors.push(parserExecutor);
+            }
         }
 
         // console.log(baseParserInfo);
