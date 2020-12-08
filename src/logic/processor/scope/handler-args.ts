@@ -13,26 +13,27 @@ import { AppScope } from '../../scope/app';
 import { Helpers } from '../../helpers';
 import { LogicItem } from '../../item';
 
-import { ConcreteParserInfo } from './builder'
-import { ConcreteItem } from '../../../concrete/item';
+import { ScopeParserInfo } from './builder'
 
 import { AlertInfo } from '../types';
 import { ItemScope } from '../../scope/item';
 
-export class ConcreteProcessorHandlerArgs
+export class ScopeProcessorHandlerArgs
 {
     private _processor: LogicProcessor;
     private _scope : LogicScope;
-    private _item: ConcreteItem;
-    private _parserInfo : ConcreteParserInfo;
-    private _variableArgs : ConcreteProcessorVariableArgs;
-    private _runtimeData : ConcreteProcessorRuntimeData;
+    private _itemScope: ItemScope | null;
+    private _namespaceScope: NamespaceScope | null;
+    private _parserInfo : ScopeParserInfo;
+    private _variableArgs : ScopeProcessorVariableArgs;
+    private _runtimeData : ScopeProcessorRuntimeData;
 
-    constructor(processor: LogicProcessor, scope : LogicScope, item: ConcreteItem, parserInfo : ConcreteParserInfo, variableArgs: ConcreteProcessorVariableArgs, runtimeData : ConcreteProcessorRuntimeData)
+    constructor(processor: LogicProcessor, scope : LogicScope, itemScope: ItemScope | null, namespaceScope: NamespaceScope | null, parserInfo : ScopeParserInfo, variableArgs: ScopeProcessorVariableArgs, runtimeData : ScopeProcessorRuntimeData)
     {
         this._processor = processor;
         this._scope = scope;
-        this._item = item;
+        this._itemScope = itemScope;
+        this._namespaceScope = namespaceScope;
         this._parserInfo = parserInfo;
         this._variableArgs = variableArgs;
         this._runtimeData = runtimeData;
@@ -50,8 +51,12 @@ export class ConcreteProcessorHandlerArgs
         return this._scope;
     }
 
-    get item() : ConcreteItem {
-        return this._item;
+    get itemScope() : ItemScope | null {
+        return this._itemScope;
+    }
+
+    get namespaceScope() : NamespaceScope | null {
+        return this._namespaceScope;
     }
 
     get infraScope() : InfraScope {
@@ -60,26 +65,6 @@ export class ConcreteProcessorHandlerArgs
 
     get helpers() : Helpers {
         return this._processor.helpers;
-    }
-
-    get namespaceScope() : NamespaceScope {
-        return this._variableArgs.namespaceScope!;
-    }
-
-    get namespaceName() : string {
-        return this._variableArgs.namespaceName!;
-    }
-
-    get app() : LogicItem {
-        return this._variableArgs.app!;
-    }
-
-    get appScope() : AppScope {
-        return this._variableArgs.appScope!;
-    }
-
-    get appName() : string {
-        return this._variableArgs.appName!;
     }
 
     hasCreatedItems() {
@@ -91,7 +76,7 @@ export class ConcreteProcessorHandlerArgs
         params = params || {};
         params.kind = params.kind || this._parserInfo.kind;
         if (_.isFunction(params.kind)) {
-            params.kind = params.kind(this._item);
+            params.kind = params.kind(this._itemScope);
         }
         if (!params.kind) {
             throw new Error("Missing handler or params kind.")
@@ -106,10 +91,13 @@ export class ConcreteProcessorHandlerArgs
 
     createK8sItem(parent : LogicItem, params? : any) : LogicItem
     {
+        if (!this._itemScope) {
+            throw new Error("NO ITEM SCOPE PRESENT");
+        }
         params = params || {};
-        var name = params.name || this._item.config.metadata.name;
+        var name = params.name || this._itemScope!.config.metadata.name;
         var newObj = this.createItem(parent, name, params);
-        this._scope.setK8sConfig(newObj, this.item.config);
+        this._scope.setK8sConfig(newObj, this._itemScope!.config);
         return newObj;
     }
 
@@ -122,38 +110,21 @@ export class ConcreteProcessorHandlerArgs
         });
     }
 
-    determineSharedFlag(itemScope : ItemScope) 
-    {
-        if (itemScope.isUsedByMany)
-        {
-            for(let xItem of itemScope.usedBy)
-            {
-                xItem.setFlag("shared");
-                for(let otherItem of itemScope.usedBy)
-                {
-                    if (otherItem.dn != xItem.dn) {
-                        xItem.setUsedBy(otherItem.dn);
-                    }
-                }
-            }
-        } 
-    }
-
 }
 
 
-export interface ConcreteProcessorVariableArgs
+export interface ScopeProcessorVariableArgs
 {
-    namespaceName? : string | null;
-    namespaceScope? : NamespaceScope | null;
+    // namespaceName? : string | null;
+    // namespaceScope? : NamespaceScope | null;
 
-    appName? : string | null;
-    appScope?: AppScope | null;
-    app?: LogicItem | null;
+    // appName? : string | null;
+    // appScope?: AppScope | null;
+    // app?: LogicItem | null;
 }
 
 
-export interface ConcreteProcessorRuntimeData
+export interface ScopeProcessorRuntimeData
 {
     createdItems : LogicItem[];
     createdAlerts : AlertInfo[];

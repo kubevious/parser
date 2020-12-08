@@ -1,18 +1,15 @@
-const _ = require("the-lodash");
+import _ from 'the-lodash';
+import { ScopeParser } from '../parser-builder';
 
-module.exports = {
-    targetKind: 'scope',
-
-    target: {
+export default ScopeParser()
+    .order(101)
+    .target({
         namespaced: true,
         scopeKind: 'Pod'
-    },
+    })
+    .handler(({ scope, itemScope }) => {
 
-    order: 101,
-
-    handler: ({ scope, itemScope}) =>
-    {
-        var volumes = _.get(itemScope.config, 'spec.volumes');
+        var volumes = _.get(itemScope!.config, 'spec.volumes');
         if (volumes)
         {
             for(var volume of volumes)
@@ -20,10 +17,10 @@ module.exports = {
                 var pvcName = _.get(volume, 'persistentVolumeClaim.claimName');
                 if (pvcName)
                 {
-                    var pvcScope = itemScope.parent.items.get('PersistentVolumeClaim', pvcName);
+                    var pvcScope = itemScope!.parent.items.get('PersistentVolumeClaim', pvcName);
                     if (pvcScope)
                     {
-                        for(var podItem of itemScope.items)
+                        for(var podItem of itemScope!.items)
                         {
                             var pvc = podItem.fetchByNaming("pvc", pvcScope.name);
                             scope.setK8sConfig(pvc, pvcScope.config);
@@ -35,5 +32,5 @@ module.exports = {
             }
         }
 
-    }
-}
+    })
+    ;
