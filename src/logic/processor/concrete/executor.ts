@@ -6,18 +6,11 @@ import { Context } from '../../../context';
 import { LogicProcessor } from '../';
 
 import { LogicScope } from "../../scope";
-import { InfraScope } from '../../scope/infra';
-import { NamespaceScope } from '../../scope/namespace';
-import { AppScope } from '../../scope/app';
 
-
-import { Helpers } from '../../helpers';
-import { LogicItem } from '../../item';
-
-import { ConcreteParserInfo, ConcreteHandler } from '../../parser-builder'
+import { ConcreteParserInfo } from '../../parser-builder'
 import { ConcreteItem } from '../../../concrete/item';
 
-import { ConcreteProcessorHandlerArgs, ConcreteProcessorRuntimeArgs } from './handler-args';
+import { ConcreteProcessorHandlerArgs, ConcreteProcessorVariableArgs, ConcreteProcessorRuntimeData } from './handler-args';
 
 import { BaseParserExecutor } from '../base/executor';
 
@@ -66,98 +59,92 @@ export class ConcreteParserExecutor implements BaseParserExecutor
             this.path, 
             item.id);
 
-        let runtimeArgs : ConcreteProcessorRuntimeArgs =
-            {
-                // namespaceScope?: Namesp;
-                // app?: LogicItem;
-                // appScope?: AppScope;
-            };
+        let variableArgs : ConcreteProcessorVariableArgs =
+        {
+        };
+
+        let runtimeData : ConcreteProcessorRuntimeData = {
+            createdItems : [],
+            createdAlerts : []
+        };
 
         let handlerArgs = new ConcreteProcessorHandlerArgs(
             this._processor,
             scope,
             item,
             this._parserInfo,
-            runtimeArgs
+            variableArgs,
+            runtimeData
         )
 
-        // var handlerArgs = {
-        //     scope: scope,
-        //     logger: this.logger,
-        //     context: this._context,
-        //     helpers: this._helpers,
-
-        //     createdItems: [],
-        //     createdAlerts: []
-        // }
-
-        // _.defaults(handlerArgs, target);
-
-        // this._preprocessHandler(handlerInfo, handlerArgs);
-
-        // this.parserInfo.
+        this._preprocessHandler(variableArgs, handlerArgs);
 
         try
         {
             this._parserInfo.handler!(handlerArgs);
-            // handlerInfo.handler(handlerArgs);
         }
         catch(reason)
         {
             this._logger.error("Error in %s parser. ", this.path, reason);
         }
 
-        // for(var alertInfo of handlerArgs.createdAlerts)
-        // {
-        //     for(var createdItem of handlerArgs.createdItems)
-        //     {
-        //         createdItem.addAlert(
-        //             alertInfo.kind, 
-        //             alertInfo.severity, 
-        //             alertInfo.msg);
-        //     }
-        // }
+        this._postProcessHandler(variableArgs, handlerArgs, runtimeData);
     }
 
-
-    private _preprocessHandler(runtimeArgs : ConcreteProcessorRuntimeArgs, handlerArgs : ConcreteProcessorHandlerArgs) //handlerInfo, handlerArgs
+    private _preprocessHandler(variableArgs : ConcreteProcessorVariableArgs, handlerArgs : ConcreteProcessorHandlerArgs) //handlerInfo, handlerArgs
     {
-        runtimeArgs.namespaceName = null;
+        variableArgs.namespaceName = null;
         
         if (this._parserInfo.targetKind == 'concrete' || this._parserInfo.targetKind == 'logic')
         {
             if (this._parserInfo.needNamespaceScope || this._parserInfo.needAppScope)
             {
                 if (this._parserInfo.namespaceNameCb) {
-                    runtimeArgs.namespaceName = this._parserInfo.namespaceNameCb(handlerArgs.item);
+                    variableArgs.namespaceName = this._parserInfo.namespaceNameCb(handlerArgs.item);
                 } else {
-                    runtimeArgs.namespaceName = handlerArgs.item.config.metadata.namespace;
+                    variableArgs.namespaceName = handlerArgs.item.config.metadata.namespace;
                 }
-                if (_.isNotNullOrUndefined(runtimeArgs.namespaceName))
+                if (_.isNotNullOrUndefined(variableArgs.namespaceName))
                 {
-                    runtimeArgs.namespaceScope = handlerArgs.scope.getNamespaceScope(runtimeArgs.namespaceName!);
+                    variableArgs.namespaceScope = handlerArgs.scope.getNamespaceScope(variableArgs.namespaceName!);
                 }
             }
         }
 
-        runtimeArgs.appName = null;
+        variableArgs.appName = null;
         if (this._parserInfo.appNameCb) {
-            runtimeArgs.appName = this._parserInfo.appNameCb(handlerArgs.item);
+            variableArgs.appName = this._parserInfo.appNameCb(handlerArgs.item);
         }
-        if (runtimeArgs.namespaceName && runtimeArgs.namespaceScope)
+        if (variableArgs.namespaceName && variableArgs.namespaceScope)
         {
-            if (this._parserInfo.needAppScope && runtimeArgs.appName)
+            if (this._parserInfo.needAppScope && variableArgs.appName)
             {
                 let appScope = handlerArgs.namespaceScope.getAppAndScope(
-                    runtimeArgs.appName!,
+                    variableArgs.appName!,
                     this._parserInfo.canCreateAppIfMissing!);
 
                 if (appScope) {
-                    runtimeArgs.appScope = appScope;
-                    runtimeArgs.app = appScope.item;
+                    variableArgs.appScope = appScope;
+                    variableArgs.app = appScope.item;
                 }
             }
         }
+    }
+
+    private _postProcessHandler(variableArgs : ConcreteProcessorVariableArgs, handlerArgs : ConcreteProcessorHandlerArgs, runtimeData : ConcreteProcessorRuntimeData)
+    {
+
+        for(var alertInfo of runtimeData.createdAlerts)
+        {
+            for(var createdItem of runtimeData.createdItems)
+            {
+                createdItem.addAlert(
+                    alertInfo.kind, 
+                    alertInfo.severity, 
+                    alertInfo.msg);
+            }
+        }
+
     }
 
 }

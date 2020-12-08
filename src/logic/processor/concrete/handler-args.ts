@@ -10,12 +10,13 @@ import { InfraScope } from '../../scope/infra';
 import { NamespaceScope } from '../../scope/namespace';
 import { AppScope } from '../../scope/app';
 
-
 import { Helpers } from '../../helpers';
 import { LogicItem } from '../../item';
 
 import { ConcreteParserInfo, ConcreteHandler } from '../../parser-builder'
 import { ConcreteItem } from '../../../concrete/item';
+
+import { AlertInfo } from '../types';
 
 export class ConcreteProcessorHandlerArgs implements ConcreteHandler
 {
@@ -23,17 +24,17 @@ export class ConcreteProcessorHandlerArgs implements ConcreteHandler
     private _scope : LogicScope;
     private _item: ConcreteItem;
     private _parserInfo : ConcreteParserInfo;
-    private _runtimeArgs : ConcreteProcessorRuntimeArgs;
+    private _variableArgs : ConcreteProcessorVariableArgs;
+    private _runtimeData : ConcreteProcessorRuntimeData;
 
-    private _createdItems : LogicItem[] = [];
-
-    constructor(processor: LogicProcessor, scope : LogicScope, item: ConcreteItem, parserInfo : ConcreteParserInfo, runtimeArgs: ConcreteProcessorRuntimeArgs)
+    constructor(processor: LogicProcessor, scope : LogicScope, item: ConcreteItem, parserInfo : ConcreteParserInfo, variableArgs: ConcreteProcessorVariableArgs, runtimeData : ConcreteProcessorRuntimeData)
     {
         this._processor = processor;
         this._scope = scope;
         this._item = item;
         this._parserInfo = parserInfo;
-        this._runtimeArgs = runtimeArgs;
+        this._variableArgs = variableArgs;
+        this._runtimeData = runtimeData;
     }
 
     get logger() : ILogger {
@@ -61,15 +62,15 @@ export class ConcreteProcessorHandlerArgs implements ConcreteHandler
     }
 
     get namespaceScope() : NamespaceScope {
-        return this._runtimeArgs.namespaceScope!;
+        return this._variableArgs.namespaceScope!;
     }
 
     get app() : LogicItem {
-        return this._runtimeArgs.app!;
+        return this._variableArgs.app!;
     }
 
     get appScope() : AppScope {
-        return this._runtimeArgs.appScope!;
+        return this._variableArgs.appScope!;
     }
 
     createItem(parent : LogicItem, name : string, params : any) : LogicItem
@@ -86,7 +87,7 @@ export class ConcreteProcessorHandlerArgs implements ConcreteHandler
         if (params.order) {
             newObj.order = params.order;
         }
-        this._createdItems.push(newObj);
+        this._runtimeData.createdItems.push(newObj);
         return newObj;
     }
 
@@ -99,10 +100,36 @@ export class ConcreteProcessorHandlerArgs implements ConcreteHandler
         return newObj;
     }
 
+    createAlert(kind : string, severity : string, msg : string)
+    {
+        this._runtimeData.createdAlerts.push({
+            kind,
+            severity,
+            msg
+        });
+    }
+
+//     determineSharedFlag(itemScope : ItemScope) 
+//     {
+//         if (itemScope.isUsedByMany)
+//         {
+//             for(let xItem of itemScope.usedBy)
+//             {
+//                 xItem.setFlag("shared");
+//                 for(let otherItem of itemScope.usedBy)
+//                 {
+//                     if (otherItem.dn != xItem.dn) {
+//                         xItem.setUsedBy(otherItem.dn);
+//                     }
+//                 }
+//             }
+//         } 
+//     }
+
 }
 
 
-export interface ConcreteProcessorRuntimeArgs
+export interface ConcreteProcessorVariableArgs
 {
     namespaceName? : string | null;
     namespaceScope? : NamespaceScope | null;
@@ -110,4 +137,11 @@ export interface ConcreteProcessorRuntimeArgs
     appName? : string | null;
     appScope?: AppScope | null;
     app?: LogicItem | null;
+}
+
+
+export interface ConcreteProcessorRuntimeData
+{
+    createdItems : LogicItem[];
+    createdAlerts : AlertInfo[];
 }

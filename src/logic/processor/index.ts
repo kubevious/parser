@@ -8,20 +8,12 @@ const fs = require("fs");
 const path = require("path");
 
 import { LogicScope } from "../scope";
-import { InfraScope } from '../scope/infra';
-import { NamespaceScope } from '../scope/namespace';
-import { AppScope } from '../scope/app';
-
-import { PropertiesBuilder } from '../properties-builder';
 
 import { Helpers } from '../helpers';
 import { LogicItem } from '../item';
 
-import { ConcreteProcessorHandlerArgs } from './concrete/handler-args';
-
-import { BaseParserBuilder, BaseParserInfo, LogicHandler } from '../parser-builder'
-import { ConcreteParserInfo, ConcreteHandler } from '../parser-builder'
-import { ConcreteItem } from '../../concrete/item';
+import { BaseParserBuilder} from '../parser-builder'
+import { ConcreteParserInfo } from '../parser-builder'
 
 import { ConcreteParserExecutor } from './concrete/executor';
 
