@@ -7,7 +7,7 @@ import { LogicProcessor } from '../';
 
 import { LogicScope } from "../../scope";
 
-import { ConcreteParserInfo } from '../../parser-builder'
+import { ConcreteParserInfo } from './builder'
 import { ConcreteItem } from '../../../concrete/item';
 
 import { ConcreteProcessorHandlerArgs, ConcreteProcessorVariableArgs, ConcreteProcessorRuntimeData } from './handler-args';

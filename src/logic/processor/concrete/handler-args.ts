@@ -13,7 +13,7 @@ import { AppScope } from '../../scope/app';
 import { Helpers } from '../../helpers';
 import { LogicItem } from '../../item';
 
-import { ConcreteParserInfo, ConcreteHandler } from '../../parser-builder'
+import { ConcreteParserInfo, ConcreteHandler } from './builder'
 import { ConcreteItem } from '../../../concrete/item';
 
 import { AlertInfo } from '../types';

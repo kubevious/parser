@@ -12,8 +12,8 @@ import { LogicScope } from "../scope";
 import { Helpers } from '../helpers';
 import { LogicItem } from '../item';
 
-import { BaseParserBuilder} from '../parser-builder'
-import { ConcreteParserInfo } from '../parser-builder'
+import { BaseParserBuilder } from './base/builder'
+import { ConcreteParserInfo } from './concrete/builder'
 
 import { ConcreteParserExecutor } from './concrete/executor';
 
