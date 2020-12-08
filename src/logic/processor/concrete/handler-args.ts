@@ -13,12 +13,12 @@ import { AppScope } from '../../scope/app';
 import { Helpers } from '../../helpers';
 import { LogicItem } from '../../item';
 
-import { ConcreteParserInfo, ConcreteHandler } from './builder'
+import { ConcreteParserInfo } from './builder'
 import { ConcreteItem } from '../../../concrete/item';
 
 import { AlertInfo } from '../types';
 
-export class ConcreteProcessorHandlerArgs implements ConcreteHandler
+export class ConcreteProcessorHandlerArgs
 {
     private _processor: LogicProcessor;
     private _scope : LogicScope;
@@ -65,12 +65,20 @@ export class ConcreteProcessorHandlerArgs implements ConcreteHandler
         return this._variableArgs.namespaceScope!;
     }
 
+    get namespaceName() : string {
+        return this._variableArgs.namespaceName!;
+    }
+
     get app() : LogicItem {
         return this._variableArgs.app!;
     }
 
     get appScope() : AppScope {
         return this._variableArgs.appScope!;
+    }
+
+    get appName() : string {
+        return this._variableArgs.appName!;
     }
 
     createItem(parent : LogicItem, name : string, params : any) : LogicItem

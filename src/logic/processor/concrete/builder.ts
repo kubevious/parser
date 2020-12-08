@@ -1,16 +1,9 @@
 import _ from 'the-lodash';
-import { ILogger } from 'the-logger';
-import { LogicItem } from '../../item';
-import { LogicScope } from '../../scope';
-import { InfraScope } from '../../scope/infra';
 import { ConcreteItem } from '../../../concrete/item';
-import { Helpers } from '../../helpers';
-import { NamespaceScope } from '../../scope/namespace';
-import { AppScope } from '../../scope/app';
-import { Context } from '../../../context';
 
 import { BaseParserInfo, BaseParserBuilder } from '../base/builder';
 
+import { ConcreteProcessorHandlerArgs } from './handler-args';
 
 export interface ConcreteParserInfo extends BaseParserInfo
 {
@@ -25,26 +18,12 @@ export interface ConcreteParserInfo extends BaseParserInfo
     needNamespaceScope?: boolean;
     namespaceNameCb? : (item : ConcreteItem) => string;
 
-    handler? : (args : ConcreteHandler) => void;
+    handler? : (args : ConcreteProcessorHandlerArgs) => void;
 }
 
 interface ConcreteTarget {
     api: string,
     kind: string
-}
-
-export interface ConcreteHandler {
-    logger : ILogger;
-    scope : LogicScope;
-    item : ConcreteItem;
-    createK8sItem : (parent : LogicItem, params? : any) => LogicItem;
-    infraScope : InfraScope;
-    helpers : Helpers;
-
-    namespaceScope: NamespaceScope;
-
-    app: LogicItem;
-    appScope: AppScope;
 }
 
 export function ConcreteParser() : ConcreteParserBuilder
@@ -115,7 +94,7 @@ export class ConcreteParserBuilder implements BaseParserBuilder
         return this;
     }
 
-    handler(value : (args : ConcreteHandler) => void)
+    handler(value : (args : ConcreteProcessorHandlerArgs) => void)
     {
         this._data.handler = value;
         return this;

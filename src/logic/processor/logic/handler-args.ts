@@ -14,11 +14,11 @@ import { ItemScope } from '../../scope/item';
 import { Helpers } from '../../helpers';
 import { LogicItem } from '../../item';
 
-import { LogicParserInfo, LogicHandler } from './builder'
+import { LogicParserInfo } from './builder'
 
 import { AlertInfo } from '../types';
 
-export class LogicProcessorHandlerArgs implements LogicHandler
+export class LogicProcessorHandlerArgs
 {
     private _processor: LogicProcessor;
     private _scope : LogicScope;
@@ -65,12 +65,20 @@ export class LogicProcessorHandlerArgs implements LogicHandler
         return this._variableArgs.namespaceScope!;
     }
 
+    get namespaceName() : string {
+        return this._variableArgs.namespaceName!;
+    }
+
     get app() : LogicItem {
         return this._variableArgs.app!;
     }
 
     get appScope() : AppScope {
         return this._variableArgs.appScope!;
+    }
+
+    get appName() : string {
+        return this._variableArgs.appName!;
     }
 
     createItem(parent : LogicItem, name : string, params? : any) : LogicItem

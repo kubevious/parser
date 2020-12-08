@@ -1,21 +1,19 @@
-const _ = require("the-lodash");
+import _ from 'the-lodash';
+import { LogicItem } from '../item';
+import { LogicParser } from '../parser-builder';
 
-module.exports = {
+const yaml = require('js-yaml');
 
-    targetKind: 'logic',
-
-    target: {
+export default LogicParser()
+    .order(33)
+    .target({
         path: ["ns", "app", "launcher"]
-    },
+    })
+    .needNamespaceScope(true)
+    .handler(({ item, namespaceScope }) => {
 
-    order: 33,
-
-    needNamespaceScope: true,
-
-    handler: ({ item, namespaceScope }) =>
-    {
-        var app = item.parent;
-        var appScope = app.scope;
+        var app = item.parent!;
+        var appScope = app.appScope;
 
         var name = _.get(item.config, 'spec.template.spec.serviceAccountName');
         if (!name) {
@@ -39,5 +37,7 @@ module.exports = {
         {
             app.addAlert('Missing', 'warn', 'Service account is not set.');
         }
-    }
-}
+
+    })
+    ;
+

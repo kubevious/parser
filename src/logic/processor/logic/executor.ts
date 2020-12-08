@@ -6,17 +6,8 @@ import { Context } from '../../../context';
 import { LogicProcessor } from '../';
 
 import { LogicScope } from "../../scope";
-import { InfraScope } from '../../scope/infra';
-import { NamespaceScope } from '../../scope/namespace';
-import { AppScope } from '../../scope/app';
 
-
-import { Helpers } from '../../helpers';
-import { LogicItem } from '../../item';
-
-import { LogicParserInfo, LogicHandler } from './builder'
-
-import { LogicProcessorHandlerArgs, LogicProcessorVariableArgs, LogicProcessorRuntimeData } from './handler-args';
+import { LogicParserInfo } from './builder'
 
 import { BaseParserExecutor } from '../base/executor';
 

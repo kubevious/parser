@@ -9,7 +9,7 @@ export default LogicParser()
     })
     .kind('vol')
     .needNamespaceScope(true)
-    .handler(({ scope, item, logger, context, createItem, createAlert, namespaceScope }) => {
+    .handler(({ scope, item, createItem, createAlert, namespaceScope }) => {
 
 
         var app = item.parent!;

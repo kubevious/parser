@@ -7,6 +7,7 @@ import { InfraScope } from './infra';
 import { NamespaceScope } from './namespace';
 import { LogicItem } from '../item';
 import { LabelMatcher } from './label-matcher';
+import { ConcreteItem } from '../../concrete/item';
 
 export class LogicScope
 {
@@ -159,7 +160,7 @@ export class LogicScope
         return infra;
     }
 
-    fetchRawContainer(item : LogicItem, name : string) : LogicItem
+    fetchRawContainer(item : ConcreteItem, name : string) : LogicItem
     {
         var nsName = item.config.metadata.namespace;
         return this.fetchNamespaceRawContainer(nsName, name)

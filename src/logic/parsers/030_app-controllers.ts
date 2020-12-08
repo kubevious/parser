@@ -24,7 +24,7 @@ export default ConcreteParser()
     .appNameCb((item) => {
         return item.config.metadata.name; 
     })
-    .handler(({ logger, scope, item, app, appScope, namespaceScope }) => {
+    .handler(({ scope, item, app, appScope, namespaceScope }) => {
 
         app.associateAppScope(appScope);
 

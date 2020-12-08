@@ -1,34 +1,30 @@
-const yaml = require('js-yaml');
-const _ = require("the-lodash");
+import _ from 'the-lodash';
+import { ConcreteParser } from '../parser-builder';
 
-module.exports = {
-    target: {
+const yaml = require('js-yaml');
+
+export default ConcreteParser()
+    .order(35)
+    .target({
         api: "autoscaling",
         kind: "HorizontalPodAutoscaler"
-    },
-
-    order: 35,
-
-    kind: 'hpa',
-
-    needAppScope: true,
-    appNameCb: (item) => {
+    })
+    .kind('hpa')
+    .needAppScope(true)
+    .appNameCb((item) => {
         var scaleTargetRef = _.get(item.config, 'spec.scaleTargetRef');
         if (!scaleTargetRef) {
             return null;
         }
         return scaleTargetRef.name;
-    },
-
-
-    handler: ({logger, scope, item, context, createK8sItem, createAlert, hasCreatedItems, appName, appInfo, app, appScope}) =>
-    {
+    })
+    .handler(({ scope, item, createK8sItem, createAlert, appName, app, appScope }) => {
         if (!appName) {
             return null;
         }
 
         // TODO: replace with appScope or app
-        if (!appInfo) {
+        if (!appScope) {
             var rawContainer = scope.fetchRawContainer(item, "Autoscalers");
             createK8sItem(rawContainer);
             createAlert('MissingApp', 'error', 'Could not find apps matching scaleTargetRef.');
@@ -50,8 +46,5 @@ module.exports = {
         {
             appProps['Replicas'] = replicasInfo;
         }
-        
-    }
-}
-
-
+    })
+    ;
