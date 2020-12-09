@@ -1,27 +1,27 @@
-const _ = require("the-lodash");
+import _ from 'the-lodash';
+import { ConcreteParser } from '../parser-builder';
 
-module.exports = {
-    target: [{
+export default ConcreteParser()
+    .order(125)
+    .target({
         api: "rbac.authorization.k8s.io",
         kind: "ClusterRole"
-    }, {
+    })
+    .target({
         api: "rbac.authorization.k8s.io",
         kind: "Role"
-    }],
-
-    order: 125,
-
-    kind: (item) => {
+    })
+    .kind((item) => {
         if(item.config.kind == "Role") {
             return 'rl'
         }
         if(item.config.kind == "ClusterRole") {
             return 'crl'
         }
-    },
-
-    needNamespaceScope: true,
-    namespaceNameCb: (item) => {
+        throw new Error();
+    })
+    .needNamespaceScope(true)
+    .namespaceNameCb((item) => {
         if(item.config.kind == "Role") {
             return item.config.metadata.namespace;
         }
@@ -29,11 +29,10 @@ module.exports = {
             return '';
         }
         throw new Error();
-    },
+    })
+    .handler(({ scope, item, namespaceScope, createK8sItem, createAlert, determineSharedFlag }) => {
 
-    handler: ({ scope, item, namespaceScope, createK8sItem, createAlert, determineSharedFlag }) =>
-    {
-        var roleScope = namespaceScope.items.get(item.config.kind, item.config.metadata.name);
+        var roleScope = namespaceScope.items.getByConcrete(item)!;
 
         if (roleScope.hasNoOwner)
         {
@@ -58,5 +57,6 @@ module.exports = {
         }
 
         determineSharedFlag(roleScope);
-    }
-}
+
+    })
+    ;

@@ -13,7 +13,7 @@ export class ItemScope
 
     private _usedBy : Record<string, LogicItem> = {};
     private _owners : Record<string, LogicItem> = {};
-    private _data = {};
+    private _data : Record<string, any> = {};
     private _items : LogicItem[] = [];
     private _appScopes : Record<string, AppScope> = {};
     private _createdAlerts : {kind : string,
@@ -26,13 +26,6 @@ export class ItemScope
         this._kind = kind;
         this._name = name;
         this._config = config;
-
-        this._usedBy = {};
-        this._owners = {};
-        this._data = {};
-        this._items = [];
-        this._appScopes = {};
-        this._createdAlerts = [];
     }
 
     get parent() {

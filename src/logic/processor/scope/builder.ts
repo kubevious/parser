@@ -23,7 +23,7 @@ export interface ScopeParserInfo extends BaseParserInfo
 }
 
 interface ScopeTarget {
-    namespaced: boolean,
+    namespaced?: boolean,
     scopeKind: string
 }
 
@@ -46,9 +46,15 @@ export class ScopeParserBuilder implements BaseParserBuilder
     {
     }
 
-    target(value : ScopeTarget)
+    target(value : ScopeTarget) : ScopeParserBuilder
     {
         this._targets.push(value);
+        return this;
+    }
+
+    kind(value : string) : ScopeParserBuilder
+    {
+        this._data.kind = value;
         return this;
     }
 

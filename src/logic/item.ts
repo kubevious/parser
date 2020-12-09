@@ -5,6 +5,8 @@ import { NamespaceScope } from './scope/namespace';
 import { AppScope } from './scope/app';
 import { ItemScope } from './scope/item';
 
+import { PropertiesBuilder } from './properties-builder';
+
 const resourcesHelper = require("./helpers/resources");
 const DocsHelper = require("kubevious-helpers").Docs;
 
@@ -226,6 +228,21 @@ export class LogicItem
             return this._properties[id];
         }
         return null;
+    }
+
+    buildProperties()
+    {
+        var builder = new PropertiesBuilder(this.config, (props: Record<string, any>) => {
+            this.addProperties({
+                kind: "key-value",
+                id: "properties",
+                title: "Properties",
+                order: 5,
+                config: props
+            });
+            return props;
+        });
+        return builder;
     }
 
     addAlert(kind: string, severity: string, msg: string)

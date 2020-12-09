@@ -13,7 +13,7 @@ export interface ConcreteParserInfo extends BaseParserInfo
     canCreateAppIfMissing? : boolean;
     appNameCb?: (item : ConcreteItem) => string;
 
-    kind?: string;
+    kind?: string | ((item: ConcreteItem) => string);
 
     needNamespaceScope?: boolean;
     namespaceNameCb? : (item : ConcreteItem) => string;
@@ -75,7 +75,7 @@ export class ConcreteParserBuilder implements BaseParserBuilder
         return this;
     }
 
-    kind(value : string) : ConcreteParserBuilder
+    kind(value : string | ((item: ConcreteItem) => string)) : ConcreteParserBuilder
     {
         this._data.kind = value;
         return this;

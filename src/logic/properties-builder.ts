@@ -40,6 +40,10 @@ export class PropertiesBuilder
         return this;
     }
 
+    get(name: string) : any {
+        return this._properties[name];
+    }
+
     build() : Record<string, any>
     {
         if (this._postBuildAction) {

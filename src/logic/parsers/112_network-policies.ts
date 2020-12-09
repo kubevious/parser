@@ -1,21 +1,18 @@
-const _ = require("the-lodash");
+import _ from 'the-lodash';
+import { LogicItem } from '../item';
+import { LogicParser } from '../parser-builder';
+import { TableBuilder } from '../table-builder';
 
-module.exports = {
-    targetKind: 'logic',
-
-    target: {
+export default LogicParser()
+    .order(112)
+    .target({
         path: ["ns", "app", "netpols"]
-    },
+    })
+    .needNamespaceScope(true)
+    .kind('netpols')
+    .handler(({ item}) => {
 
-    order: 112,
-
-    kind: "netpols",
-
-    handler: ({logger, scope, item, itemScope, createK8sItem}) =>
-    {
-        let properties = {
-            
-        };
+        let properties = item.buildProperties();
 
         for(let direction of ['Ingress', 'Egress'])
         {
@@ -33,43 +30,23 @@ module.exports = {
 
         /*****/
 
-        function processDirection(direction)
+        function processDirection(direction: string)
         {
-            properties[direction] = false;
+            properties.add(direction, false);
 
-            let trafficTable = {
-                headers: [
-                    {
-                        id: 'dn',
-                        label: 'Application',
-                        kind: 'shortcut'
-                    },
-                    "ports",
-                    "access",
-                    {
-                        id: 'policy',
-                        label: 'Policy',
-                        kind: 'shortcut'
-                    }
-                ],
-                rows: []
-            }
+            let trafficTable = new TableBuilder()
+                .column('dn', 'Application', 'shortcut')
+                .column('ports')
+                .column('access')
+                .column('policy', 'Policy', 'shortcut')
+                ;
 
-            let cidrTrafficTable = {
-                headers: [
-                    {
-                        id: 'target'
-                    },
-                    "ports",
-                    "access",
-                    {
-                        id: 'policy',
-                        label: 'Policy',
-                        kind: 'shortcut'
-                    }
-                ],
-                rows: []
-            }
+            let cidrTrafficTable = new TableBuilder()
+                .column('target')
+                .column('ports')
+                .column('access')
+                .column('policy', 'Policy', 'shortcut')
+                ;
 
             for(let child of item.getChildren())
             {
@@ -78,7 +55,7 @@ module.exports = {
                 {
                     if (childProperties.config[direction])
                     {
-                        properties[direction] = true;
+                        properties.add(direction, true);
                     }
                 }
 
@@ -89,7 +66,7 @@ module.exports = {
                     {
                         let myRule = _.clone(row);
                         myRule.policy = child.id;
-                        trafficTable.rows.push(myRule);
+                        trafficTable.row(myRule);
                     }
                 }
 
@@ -100,12 +77,12 @@ module.exports = {
                     {
                         let myRule = _.clone(row);
                         myRule.policy = child.id;
-                        cidrTrafficTable.rows.push(myRule);
+                        cidrTrafficTable.row(myRule);
                     }
                 }
             }
 
-            if (trafficTable.rows.length > 0) {
+            if (trafficTable.hasRows) {
                 item.addProperties({
                     kind: "table",
                     id: `${direction.toLowerCase()}-app`,
@@ -115,7 +92,7 @@ module.exports = {
                 });
             }
 
-            if (cidrTrafficTable.rows.length > 0) {
+            if (cidrTrafficTable.hasRows) {
                 item.addProperties({
                     kind: "table",
                     id: `${direction.toLowerCase()}-cidr`,
@@ -125,13 +102,13 @@ module.exports = {
                 });
             }
 
-            if (properties[direction])
+            if (properties.get(direction))
             {
-                if ((trafficTable.rows.length + cidrTrafficTable.rows.length) == 0) {
-                    properties[direction + ' Blocked'] = true;
+                if ((trafficTable.rowCount + cidrTrafficTable.rowCount) == 0) {
+                    properties.add(direction + ' Blocked', true);
                 }
             }
         }
 
-    }
-}
+    })
+    ;

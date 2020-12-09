@@ -1,25 +1,27 @@
-module.exports = {
-    target: [{
+import _ from 'the-lodash';
+import { ConcreteParser } from '../parser-builder';
+
+export default ConcreteParser()
+    .order(120)
+    .target({
         api: "rbac.authorization.k8s.io",
         kind: "RoleBinding"
-    }, {
+    })
+    .target({
         api: "rbac.authorization.k8s.io",
         kind: "ClusterRoleBinding"
-    }],
-
-    order: 120,
-
-    kind: (item) => {
+    })
+    .kind((item) => {
         if(item.config.kind == "RoleBinding") {
             return 'rlbndg'
         }
         if(item.config.kind == "ClusterRoleBinding") {
             return 'crlbndg'
         }
-    },
-
-    needNamespaceScope: true,
-    namespaceNameCb: (item) => {
+        throw new Error();
+    })
+    .needNamespaceScope(true)
+    .namespaceNameCb((item) => {
         if(item.config.kind == "RoleBinding") {
             return item.config.metadata.namespace;
         }
@@ -27,10 +29,9 @@ module.exports = {
             return '';
         }
         throw new Error();
-    },
+    })
+    .handler(({ scope, item, namespaceScope, createK8sItem, createAlert, determineSharedFlag, helpers }) => {
 
-    handler: ({ scope, item, namespaceScope, createK8sItem, createAlert, determineSharedFlag, helpers }) =>
-    {
         var bindingScope = namespaceScope.items.register(item.config);
 
         var targetNamespaceName = null;
@@ -132,5 +133,6 @@ module.exports = {
         bindingScope.addPropertyGroup(propsConfig);
 
         determineSharedFlag(bindingScope);
-    }
-}
+
+    })
+    ;

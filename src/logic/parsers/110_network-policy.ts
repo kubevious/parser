@@ -1,45 +1,42 @@
-const _ = require("the-lodash");
+import _ from 'the-lodash';
+import { LogicItem } from '../item';
+import { ScopeParser } from '../parser-builder';
 
-module.exports = {
-    targetKind: 'scope',
+import { TableBuilder } from '../table-builder';
 
-    target: {
+export default ScopeParser()
+    .order(110)
+    .target({
         namespaced: true,
         scopeKind: 'NetworkPolicy'
-    },
+    })
+    .kind('netpol')
+    .handler(({ scope, itemScope, namespaceScope, createK8sItem }) => {
 
-    order: 110,
-
-    kind: "netpol",
-
-    handler: ({logger, scope, itemScope, createK8sItem}) =>
-    {
-        namespaceScope = itemScope.parent;
-
-        let policyTypes = _.get(itemScope.config, 'spec.policyTypes');
+        let policyTypes = _.get(itemScope!.config, 'spec.policyTypes');
         if (!policyTypes || policyTypes.length == 0) {
             policyTypes = ['Ingress'];
         }
 
-        let policyProperties = {
+        let policyProperties : Record<string, any> = {
             
         };
 
-        var appSelector = _.get(itemScope.config, 'spec.podSelector.matchLabels');
+        var appSelector = _.get(itemScope!.config, 'spec.podSelector.matchLabels');
         if (!appSelector)
         {
             appSelector = {};
         }
 
-        var appScopes = namespaceScope.findAppScopesByLabels(appSelector);
+        var appScopes = namespaceScope!.findAppScopesByLabels(appSelector);
         for(var appScope of appScopes)
         {
             var container = appScope.item.fetchByNaming("netpols", "NetworkPolicies");
 
             var k8sNetworkPolicy = createK8sItem(container, 
                 { });
-            itemScope.registerItem(k8sNetworkPolicy);
-            itemScope.markUsedBy(k8sNetworkPolicy);
+            itemScope!.registerItem(k8sNetworkPolicy);
+            itemScope!.markUsedBy(k8sNetworkPolicy);
 
             processRules(k8sNetworkPolicy, 
                 'Ingress',
@@ -52,11 +49,11 @@ module.exports = {
                 'to');
         }
 
-        itemScope.addProperties(policyProperties);
+        itemScope!.addProperties(policyProperties);
 
         ///
 
-        function processRules(k8sNetworkPolicy, policyType, specPath, rulesPath)
+        function processRules(k8sNetworkPolicy: LogicItem, policyType: string, specPath: string, rulesPath: string)
         {
             if (!_.includes(policyTypes, policyType)) {
                 return;
@@ -64,31 +61,17 @@ module.exports = {
 
             policyProperties[policyTypes] = true;
 
-            var trafficTable = {
-                headers: [
-                    {
-                        id: 'dn',
-                        label: 'Application',
-                        kind: 'shortcut'
-                    },
-                    "ports",
-                    "access"
-                ],
-                rows: []
-            }
+            let trafficTable = new TableBuilder()
+                .column('dn', 'Application', 'shortcut')
+                .column('ports')
+                .column('access');
 
-            var cidrTrafficTable = {
-                headers: [
-                    {
-                        id: 'target'
-                    },
-                    "ports",
-                    "access"
-                ],
-                rows: []
-            }
+            let cidrTrafficTable = new TableBuilder()
+                .column('target')
+                .column('ports')
+                .column('access');
 
-            var policyConfig = _.get(itemScope.config, specPath);
+            var policyConfig = _.get(itemScope!.config, specPath);
             if (policyConfig)
             {
                 for(var policyItem of policyConfig)
@@ -96,7 +79,7 @@ module.exports = {
                     var portsInfo = "*";
                     if (policyItem.ports)
                     {
-                        portsInfo = policyItem.ports.map(x => {
+                        portsInfo = policyItem.ports.map((x : any) => {
                             var items = [x.port, x.name, x.protocol];
                             items = _.filter(items, x => _.isNotNullOrUndefined(x));
                             return items.join('/');
@@ -112,7 +95,7 @@ module.exports = {
                             const ipBlock = _.get(rule, 'ipBlock');
                             if (ipBlock)
                             {
-                                cidrTrafficTable.rows.push({
+                                cidrTrafficTable.row({
                                     target: _.get(ipBlock, 'cidr'),
                                     ports: portsInfo,
                                     access: 'allow'
@@ -123,7 +106,7 @@ module.exports = {
                                 {
                                     for(let ip of cidrExcept)
                                     {
-                                        cidrTrafficTable.rows.push({
+                                        cidrTrafficTable.row({
                                             target: ip,
                                             ports: portsInfo,
                                             access: 'deny'
@@ -148,10 +131,10 @@ module.exports = {
     
                                 for(let targetNamespaceScope of targetNamespaceScopes)
                                 {
-                                    var fromAppScopes = targetNamespaceScope.findAppScopesByLabels(podSelectorLabels);
+                                    var fromAppScopes = targetNamespaceScope!.findAppScopesByLabels(podSelectorLabels);
                                     for(var fromAppScope of fromAppScopes)
                                     {
-                                        trafficTable.rows.push({
+                                        trafficTable.row({
                                             dn: fromAppScope.item.dn,
                                             ports: portsInfo,
                                             access: 'allow'
@@ -165,7 +148,7 @@ module.exports = {
                 }
             }
 
-            if (trafficTable.rows.length > 0) {
+            if (trafficTable.hasRows) {
                 k8sNetworkPolicy.addProperties({
                     kind: "table",
                     id: `${policyType.toLowerCase()}-app`,
@@ -175,7 +158,7 @@ module.exports = {
                 });
             }
 
-            if (cidrTrafficTable.rows.length > 0) {
+            if (cidrTrafficTable.hasRows) {
                 k8sNetworkPolicy.addProperties({
                     kind: "table",
                     id: `${policyType.toLowerCase()}-cidr`,
@@ -185,9 +168,10 @@ module.exports = {
                 });
             }
 
-            if ((trafficTable.rows.length + cidrTrafficTable.rows.length) == 0) {
+            if ((trafficTable.rowCount + cidrTrafficTable.rowCount) == 0) {
                 policyProperties[policyType + ' Blocked'] = true;
             }
         }
-    }
-}
+
+    })
+    ;

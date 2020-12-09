@@ -1,19 +1,15 @@
-const _ = require("the-lodash");
+import _ from 'the-lodash';
+import { ScopeParser } from '../parser-builder';
 
-module.exports = {
-    targetKind: 'scope',
-
-    target: {
+export default ScopeParser()
+    .order(136)
+    .target({
         namespaced: false,
         scopeKind: 'PodSecurityPolicy'
-    },
+    })
+    .kind('psp')
+    .handler(({ scope, itemScope, createK8sItem, createAlert, determineSharedFlag }) => {
 
-    kind: 'psp',
-
-    order: 136,
-
-    handler: ({scope, itemScope, createK8sItem, createAlert, determineSharedFlag }) =>
-    {
         if (itemScope.isNotUsed)
         {
             var rawContainer = scope.fetchNamespaceRawContainer("", "PodSecurityPolicies");
@@ -34,6 +30,6 @@ module.exports = {
             .build()
 
         determineSharedFlag(itemScope);
-        
-    }
-}
+
+    })
+    ;

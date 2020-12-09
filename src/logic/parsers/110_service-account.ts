@@ -1,21 +1,17 @@
-const _ = require("the-lodash");
+import _ from 'the-lodash';
+import { ConcreteParser } from '../parser-builder';
 
-module.exports = {
-
-    target: {
+export default ConcreteParser()
+    .order(110)
+    .target({
         api: "v1",
         kind: "ServiceAccount"
-    },
+    })
+    .kind('svcaccnt')
+    .needNamespaceScope(true)
+    .handler(({ scope, item, namespaceScope, createK8sItem, createAlert, determineSharedFlag }) => {
 
-    order: 110,
-
-    kind: 'svcaccnt',
-
-    needNamespaceScope: true,
-
-    handler: ({scope, item, namespaceScope, createK8sItem, createAlert, determineSharedFlag}) =>
-    {
-        var serviceAccountScope = namespaceScope.items.get(item.config);
+        var serviceAccountScope = namespaceScope.items.getByConcrete(item)!;
 
         if (serviceAccountScope.hasNoOwner)
         {
@@ -40,5 +36,6 @@ module.exports = {
 
             determineSharedFlag(serviceAccountScope);
         }
-    }
-}
+
+    })
+    ;

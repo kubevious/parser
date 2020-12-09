@@ -47,16 +47,7 @@ export class ItemsScope
 
     get(kind: string, name: string) : ItemScope | null
     {
-        if (_.isPlainObject(kind))
-        {
-            // TODO: FIx Me. 
-            return null;
-            // return this._get(kind.kind, kind.metadata.name);
-        }
-        else
-        {
-            return this._get(kind, name);
-        }
+        return this._get(kind, name);
     }
 
     getByConcrete(item : ConcreteItem) : ItemScope | null

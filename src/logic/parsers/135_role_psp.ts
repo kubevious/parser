@@ -1,22 +1,20 @@
-const _ = require("the-lodash");
+import _ from 'the-lodash';
+import { ScopeParser } from '../parser-builder';
 
-module.exports = {
-    targetKind: 'scope',
-
-    target: [{
+export default ScopeParser()
+    .order(135)
+    .target({
         namespaced: true, // TODO: Fix later. ClusterRole scope should be created as NonNamespaced in step# 115.
         scopeKind: 'ClusterRole'
-    }, {
+    })
+    .target({
         namespaced: true,
         scopeKind: 'Role'
-    }],
+    })
+    .handler(({ scope, infraScope, itemScope }) => {
 
-    order: 135,
-
-    handler: ({ scope, infraScope, itemScope, logger }) =>
-    {
         var key = 'policy/podsecuritypolicies';
-        var pspRules = itemScope.data.rules[key];
+        var pspRules = itemScope!.data.rules[key];
         if (!pspRules) {
             return;
         }
@@ -28,7 +26,7 @@ module.exports = {
                 var pspScope = infraScope.items.get('PodSecurityPolicy', pspRuleItem.name);
                 if (pspScope)
                 {
-                    for(var roleItem of itemScope.items)
+                    for(var roleItem of itemScope!.items)
                     {
                         var psp = roleItem.fetchByNaming("psp", pspScope.name);
                         scope.setK8sConfig(psp, pspScope.config);
@@ -38,10 +36,10 @@ module.exports = {
                 }
                 else
                 {
-                   itemScope.createAlert('missing-psp', 'error', 'PodSecurityPolicy "' + pspRuleItem.name + '" not found.')
+                   itemScope!.createAlert('missing-psp', 'error', 'PodSecurityPolicy "' + pspRuleItem.name + '" not found.')
                 }
             }
         }
 
-    }
-}
+    })
+    ;

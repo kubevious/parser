@@ -1,20 +1,17 @@
-const _ = require("the-lodash");
+import _ from 'the-lodash';
+import { ConcreteParser } from '../parser-builder';
 
-module.exports = {
-    target: {
+export default ConcreteParser()
+    .order(110)
+    .target({
         api: "v1",
         kind: "PersistentVolumeClaim"
-    },
+    })
+    .kind('pvc')
+    .needNamespaceScope(true)
+    .handler(({ scope, item, createK8sItem, createAlert, namespaceScope, determineSharedFlag }) => {
 
-    kind: 'pvc',
-
-    order: 110,
-
-    needNamespaceScope: true,
-
-    handler: ({logger, scope, item, createK8sItem, createAlert, namespaceScope, determineSharedFlag, propertiesBuilder}) =>
-    {
-        var pvcScope = namespaceScope.items.get(item.config);
+        var pvcScope = namespaceScope.items.getByConcrete(item)!;
 
         determineSharedFlag(pvcScope);
 
@@ -35,5 +32,6 @@ module.exports = {
             .fromConfig('Access Modes', 'spec.accessModes')
             .fromConfig('Volume Mode', 'spec.volumeMode')
             .build()
-    }
-}
+
+    })
+    ;
