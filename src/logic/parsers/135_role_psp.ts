@@ -14,7 +14,7 @@ export default ScopeParser()
     .handler(({ scope, infraScope, itemScope }) => {
 
         var key = 'policy/podsecuritypolicies';
-        var pspRules = itemScope!.data.rules[key];
+        var pspRules = itemScope.data.rules[key];
         if (!pspRules) {
             return;
         }
@@ -26,7 +26,7 @@ export default ScopeParser()
                 var pspScope = infraScope.items.get('PodSecurityPolicy', pspRuleItem.name);
                 if (pspScope)
                 {
-                    for(var roleItem of itemScope!.items)
+                    for(var roleItem of itemScope.items)
                     {
                         var psp = roleItem.fetchByNaming("psp", pspScope.name);
                         scope.setK8sConfig(psp, pspScope.config);
@@ -36,7 +36,7 @@ export default ScopeParser()
                 }
                 else
                 {
-                   itemScope!.createAlert('missing-psp', 'error', 'PodSecurityPolicy "' + pspRuleItem.name + '" not found.')
+                   itemScope.createAlert('missing-psp', 'error', 'PodSecurityPolicy "' + pspRuleItem.name + '" not found.')
                 }
             }
         }

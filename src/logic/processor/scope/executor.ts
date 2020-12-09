@@ -53,31 +53,20 @@ export class ScopeParserExecutor implements BaseParserExecutor
     {
         let targets : {
             id: string,
-            itemScope: ItemScope | null,
+            itemScope: ItemScope,
             namespaceScope: NamespaceScope | null
         }[] = [];
 
         let targetInfo = this._parserInfo.target!;
         if (targetInfo.namespaced) {
             let namespaces = scope.getNamespaceScopes();
-            if (targetInfo.scopeKind) {
-                for(let namespaceScope of namespaces)
-                {
-                    for(let itemScope of namespaceScope.items.getAll(targetInfo.scopeKind))
-                    {
-                        targets.push({
-                            id: 'scope-item-' + itemScope.kind + '-' + itemScope.name,
-                            itemScope: itemScope,
-                            namespaceScope: namespaceScope 
-                        })
-                    }
-                }
-            } else {
-                for(let namespaceScope of namespaces)
+            for(let namespaceScope of namespaces)
+            {
+                for(let itemScope of namespaceScope.items.getAll(targetInfo.scopeKind))
                 {
                     targets.push({
-                        id: 'scope-ns-' + namespaceScope.name,
-                        itemScope: null,
+                        id: 'scope-item-' + itemScope.kind + '-' + itemScope.name,
+                        itemScope: itemScope,
                         namespaceScope: namespaceScope 
                     })
                 }
@@ -99,7 +88,7 @@ export class ScopeParserExecutor implements BaseParserExecutor
         }
     }
 
-    _processHandler(scope : LogicScope, id: string, itemScope: ItemScope | null, namespaceScope: NamespaceScope | null)
+    _processHandler(scope : LogicScope, id: string, itemScope: ItemScope, namespaceScope: NamespaceScope | null)
     {
         this._logger.silly("[_processHandler] ConcreteHandler: %s, Item: %s", 
             this.path, 

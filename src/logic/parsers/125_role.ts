@@ -30,7 +30,7 @@ export default ConcreteParser()
         }
         throw new Error();
     })
-    .handler(({ scope, item, namespaceScope, createK8sItem, createAlert, determineSharedFlag }) => {
+    .handler(({ scope, item, namespaceScope, createK8sItem, createAlert, helpers }) => {
 
         var roleScope = namespaceScope.items.getByConcrete(item)!;
 
@@ -56,7 +56,7 @@ export default ConcreteParser()
             logicItem.addProperties(roleScope.data.roleMatrixProps);
         }
 
-        determineSharedFlag(roleScope);
+        helpers.common.determineSharedFlag(roleScope);
 
     })
     ;

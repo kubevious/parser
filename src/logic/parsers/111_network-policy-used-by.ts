@@ -8,9 +8,9 @@ export default ScopeParser()
         namespaced: true,
         scopeKind: 'NetworkPolicy'
     })
-    .handler(({ logger, scope, itemScope, determineSharedFlag }) => {
+    .handler(({ itemScope, helpers }) => {
         
-        determineSharedFlag(itemScope!);
+        helpers.common.determineSharedFlag(itemScope);
 
     })
     ;

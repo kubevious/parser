@@ -13,7 +13,7 @@ export default ScopeParser()
     .kind('netpol')
     .handler(({ scope, itemScope, namespaceScope, createK8sItem }) => {
 
-        let policyTypes = _.get(itemScope!.config, 'spec.policyTypes');
+        let policyTypes = _.get(itemScope.config, 'spec.policyTypes');
         if (!policyTypes || policyTypes.length == 0) {
             policyTypes = ['Ingress'];
         }
@@ -22,7 +22,7 @@ export default ScopeParser()
             
         };
 
-        var appSelector = _.get(itemScope!.config, 'spec.podSelector.matchLabels');
+        var appSelector = _.get(itemScope.config, 'spec.podSelector.matchLabels');
         if (!appSelector)
         {
             appSelector = {};
@@ -35,8 +35,8 @@ export default ScopeParser()
 
             var k8sNetworkPolicy = createK8sItem(container, 
                 { });
-            itemScope!.registerItem(k8sNetworkPolicy);
-            itemScope!.markUsedBy(k8sNetworkPolicy);
+            itemScope.registerItem(k8sNetworkPolicy);
+            itemScope.markUsedBy(k8sNetworkPolicy);
 
             processRules(k8sNetworkPolicy, 
                 'Ingress',
@@ -49,7 +49,7 @@ export default ScopeParser()
                 'to');
         }
 
-        itemScope!.addProperties(policyProperties);
+        itemScope.addProperties(policyProperties);
 
         ///
 
@@ -71,7 +71,7 @@ export default ScopeParser()
                 .column('ports')
                 .column('access');
 
-            var policyConfig = _.get(itemScope!.config, specPath);
+            var policyConfig = _.get(itemScope.config, specPath);
             if (policyConfig)
             {
                 for(var policyItem of policyConfig)

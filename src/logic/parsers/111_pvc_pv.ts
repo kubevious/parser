@@ -10,7 +10,7 @@ export default ScopeParser()
     .kind('pv')
     .handler(({ scope, itemScope, createK8sItem, createAlert }) => {
 
-        var claimRef = _.get(itemScope!.config, 'spec.claimRef');
+        var claimRef = _.get(itemScope.config, 'spec.claimRef');
         if (claimRef)
         {
             var namespaceScope = scope.getNamespaceScope(claimRef.namespace);
@@ -19,24 +19,24 @@ export default ScopeParser()
             {
                 for(var pvcItem of pvcScope.items)
                 {
-                    var pv = pvcItem.fetchByNaming("pv", itemScope!.name);
-                    scope.setK8sConfig(pv, itemScope!.config);
-                    itemScope!.registerItem(pv);
-                    itemScope!.markUsedBy(pv);
+                    var pv = pvcItem.fetchByNaming("pv", itemScope.name);
+                    scope.setK8sConfig(pv, itemScope.config);
+                    itemScope.registerItem(pv);
+                    itemScope.markUsedBy(pv);
                 }
             }
         }
 
-        if (itemScope!.isNotUsed)
+        if (itemScope.isNotUsed)
         {
             var infra = scope.fetchInfraRawContainer();
             var storage = infra.fetchByNaming("storage", "Storage");
             var pvItem = createK8sItem(storage);
             createAlert('Unused', 'warn', 'PersistentVolume not attached.');
-            itemScope!.registerItem(pvItem);
+            itemScope.registerItem(pvItem);
         }
 
-        itemScope!.buildProperties()
+        itemScope.buildProperties()
             .fromConfig('StorageClass', 'spec.storageClassName')
             .fromConfig('Status', 'status.phase')
             .fromConfig('Finalizers', 'metadata.finalizers')

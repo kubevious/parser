@@ -9,11 +9,11 @@ export default ConcreteParser()
     })
     .kind('pvc')
     .needNamespaceScope(true)
-    .handler(({ scope, item, createK8sItem, createAlert, namespaceScope, determineSharedFlag }) => {
+    .handler(({ scope, item, createK8sItem, createAlert, namespaceScope, helpers }) => {
 
         var pvcScope = namespaceScope.items.getByConcrete(item)!;
 
-        determineSharedFlag(pvcScope);
+        helpers.common.determineSharedFlag(pvcScope);
 
         if (pvcScope.isNotUsed)
         {

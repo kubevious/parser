@@ -9,7 +9,7 @@ export default ScopeParser()
     })
     .handler(({ scope, itemScope }) => {
 
-        var volumes = _.get(itemScope!.config, 'spec.volumes');
+        var volumes = _.get(itemScope.config, 'spec.volumes');
         if (volumes)
         {
             for(var volume of volumes)
@@ -17,10 +17,10 @@ export default ScopeParser()
                 var pvcName = _.get(volume, 'persistentVolumeClaim.claimName');
                 if (pvcName)
                 {
-                    var pvcScope = itemScope!.parent.items.get('PersistentVolumeClaim', pvcName);
+                    var pvcScope = itemScope.parent.items.get('PersistentVolumeClaim', pvcName);
                     if (pvcScope)
                     {
-                        for(var podItem of itemScope!.items)
+                        for(var podItem of itemScope.items)
                         {
                             var pvc = podItem.fetchByNaming("pvc", pvcScope.name);
                             scope.setK8sConfig(pvc, pvcScope.config);

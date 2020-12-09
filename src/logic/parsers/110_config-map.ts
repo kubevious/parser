@@ -9,11 +9,11 @@ export default ConcreteParser()
     })
     .kind('configmap')
     .needNamespaceScope(true)
-    .handler(({ logger, scope, item, createK8sItem, createAlert, namespaceScope, determineSharedFlag }) => {
+    .handler(({ logger, scope, item, createK8sItem, createAlert, namespaceScope, helpers }) => {
 
         var configMapScope = namespaceScope.items.getByConcrete(item)!;
 
-        determineSharedFlag(configMapScope);
+        helpers.common.determineSharedFlag(configMapScope);
 
         if (configMapScope.isNotUsed)
         {

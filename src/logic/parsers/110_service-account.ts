@@ -9,7 +9,7 @@ export default ConcreteParser()
     })
     .kind('svcaccnt')
     .needNamespaceScope(true)
-    .handler(({ scope, item, namespaceScope, createK8sItem, createAlert, determineSharedFlag }) => {
+    .handler(({ scope, item, namespaceScope, createK8sItem, createAlert, helpers }) => {
 
         var serviceAccountScope = namespaceScope.items.getByConcrete(item)!;
 
@@ -34,7 +34,7 @@ export default ConcreteParser()
                 serviceAccountScope.markUsedBy(logicItem);
             }
 
-            determineSharedFlag(serviceAccountScope);
+            helpers.common.determineSharedFlag(serviceAccountScope);
         }
 
     })

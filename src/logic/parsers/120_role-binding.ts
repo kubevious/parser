@@ -30,7 +30,7 @@ export default ConcreteParser()
         }
         throw new Error();
     })
-    .handler(({ scope, item, namespaceScope, createK8sItem, createAlert, determineSharedFlag, helpers }) => {
+    .handler(({ scope, item, namespaceScope, createK8sItem, createAlert, helpers }) => {
 
         var bindingScope = namespaceScope.items.register(item.config);
 
@@ -132,7 +132,7 @@ export default ConcreteParser()
         var propsConfig = helpers.roles.buildRoleMatrix(bindingScope.data.rules);
         bindingScope.addPropertyGroup(propsConfig);
 
-        determineSharedFlag(bindingScope);
+        helpers.common.determineSharedFlag(bindingScope);
 
     })
     ;

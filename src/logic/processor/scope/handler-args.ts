@@ -22,13 +22,13 @@ export class ScopeProcessorHandlerArgs
 {
     private _processor: LogicProcessor;
     private _scope : LogicScope;
-    private _itemScope: ItemScope | null;
+    private _itemScope: ItemScope;
     private _namespaceScope: NamespaceScope | null;
     private _parserInfo : ScopeParserInfo;
     private _variableArgs : ScopeProcessorVariableArgs;
     private _runtimeData : ScopeProcessorRuntimeData;
 
-    constructor(processor: LogicProcessor, scope : LogicScope, itemScope: ItemScope | null, namespaceScope: NamespaceScope | null, parserInfo : ScopeParserInfo, variableArgs: ScopeProcessorVariableArgs, runtimeData : ScopeProcessorRuntimeData)
+    constructor(processor: LogicProcessor, scope : LogicScope, itemScope: ItemScope, namespaceScope: NamespaceScope | null, parserInfo : ScopeParserInfo, variableArgs: ScopeProcessorVariableArgs, runtimeData : ScopeProcessorRuntimeData)
     {
         this._processor = processor;
         this._scope = scope;
@@ -51,7 +51,7 @@ export class ScopeProcessorHandlerArgs
         return this._scope;
     }
 
-    get itemScope() : ItemScope | null {
+    get itemScope() : ItemScope {
         return this._itemScope;
     }
 
@@ -95,9 +95,9 @@ export class ScopeProcessorHandlerArgs
             throw new Error("NO ITEM SCOPE PRESENT");
         }
         params = params || {};
-        var name = params.name || this._itemScope!.config.metadata.name;
+        var name = params.name || this._itemScope.config.metadata.name;
         var newObj = this.createItem(parent, name, params);
-        this._scope.setK8sConfig(newObj, this._itemScope!.config);
+        this._scope.setK8sConfig(newObj, this._itemScope.config);
         return newObj;
     }
 
@@ -108,23 +108,6 @@ export class ScopeProcessorHandlerArgs
             severity,
             msg
         });
-    }
-
-    determineSharedFlag(itemScope : ItemScope) 
-    {
-        if (itemScope.isUsedByMany)
-        {
-            for(let xItem of itemScope.usedBy)
-            {
-                xItem.setFlag("shared");
-                for(let otherItem of itemScope.usedBy)
-                {
-                    if (otherItem.dn != xItem.dn) {
-                        xItem.setUsedBy(otherItem.dn);
-                    }
-                }
-            }
-        } 
     }
 
 }
