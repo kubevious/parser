@@ -1,21 +1,35 @@
-const _ = require('the-lodash');
-const Promise = require('the-promise');
+import _ from 'the-lodash';
+import { ILogger } from 'the-logger';
+import { Promise } from 'the-promise';
+import { Context } from '../context';
+
+import { readdirSync, statSync, readFileSync } from 'fs';
+import { dirname } from 'path';
+ 
 const Path = require('path');
-const fs = require('fs');
 const yaml = require('js-yaml');
 
-class K8sMockLoader 
+type ReadyHandler = (isReady: boolean) => void;
+
+export class K8sMockLoader 
 {
-    constructor(context, name)
+    private _context : Context;
+    private _logger : ILogger;
+
+    private _name : string;
+    private _isReady : boolean = false;
+
+    private _targets : Record<string, (string | null)[]> = {};
+    private _readyHandler? : ReadyHandler;
+
+    constructor(context : Context, name: string)
     {
         this._context = context;
         this._logger = context.logger.sublogger("K8sMockLoader");
-
         this._name = name;
-        this.logger.info("Constructed");
-        this._isReady = false;
 
-        this._targets = {};
+        this.logger.info("Constructed");
+
         this._loadTargets();
     }
 
@@ -23,7 +37,7 @@ class K8sMockLoader
         return this._logger;
     }
 
-    setupReadyHandler(handler)
+    setupReadyHandler(handler : ReadyHandler)
     {
         this._readyHandler = handler;
         if (this._isReady) {
@@ -33,11 +47,13 @@ class K8sMockLoader
 
     run()
     {
-        var dirName = Path.resolve(__dirname, this._name);
+        var dirName = Path.resolve(__dirname, '..', '..', this._name);
+        this.logger.info('[run] DataDir: %s', dirName);
+
         var files = this._getAllFiles(dirName);
         for(var fullPath of files)
         {
-            var contents = fs.readFileSync(fullPath);
+            var contents = readFileSync(fullPath, { encoding: 'utf8' });
             var obj = null;
             if (fullPath.endsWith('.json')) {
                 obj = JSON.parse(contents);
@@ -57,28 +73,30 @@ class K8sMockLoader
 
         setTimeout(() => {
             this._isReady = true;
-            this._readyHandler(true);
+            if (this._readyHandler) {
+                this._readyHandler!(true);
+            }
         }, 3000);
     }
 
-    _getAllFiles(dirPath, arrayOfFiles) {
-        let files = fs.readdirSync(dirPath)
+    _getAllFiles(dirPath: string, arrayOfFiles? : string[]) : string[] {
+        let files = readdirSync(dirPath)
       
         arrayOfFiles = arrayOfFiles || []
       
-        files.forEach((file) => {
+        files.forEach((file : string) => {
             const childPath = Path.join(dirPath, file);
-            if (fs.statSync(childPath).isDirectory()) {
+            if (statSync(childPath).isDirectory()) {
                 arrayOfFiles = this._getAllFiles(childPath, arrayOfFiles)
             } else {
-                arrayOfFiles.push(childPath)
+                arrayOfFiles!.push(childPath)
             }
         })
       
         return arrayOfFiles
     }
 
-    _handle(isPresent, obj)
+    _handle(isPresent: boolean, obj : any)
     {
         if (obj.kind == 'List')
         {
@@ -99,7 +117,7 @@ class K8sMockLoader
         }
     }
 
-    _isTrackedObject(obj)
+    _isTrackedObject(obj : any)
     {
         if (!this._targets[obj.kind]) {
             return false;
@@ -134,5 +152,3 @@ class K8sMockLoader
         this.logger.info("Targets: ", this._targets);
     }
 }
-
-module.exports = K8sMockLoader;

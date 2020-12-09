@@ -8,7 +8,6 @@ import { LogicProcessor } from '../';
 import { LogicScope } from "../../scope";
 import { InfraScope } from '../../scope/infra';
 import { NamespaceScope } from '../../scope/namespace';
-import { AppScope } from '../../scope/app';
 
 import { Helpers } from '../../helpers';
 import { LogicItem } from '../../item';
@@ -71,7 +70,7 @@ export class ScopeProcessorHandlerArgs
         return this._runtimeData.createdItems.length > 0;
     }
 
-    createItem(parent : LogicItem, name : string, params : any) : LogicItem
+    createItem(parent : LogicItem, name : string, params? : any) : LogicItem
     {
         params = params || {};
         params.kind = params.kind || this._parserInfo.kind;
@@ -81,7 +80,7 @@ export class ScopeProcessorHandlerArgs
         if (!params.kind) {
             throw new Error("Missing handler or params kind.")
         }
-        let newObj = parent.fetchByNaming(params.kind, name);
+        const newObj = parent.fetchByNaming(params.kind, name);
         if (params.order) {
             newObj.order = params.order;
         }
@@ -95,8 +94,8 @@ export class ScopeProcessorHandlerArgs
             throw new Error("NO ITEM SCOPE PRESENT");
         }
         params = params || {};
-        var name = params.name || this._itemScope.config.metadata.name;
-        var newObj = this.createItem(parent, name, params);
+        const name = params.name || this._itemScope.config.metadata.name;
+        const newObj = this.createItem(parent, name, params);
         this._scope.setK8sConfig(newObj, this._itemScope.config);
         return newObj;
     }

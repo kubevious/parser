@@ -4,8 +4,8 @@ import { ILogger } from 'the-logger';
 
 import { Context } from '../../context';
 
-const fs = require("fs");
-const path = require("path");
+import { readdirSync } from 'fs' 
+import * as path from 'path' 
 
 import { LogicScope } from "../scope";
 
@@ -55,14 +55,16 @@ export class LogicProcessor
     private _extractProcessors(location : string)
     {
         this.logger.info('[_extractProcessors] location: %s', location);
-        let files : string[] = fs.readdirSync(path.join(__dirname, location));
+        let searchPath = path.resolve(__dirname, '..', location);
+        this.logger.debug('[_extractProcessors] search path: %s', searchPath);
+        let files : string[] = readdirSync(searchPath);
         files = _.filter(files, x => x.endsWith('.d.ts'));
 
         let processors : BaseParserExecutor[] = [];
 
         for(var fileName of files)
         {
-            this.logger.info('[_extractProcessors] %s', fileName);
+            this.logger.debug('[_extractProcessors] %s', fileName);
             let moduleName = fileName.replace('.d.ts', '');
             this._loadProcessor(moduleName, location, processors);
         }
@@ -89,7 +91,7 @@ export class LogicProcessor
         this.logger.info('[_loadProcessor] %s...', name);
 
         const moduleName = location + '/' + name;
-        const modulePath = './' + moduleName;
+        const modulePath = '../' + moduleName;
         const parserModule = require(modulePath);
 
         let defaultExport = parserModule.default;

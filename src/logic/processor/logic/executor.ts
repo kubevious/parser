@@ -81,18 +81,18 @@ export class LogicParserExecutor implements BaseParserExecutor
             runtimeData
         )
 
-        this._preprocessHandler(variableArgs, handlerArgs);
 
         try
         {
+            this._preprocessHandler(variableArgs, handlerArgs);
             this._parserInfo.handler!(handlerArgs);
+            this._postProcessHandler(variableArgs, handlerArgs, runtimeData);
         }
         catch(reason)
         {
             this._logger.error("Error in %s parser. ", this.path, reason);
         }
 
-        this._postProcessHandler(variableArgs, handlerArgs, runtimeData);
     }
 
     private _preprocessHandler(variableArgs : LogicProcessorVariableArgs, handlerArgs : LogicProcessorHandlerArgs)

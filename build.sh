@@ -10,5 +10,15 @@ echo '*************************************'
 rm -rf dist/
 
 npm run build
+RESULT=$?
+if [ $RESULT -ne 0 ]; then
+  echo "Build failed"
+  exit 1;
+fi
 
 npm run lint
+RESULT=$?
+if [ $RESULT -ne 0 ]; then
+  echo "Lint failed"
+  exit 1;
+fi

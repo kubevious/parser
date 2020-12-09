@@ -10,6 +10,8 @@ export default ScopeParser()
     .kind('pv')
     .handler(({ scope, itemScope, createK8sItem, createAlert }) => {
 
+        // return
+
         var claimRef = _.get(itemScope.config, 'spec.claimRef');
         if (claimRef)
         {

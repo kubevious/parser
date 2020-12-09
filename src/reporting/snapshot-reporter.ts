@@ -4,6 +4,8 @@ import { ILogger } from 'the-logger';
 
 import { Snapshot } from './snapshot'
 
+import * as VERSION from '../version'
+
 export class SnapshotReporter
 {
     private _logger: ILogger;
@@ -83,7 +85,7 @@ export class SnapshotReporter
     {
         this.logger.info("[_createSnapshot]");
         var body = {
-            version: require('../../version'),
+            version: VERSION,
             date: this._snapshot.date.toISOString()
         }
         return this._request('/snapshot', body)

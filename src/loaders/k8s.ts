@@ -2,6 +2,9 @@ import _ from 'the-lodash';
 import { Promise } from 'the-promise';
 import { ILogger } from 'the-logger';
 
+import { writeFileSync } from 'fs';
+import * as Path from 'path' 
+
 import { Context } from '../context';
 
 import moment from 'moment';
@@ -197,9 +200,6 @@ export class K8sLoader
     
     _debugSaveToMock(isPresent: boolean, obj : any)
     {
-        const Path = require('path');
-        const fs = require('fs');
-
         if (isPresent) {
 
             let parts = [obj.apiVersion, obj.kind, obj.namespace, obj.metadata.name];
@@ -211,7 +211,7 @@ export class K8sLoader
             fileName = fileName + '.json';
             fileName = Path.resolve(__dirname, '..', '..', 'mock', 'data', fileName);
             this._logger.info(fileName);
-            fs.writeFileSync(fileName, JSON.stringify(obj, null, 4));
+            writeFileSync(fileName, JSON.stringify(obj, null, 4));
         }
     }
 

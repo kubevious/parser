@@ -17,7 +17,6 @@ import { ConcreteParserInfo } from './builder'
 import { ConcreteItem } from '../../../concrete/item';
 
 import { AlertInfo } from '../types';
-import { ItemScope } from '../../scope/item';
 
 export class ConcreteProcessorHandlerArgs
 {

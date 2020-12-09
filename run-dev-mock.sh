@@ -15,4 +15,13 @@ export WORLDVIOUS_ID=123e4567-e89b-12d3-a456-426614174000
 # export WORLDVIOUS_METRICS_REPORT_TIMEOUT=6
 # export WORLDVIOUS_ERROR_REPORT_TIMEOUT=7
 
-node mock/index-mock
+./build.sh
+RESULT=$?
+if [ $RESULT -ne 0 ]; then
+  echo "Build failed"
+  exit 1;
+fi
+
+# node .
+
+node dist/mock/index-mock

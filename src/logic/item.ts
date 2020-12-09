@@ -7,7 +7,9 @@ import { ItemScope } from './scope/item';
 
 import { PropertiesBuilder } from './properties-builder';
 
-const resourcesHelper = require("./helpers/resources");
+import { Helpers } from './helpers';
+const helpers = new Helpers();
+
 const DocsHelper = require("kubevious-helpers").Docs;
 
 import { DumpWriter } from 'the-logger';
@@ -320,7 +322,7 @@ export class LogicItem
                     for(var metricKind of _.keys(config[metric]))
                     {
                         var value = config[metric][metricKind];
-                        props.config[metric + ' ' + metricKind] = resourcesHelper.stringify(metric, value);
+                        props.config[metric + ' ' + metricKind] = helpers.resources.stringify(metric, value);
                     }
                 }
             } 
@@ -333,7 +335,7 @@ export class LogicItem
                 for(var key of _.keys(config))
                 {
                     var value = config[key];
-                    props.config[key] = resourcesHelper.percentage(value);
+                    props.config[key] = helpers.resources.percentage(value);
                 }
             }
 
