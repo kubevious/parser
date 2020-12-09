@@ -87,7 +87,6 @@ export class ConcreteParserBuilder implements BaseParserBuilder
         return this;
     }
 
-
     namespaceNameCb(value : (item : ConcreteItem) => string) : ConcreteParserBuilder
     {
         this._data.namespaceNameCb = value;

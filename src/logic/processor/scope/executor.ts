@@ -16,14 +16,13 @@ import { BaseParserExecutor } from '../base/executor';
 import { ItemScope } from '../../scope/item';
 import { NamespaceScope } from '../../scope/namespace';
 
-export class ConcreteParserExecutor implements BaseParserExecutor
+export class ScopeParserExecutor implements BaseParserExecutor
 {
     private _context : Context;
     private _processor : LogicProcessor;
     private _logger : ILogger;
     public path : string;
 
-    private parserInfo : ScopeParserInfo;
     private _parserInfo : ScopeParserInfo;
 
     constructor(processor : LogicProcessor, path : string, parserInfo : ScopeParserInfo)
@@ -32,7 +31,6 @@ export class ConcreteParserExecutor implements BaseParserExecutor
         this._processor = processor;
         this._logger = processor.logger;
         this._context = processor.context;
-        this.parserInfo = parserInfo;
         this._parserInfo = parserInfo;
     }
 
@@ -59,7 +57,7 @@ export class ConcreteParserExecutor implements BaseParserExecutor
             namespaceScope: NamespaceScope | null
         }[] = [];
 
-        let targetInfo = this.parserInfo.target!;
+        let targetInfo = this._parserInfo.target!;
         if (targetInfo.namespaced) {
             let namespaces = scope.getNamespaceScopes();
             if (targetInfo.scopeKind) {

@@ -56,6 +56,12 @@ export class LogicParserBuilder implements BaseParserBuilder
         return this;
     }
 
+    namespaceNameCb(value : (item : LogicItem) => string) : LogicParserBuilder
+    {
+        this._data.namespaceNameCb = value;
+        return this;
+    }
+
     kind(value : string) : LogicParserBuilder
     {
         this._data.kind = value;

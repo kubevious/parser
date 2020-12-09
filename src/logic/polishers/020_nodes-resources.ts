@@ -1,17 +1,16 @@
-const _ = require("the-lodash");
+import _ from 'the-lodash';
+import { LogicParser } from '../parser-builder';
 
-module.exports = {
-    target: {
+export default LogicParser()
+    .order(20)
+    .target({
         path: ["infra", "nodes"]
-    },
+    })
+    .handler(({ item, infraScope, helpers }) => {
 
-    order: 20,
-
-    handler: ({item, logger, infraScope, helpers}) =>
-    {
-        var nodesResourcesProps = {
+        var nodesResourcesProps : Record<string, any> = {
         }
-        var perNodeResources = {}
+        var perNodeResources : Record<string, any> = {}
         for(var metric of helpers.resources.METRICS) {
             nodesResourcesProps[metric] = { allocatable: 0, capacity: 0 };
             perNodeResources[metric] = null;
@@ -46,7 +45,7 @@ module.exports = {
             }
         }
 
-        var nodeResourcesProps = {}
+        var nodeResourcesProps : Record<string, any> = {}
         for(var metric of helpers.resources.METRICS)
         {
             if (perNodeResources[metric] == null)
@@ -77,11 +76,12 @@ module.exports = {
         });
 
 
-        var clusterAllocatableResources = {}
+        var clusterAllocatableResources : Record<string, any> = {}
         for(var metric of helpers.resources.METRICS)
         {
             clusterAllocatableResources[metric] = nodesResourcesProps[metric].allocatable;
         }
         infraScope.setClusterResources(clusterAllocatableResources);
-    }
-}
+
+    })
+    ;

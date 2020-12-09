@@ -10,15 +10,15 @@ export default ScopeParser()
     .kind('psp')
     .handler(({ scope, itemScope, createK8sItem, createAlert, determineSharedFlag }) => {
 
-        if (itemScope.isNotUsed)
+        if (itemScope!.isNotUsed)
         {
             var rawContainer = scope.fetchNamespaceRawContainer("", "PodSecurityPolicies");
             var logicItem = createK8sItem(rawContainer);
-            itemScope.registerItem(logicItem);
-            createAlert('Unused', 'warn', itemScope.kind + ' not used.');
+            itemScope!.registerItem(logicItem);
+            createAlert('Unused', 'warn', itemScope!.kind + ' not used.');
         }
 
-        itemScope.buildProperties()
+        itemScope!.buildProperties()
             .fromConfig('Priviledged', 'spec.allowPrivilegeEscalation', false)
             .fromConfig('Capabilities', 'spec.allowedCapabilities')
             .fromConfig('seLinux', 'spec.seLinux.rule')
@@ -29,7 +29,7 @@ export default ScopeParser()
             .fromConfig('Volumes', 'spec.volumes', [])
             .build()
 
-        determineSharedFlag(itemScope);
+        determineSharedFlag(itemScope!);
 
     })
     ;

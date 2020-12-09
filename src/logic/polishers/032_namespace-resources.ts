@@ -1,28 +1,27 @@
-const _ = require("the-lodash");
+import _ from 'the-lodash';
+import { LogicParser } from '../parser-builder';
 
-module.exports = {
-    target: {
+export default LogicParser()
+    .order(32)
+    .target({
         path: ["ns"]
-    },
+    })
+    .handler(({ scope, item, logger, helpers }) => {
 
-    order: 32,
-
-    handler: ({scope, item, logger, helpers}) =>
-    {
-        var usedResourcesProps = {
+        var usedResourcesProps : Record<string, any>  = {
         }
-        var clusterConsumptionProps = {};
+        var clusterConsumptionProps : Record<string, any>  = {};
         var appsByConsumptionTable = {
-            headers: [
+            headers: <any[]>[
                 {
                     id: 'dn',
                     label: 'Application',
                     kind: 'shortcut'
                 }
             ],
-            rows: []
+            rows: <any[]>[]
         }
-        var appsByConsumptionDict = {};
+        var appsByConsumptionDict : Record<string, any>  = {};
         for(var metric of helpers.resources.METRICS) {
             usedResourcesProps[metric] = { request: 0 };
             clusterConsumptionProps[metric] = 0;
@@ -117,5 +116,6 @@ module.exports = {
             order: 8,
             config: appsByConsumptionTable
         });
-    }
-}
+
+    })
+    ;

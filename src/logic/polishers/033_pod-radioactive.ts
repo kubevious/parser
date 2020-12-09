@@ -1,15 +1,14 @@
-const _ = require("the-lodash");
+import _ from 'the-lodash';
+import { LogicParser } from '../parser-builder';
 
-module.exports = {
-    target: {
-        path: ["ns", "raw", "raw", "pod"]
-    },
+export default LogicParser()
+    .order(33)
+    .target({
+        path: [ "ns", "raw", "raw", "pod" ]
+    })
+    .handler(({ item }) => {
 
-    order: 33,
-
-    handler: ({scope, item, logger, context}) =>
-    {
-        var radioactiveProps = {};
+        var radioactiveProps : Record<string, any> = {};
 
         var podSpec = _.get(item.config, 'spec')
         if (podSpec)
@@ -49,5 +48,5 @@ module.exports = {
             });
         }
 
-    }
-}
+    })
+    ;

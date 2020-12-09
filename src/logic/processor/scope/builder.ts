@@ -35,7 +35,7 @@ export function ScopeParser() : ScopeParserBuilder
 export class ScopeParserBuilder implements BaseParserBuilder
 {
     private _data : ScopeParserInfo = {
-        targetKind: 'concrete',
+        targetKind: 'scope',
         order: 0,
         target: null
     };

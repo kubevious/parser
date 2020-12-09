@@ -1,15 +1,14 @@
-const _ = require("the-lodash");
+import _ from 'the-lodash';
+import { LogicParser } from '../parser-builder';
 
-module.exports = {
-    target: {
+export default LogicParser()
+    .order(31)
+    .target({
         path: ["ns", "app"]
-    },
+    })
+    .handler(({ item, infraScope, helpers }) => {
 
-    order: 31,
-
-    handler: ({item, logger, context, infraScope, helpers}) =>
-    {
-        var perPodResourcesProps = {
+        var perPodResourcesProps : Record<string, any> = {
         }
         for(var metric of helpers.resources.METRICS) {
             perPodResourcesProps[metric] = { request: 0 };
@@ -56,7 +55,7 @@ module.exports = {
             }
         }
         
-        var usedResourcesProps = {
+        var usedResourcesProps : Record<string, any> = {
         }
         for(var metric of helpers.resources.METRICS)
         {
@@ -74,7 +73,7 @@ module.exports = {
         });
 
         // ***
-        var myUsedResources = {};
+        var myUsedResources : Record<string, any> = {};
         var availableResources = null;
         if (launcher) 
         {
@@ -99,7 +98,7 @@ module.exports = {
 
         if (availableResources)
         {
-            var clusterConsumptionProps = {};
+            var clusterConsumptionProps : Record<string, any> = {};
             for(var metric of _.keys(myUsedResources))
             {
                 var value = myUsedResources[metric];
@@ -120,5 +119,6 @@ module.exports = {
                 config: clusterConsumptionProps
             });
         }
-    }
-}
+
+    })
+    ;

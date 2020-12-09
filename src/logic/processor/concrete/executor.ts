@@ -21,7 +21,6 @@ export class ConcreteParserExecutor implements BaseParserExecutor
     private _logger : ILogger;
     public path : string;
 
-    private parserInfo : ConcreteParserInfo;
     private _parserInfo : ConcreteParserInfo;
 
     constructor(processor : LogicProcessor, path : string, parserInfo : ConcreteParserInfo)
@@ -30,7 +29,6 @@ export class ConcreteParserExecutor implements BaseParserExecutor
         this._processor = processor;
         this._logger = processor.logger;
         this._context = processor.context;
-        this.parserInfo = parserInfo;
         this._parserInfo = parserInfo;
     }
 
@@ -51,7 +49,7 @@ export class ConcreteParserExecutor implements BaseParserExecutor
 
     execute(scope : LogicScope)
     {
-        let items = this._context.concreteRegistry.filterItems(this.parserInfo.target);
+        let items = this._context.concreteRegistry.filterItems(this._parserInfo.target);
 
         for(var item of items)
         {

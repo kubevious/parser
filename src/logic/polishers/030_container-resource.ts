@@ -1,15 +1,14 @@
-const _ = require("the-lodash");
+import _ from 'the-lodash';
+import { LogicParser } from '../parser-builder';
 
-module.exports = {
-    target: {
+export default LogicParser()
+    .order(30)
+    .target({
         path: ["ns", "app", "cont"]
-    },
+    })
+    .handler(({ item, helpers }) => {
 
-    order: 30,
-
-    handler: ({scope, item, logger, helpers}) =>
-    {
-        var resourcesProps = {
+        var resourcesProps : Record<string, any> = {
         }
         for(var metric of helpers.resources.METRICS) {
             collectResourceMetric(metric);
@@ -25,7 +24,7 @@ module.exports = {
 
         /*******************************************/
 
-        function collectResourceMetric(metric)
+        function collectResourceMetric(metric : string)
         {
             if (!resourcesProps[metric]) {
                 resourcesProps[metric] = {};
@@ -34,7 +33,7 @@ module.exports = {
             collectResourceMetricCounter(metric, 'limit');
         }
 
-        function collectResourceMetricCounter(metric, counter)
+        function collectResourceMetricCounter(metric: string, counter: string)
         {
             var rawValue = _.get(item.config, 'resources.' + counter + 's.' + metric);
             if (!rawValue) {
@@ -46,7 +45,7 @@ module.exports = {
             resourcesProps[metric][counter] = helpers.resources.parse(metric, rawValue);
         }
 
-        function getDefaultMetric(metric, counter)
+        function getDefaultMetric(metric: string, counter: string)
         {
             return null;
             // TODO: Get from LimitRange.
@@ -59,5 +58,6 @@ module.exports = {
                 }
             }
         }
-    }
-}
+
+    })
+    ;

@@ -1,15 +1,14 @@
-const _ = require("the-lodash");
+import _ from 'the-lodash';
+import { LogicParser } from '../parser-builder';
 
-module.exports = {
-    target: {
+export default LogicParser()
+    .order(33)
+    .target({
         path: ["ns", "app", "cont"]
-    },
+    })
+    .handler(({ item }) => {
 
-    order: 33,
-
-    handler: ({scope, item, logger, context}) =>
-    {
-        var radioactiveProps = {};
+        var radioactiveProps : Record<string, any> = {};
 
         if (_.get(item.config, 'securityContext.privileged')) {
             radioactiveProps['privileged'] = true;
@@ -28,5 +27,5 @@ module.exports = {
             });
         }
 
-    }
-}
+    })
+    ;
