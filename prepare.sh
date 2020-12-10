@@ -12,4 +12,4 @@ cd $MY_DIR
 rm -rf node_modules/
 npm install --ignore-scripts
 npm install --only=dev --ignore-scripts
-npm update kubevious-helpers k8s-super-client the-lodash the-logger the-promise @kubevious/worldvious-client @kubevious/helper-backend
+npm update @kubevious/helpers k8s-super-client the-lodash the-logger the-promise @kubevious/worldvious-client @kubevious/helper-backend

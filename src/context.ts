@@ -3,7 +3,7 @@ import { Promise } from 'the-promise';
 
 import { Backend, TimerFunction } from '@kubevious/helper-backend'
 
-const ProcessingTracker = require("kubevious-helpers").ProcessingTracker;
+import { ProcessingTracker } from '@kubevious/helpers/dist/processing-tracker';
 const { WorldviousClient } = require('@kubevious/worldvious-client');
 
 import { ConcreteRegistry } from './concrete/registry';

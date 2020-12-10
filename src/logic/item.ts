@@ -10,7 +10,8 @@ import { PropertiesBuilder } from './properties-builder';
 import { Helpers } from './helpers';
 const helpers = new Helpers();
 
-const DocsHelper = require("kubevious-helpers").Docs;
+import * as DocsHelper from '@kubevious/helpers/dist/docs';
+
 
 import { DumpWriter } from 'the-logger';
 

@@ -10,8 +10,8 @@ import { JobDampener } from '../utils/job-dampener';
 import { Snapshot } from './snapshot';
 import { SnapshotReporter } from './snapshot-reporter';
 
-const HandledError = require('kubevious-helpers').HandledError;
-const RetryableAction = require('kubevious-helpers').RetryableAction;
+import { HandledError } from '@kubevious/helpers/dist/handled-error';
+import { RetryableAction } from '@kubevious/helpers/dist/retryable-action';
 
 export class ReporterTarget
 {
@@ -109,7 +109,10 @@ export class ReporterTarget
             retryCount: 5
         })
         action.canRetry((reason : any) => {
-            return reason instanceof RetryableError;
+            if (reason instanceof HandledError) {
+                return reason.canRetry;
+            }
+            return false;
         })
         return action.run();
     }
@@ -133,7 +136,7 @@ export class ReporterTarget
                     }
                 } else if (reason.request) {
                     this.logger.error('[request] URL: %s, ERROR: %s', url, reason.message)
-                    throw new RetryableError("Could not connect");
+                    throw new HandledError("Could not connect", true);
                 } else {
                     this.logger.error('[request] URL: %s. Reason: ', url, reason)
                     throw new HandledError("Unknown error " + reason.message);
@@ -190,12 +193,4 @@ export class ReporterTarget
         this._axiosCollector = axios.create(options);
     }
 
-}
-
-class RetryableError extends HandledError {  
-    constructor(message : string) {
-      super(message)
-  
-      this.name = this.constructor.name
-    }
 }

@@ -2,8 +2,9 @@ import _ from 'the-lodash';
 import { Promise } from 'the-promise';
 import { ILogger } from 'the-logger';
 
-const DateUtils = require("kubevious-helpers").DateUtils;
-const HandledError = require('kubevious-helpers').HandledError;
+import * as DateUtils from '@kubevious/helpers/dist/date-utils';
+import { HandledError } from '@kubevious/helpers/dist/handled-error';
+
 
 export type JobDampenerHandler = (date : any, data : any) => void;
 

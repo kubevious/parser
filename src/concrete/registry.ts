@@ -4,7 +4,8 @@ import { ILogger } from 'the-logger';
 
 import { Context } from '../context';
 
-const EventDampener = require('kubevious-helpers').EventDampener;
+import { EventDampener } from '@kubevious/helpers/dist/event-dampener';
+
 import { ConcreteItem } from './item';
 
 // export type ItemId = string | object;
