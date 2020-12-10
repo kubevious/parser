@@ -8,7 +8,7 @@ export default LogicParser()
     .target({
         path: ["ns", "app", "netpols"]
     })
-    .needNamespaceScope(true)
+    // .needNamespaceScope(true)
     .kind('netpols')
     .handler(({ item }) => {
 
@@ -81,7 +81,7 @@ export default LogicParser()
                     id: `${direction.toLowerCase()}-app`,
                     title: `${direction} Application Rules`,
                     order: 8,
-                    config: trafficTable
+                    config: trafficTable.extract()
                 });
             }
 
@@ -91,7 +91,7 @@ export default LogicParser()
                     id: `${direction.toLowerCase()}-cidr`,
                     title: `${direction} CIDR Rules`,
                     order: 8,
-                    config: cidrTrafficTable
+                    config: cidrTrafficTable.extract()
                 });
             }
 

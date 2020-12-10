@@ -1,13 +1,11 @@
 import _ from 'the-lodash';
 import { ILogger } from 'the-logger';
-import { Promise } from 'the-promise';
 import { Context } from '../context';
 
 import { readdirSync, statSync, readFileSync } from 'fs';
-import { dirname } from 'path';
  
-const Path = require('path');
-const yaml = require('js-yaml');
+import * as Path from 'path';
+import * as yaml from 'js-yaml';
 
 type ReadyHandler = (isReady: boolean) => void;
 
@@ -54,7 +52,7 @@ export class K8sMockLoader
         for(var fullPath of files)
         {
             var contents = readFileSync(fullPath, { encoding: 'utf8' });
-            var obj = null;
+            var obj : any = null;
             if (fullPath.endsWith('.json')) {
                 obj = JSON.parse(contents);
             } else if (fullPath.endsWith('.yaml')) {

@@ -22,6 +22,4 @@ if [ $RESULT -ne 0 ]; then
   exit 1;
 fi
 
-# node .
-
 node dist/mock/index-mock

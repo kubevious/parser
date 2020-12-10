@@ -3,7 +3,7 @@ import { ILogger } from 'the-logger';
 
 import { Context } from '../context';
 
-import { K8sLoader, ReadyHandler } from './k8s';
+import { K8sLoader, ReadyHandler } from '../loaders/k8s';
 
 const K8sClient = require('k8s-super-client');
 
@@ -18,7 +18,7 @@ export class GKELoader
     private _name: string;
     private _region: string;
 
-    constructor(context: Context, credentials: any, name: string, region: string, readyHandler : ReadyHandler)
+    constructor(context: Context, credentials: any, name: string, region: string)
     {
         this._context = context;
         this._logger = context.logger.sublogger("GKELoader");

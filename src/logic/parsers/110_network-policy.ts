@@ -153,7 +153,7 @@ export default ScopeParser()
                     id: `${policyType.toLowerCase()}-app`,
                     title: `${policyType} Application Rules`,
                     order: 8,
-                    config: trafficTable
+                    config: trafficTable.extract()
                 });
             }
 
@@ -163,7 +163,7 @@ export default ScopeParser()
                     id: `${policyType.toLowerCase()}-cidr`,
                     title: `${policyType} CIDR Rules`,
                     order: 8,
-                    config: cidrTrafficTable
+                    config: cidrTrafficTable.extract()
                 });
             }
 

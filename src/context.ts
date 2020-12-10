@@ -185,5 +185,3 @@ export class Context
         return true;
     }
 }
-
-module.exports.Context = Context;

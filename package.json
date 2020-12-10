@@ -33,6 +33,7 @@
     "the-promise": "^2.0.3"
   },
   "devDependencies": {
+    "@types/js-yaml": "^3.12.5",
     "@types/mocha": "^8.0.3",
     "@types/node": "^14.14.5",
     "@types/should": "^13.0.0",

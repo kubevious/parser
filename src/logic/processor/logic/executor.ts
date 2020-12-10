@@ -103,9 +103,7 @@ export class LogicParserExecutor implements BaseParserExecutor
             if (this._parserInfo.namespaceNameCb) {
                 variableArgs.namespaceName = this._parserInfo.namespaceNameCb(item);
             } else {
-                this._logger.info("******** DN: %s", item.dn);
-                this._logger.info("********", item.config);
-                variableArgs.namespaceName = item.config.metadata.namespace;
+                variableArgs.namespaceName = _.get(item.config, 'metadata.namespace');
             }
             if (_.isNotNullOrUndefined(variableArgs.namespaceName))
             {

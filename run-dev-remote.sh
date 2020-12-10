@@ -6,4 +6,12 @@ cd $MY_DIR
 export LOG_TO_FILE=true
 export NODE_ENV=development
 export KUBEVIOUS_COLLECTOR=http://localhost:4001/api/v1/collect
-node mock/index-remote
+
+./build.sh
+RESULT=$?
+if [ $RESULT -ne 0 ]; then
+  echo "Build failed"
+  exit 1;
+fi
+
+node dist/mock/index-remote

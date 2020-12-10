@@ -7,7 +7,7 @@ source configuration.sh
 
 docker build \
     -f Dockerfile \
-    -t kubevious-parser \
+    -t ${CONTAINER_NAME} \
     .
 
 echo "*** RUN WITH:"
