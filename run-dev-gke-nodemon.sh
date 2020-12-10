@@ -3,10 +3,16 @@ MY_PATH="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/$(basename "${BASH_SOURCE
 MY_DIR="$(dirname $MY_PATH)"
 cd $MY_DIR
 
-export LOG_TO_FILE=true
-export NODE_ENV=development
 export GKE_CREDENTIALS_PATH=credentials.json
 export GKE_REGION=us-central1-a
 export GKE_K8S_CLUSTER=kubevious-samples
 export KUBEVIOUS_COLLECTOR=http://localhost:4001/api/v1/collect
-nodemon mock/index-gke
+
+./build.sh
+RESULT=$?
+if [ $RESULT -ne 0 ]; then
+  echo "Build failed"
+  exit 1;
+fi
+
+nodemon dist/mock/index-gke
