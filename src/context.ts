@@ -56,6 +56,10 @@ export class Context
         this._server = new WebServer(this);
 
         this._k8sClient = null;
+
+        backend.registerErrorHandler((reason) => {
+            return this.worldvious.acceptError(reason);
+        });
     }
 
     get logger() : ILogger {
@@ -125,19 +129,10 @@ export class Context
         return Promise.resolve()
             .then(() => this._worldvious.init())
             .then(() => this._processLoaders())
-            .then(() => this._server.run())
-            .catch(reason => {
-                console.log("***** ERROR *****");
-                console.log(reason);
-                this.logger.error(reason);
-                return Promise.resolve(this.worldvious.acceptError(reason))
-                    .then(() => {
-                        process.exit(1);
-                    })
-            });
+            .then(() => this._server.run());
     }
 
-    _setupTracker()
+    private _setupTracker()
     {
         if (process.env.NODE_ENV == 'development')
         {
@@ -153,14 +148,14 @@ export class Context
         })
     }
 
-    _processLoaders()
+    private _processLoaders()
     {
         return Promise.serial(this._loaders, x => {
             return x.loader.run();
         });
     }
 
-    _checkLoadersReady()
+    private _checkLoadersReady()
     {
         var areLoadersReady = this._calculateLoadersReady();
         if (areLoadersReady != this._areLoadersReady) {
@@ -174,7 +169,7 @@ export class Context
         }
     }
 
-    _calculateLoadersReady()
+    private _calculateLoadersReady()
     {
         for(var loader of this._loaders)
         {

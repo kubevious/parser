@@ -7,23 +7,23 @@ const K8sClient = require('k8s-super-client');
 
 const backend = new Backend("parser");
 
-const context = new Context(backend);
+backend.initialize(() => {
 
-K8sClient.connect(backend.logger, {
-    server: 'http://127.0.0.1',
-    token: '',
-    httpAgent: {
+    const context = new Context(backend);
 
-    }
-})
-.then((client: any) => {
-    var loader = new K8sLoader(context,
-        client,
-        {});
-    context.addLoader(loader);
-    
-    context.run();
-})
-.catch((reason : any) => {
-    backend.logger.error("ERROR: ", reason);
-})
+    K8sClient.connect(backend.logger, {
+        server: 'http://127.0.0.1',
+        token: '',
+        httpAgent: {
+
+        }
+    })
+    .then((client: any) => {
+        var loader = new K8sLoader(context,
+            client,
+            {});
+        context.addLoader(loader);
+    })
+    .then(() => context.run())
+
+});

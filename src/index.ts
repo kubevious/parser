@@ -4,9 +4,12 @@ import { LocalLoader } from './loaders/local'
 
 const backend = new Backend("parser");
 
-const context = new Context(backend);
+backend.initialize(() => {
+    const context = new Context(backend);
 
-var loader = new LocalLoader(context);
-context.addLoader(loader);
+    var loader = new LocalLoader(context);
+    context.addLoader(loader);
 
-context.run();
+    return context.run();
+});
+
