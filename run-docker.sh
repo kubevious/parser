@@ -12,7 +12,7 @@ docker run \
     -p ${SERVER_PORT}:${SERVER_PORT} \
     --network ${NETWORK_NAME} \
     -e KUBEVIOUS_COLLECTOR=http://kubevious-backend:4001/api/v1/collect \
-    ${${CONTAINER_NAME}}
+    ${IMAGE_NAME}
     # --entrypoint="node" \
 
     

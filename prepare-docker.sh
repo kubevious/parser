@@ -7,7 +7,7 @@ source configuration.sh
 
 docker build \
     -f Dockerfile \
-    -t ${CONTAINER_NAME} \
+    -t ${IMAGE_NAME} \
     .
 
 echo "*** RUN WITH:"
