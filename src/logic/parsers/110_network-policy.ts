@@ -33,8 +33,7 @@ export default ScopeParser()
         {
             var container = appScope.item.fetchByNaming("netpols", "NetworkPolicies");
 
-            var k8sNetworkPolicy = createK8sItem(container, 
-                { });
+            var k8sNetworkPolicy = createK8sItem(container);
             itemScope.registerItem(k8sNetworkPolicy);
             itemScope.markUsedBy(k8sNetworkPolicy);
 

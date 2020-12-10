@@ -10,7 +10,7 @@ import { LogicScope } from "../../scope";
 import { ConcreteParserInfo } from './builder'
 import { ConcreteItem } from '../../../concrete/item';
 
-import { ConcreteProcessorHandlerArgs, ConcreteProcessorVariableArgs, ConcreteProcessorRuntimeData } from './handler-args';
+import { constructArgs, ConcreteProcessorVariableArgs, ConcreteProcessorRuntimeData } from './handler-args';
 
 import { BaseParserExecutor } from '../base/executor';
 
@@ -72,54 +72,54 @@ export class ConcreteParserExecutor implements BaseParserExecutor
             createdAlerts : []
         };
 
-        let handlerArgs = new ConcreteProcessorHandlerArgs(
-            this._processor,
-            scope,
-            item,
-            this._parserInfo,
-            variableArgs,
-            runtimeData
-        )
-
-        this._preprocessHandler(variableArgs, handlerArgs);
-
         try
         {
+            this._preprocessHandler(scope, item, variableArgs);
+
+            let handlerArgs = constructArgs(
+                this._processor,
+                this._parserInfo,
+                scope,
+                item,
+                variableArgs,
+                runtimeData);
+    
             this._parserInfo.handler!(handlerArgs);
+
+            this._postProcessHandler(runtimeData);
         }
         catch(reason)
         {
             this._logger.error("Error in %s parser. ", this.path, reason);
         }
 
-        this._postProcessHandler(variableArgs, handlerArgs, runtimeData);
     }
 
-    private _preprocessHandler(variableArgs : ConcreteProcessorVariableArgs, handlerArgs : ConcreteProcessorHandlerArgs)
+    private _preprocessHandler(scope : LogicScope, item: ConcreteItem, variableArgs : ConcreteProcessorVariableArgs)
     {
         variableArgs.namespaceName = null;
         if (this._parserInfo.needNamespaceScope || this._parserInfo.needAppScope)
         {
             if (this._parserInfo.namespaceNameCb) {
-                variableArgs.namespaceName = this._parserInfo.namespaceNameCb(handlerArgs.item);
+                variableArgs.namespaceName = this._parserInfo.namespaceNameCb(item);
             } else {
-                variableArgs.namespaceName = handlerArgs.item.config.metadata.namespace;
+                variableArgs.namespaceName = item.config.metadata.namespace;
             }
             if (_.isNotNullOrUndefined(variableArgs.namespaceName))
             {
-                variableArgs.namespaceScope = handlerArgs.scope.getNamespaceScope(variableArgs.namespaceName!);
+                variableArgs.namespaceScope = scope.getNamespaceScope(variableArgs.namespaceName!);
             }
         }
 
         variableArgs.appName = null;
         if (this._parserInfo.appNameCb) {
-            variableArgs.appName = this._parserInfo.appNameCb(handlerArgs.item);
+            variableArgs.appName = this._parserInfo.appNameCb(item);
         }
         if (variableArgs.namespaceName && variableArgs.namespaceScope)
         {
             if (this._parserInfo.needAppScope && variableArgs.appName)
             {
-                let appScope = handlerArgs.namespaceScope.getAppAndScope(
+                let appScope = variableArgs.namespaceScope.getAppAndScope(
                     variableArgs.appName!,
                     this._parserInfo.canCreateAppIfMissing!);
 
@@ -131,7 +131,7 @@ export class ConcreteParserExecutor implements BaseParserExecutor
         }
     }
 
-    private _postProcessHandler(variableArgs : ConcreteProcessorVariableArgs, handlerArgs : ConcreteProcessorHandlerArgs, runtimeData : ConcreteProcessorRuntimeData)
+    private _postProcessHandler(runtimeData : ConcreteProcessorRuntimeData)
     {
 
         for(var alertInfo of runtimeData.createdAlerts)

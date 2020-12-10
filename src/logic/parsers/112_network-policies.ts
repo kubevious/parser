@@ -10,7 +10,7 @@ export default LogicParser()
     })
     .needNamespaceScope(true)
     .kind('netpols')
-    .handler(({ item}) => {
+    .handler(({ item }) => {
 
         let properties = item.buildProperties();
 

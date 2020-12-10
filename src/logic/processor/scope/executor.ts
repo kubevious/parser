@@ -10,7 +10,7 @@ import { LogicScope } from "../../scope";
 import { ScopeParserInfo } from './builder'
 import { ConcreteItem } from '../../../concrete/item';
 
-import { ScopeProcessorHandlerArgs, ScopeProcessorVariableArgs, ScopeProcessorRuntimeData } from './handler-args';
+import { constructArgs, ScopeProcessorHandlerArgs, ScopeProcessorVariableArgs, ScopeProcessorRuntimeData } from './handler-args';
 
 import { BaseParserExecutor } from '../base/executor';
 import { ItemScope } from '../../scope/item';
@@ -103,35 +103,29 @@ export class ScopeParserExecutor implements BaseParserExecutor
             createdAlerts : []
         };
 
-        let handlerArgs = new ScopeProcessorHandlerArgs(
-            this._processor,
-            scope,
-            itemScope,
-            namespaceScope,
-            this._parserInfo,
-            variableArgs,
-            runtimeData
-        )
-
-        this._preprocessHandler(variableArgs, handlerArgs);
-
         try
         {
+            let handlerArgs = constructArgs(
+                this._processor,
+                this._parserInfo,
+                scope,
+                itemScope,
+                namespaceScope,
+                variableArgs,
+                runtimeData);
+
             this._parserInfo.handler!(handlerArgs);
+
+            this._postProcessHandler(runtimeData);
         }
         catch(reason)
         {
             this._logger.error("Error in %s parser. ", this.path, reason);
         }
 
-        this._postProcessHandler(variableArgs, handlerArgs, runtimeData);
     }
 
-    private _preprocessHandler(variableArgs : ScopeProcessorVariableArgs, handlerArgs : ScopeProcessorHandlerArgs)
-    {
-    }
-
-    private _postProcessHandler(variableArgs : ScopeProcessorVariableArgs, handlerArgs : ScopeProcessorHandlerArgs, runtimeData : ScopeProcessorRuntimeData)
+    private _postProcessHandler(runtimeData : ScopeProcessorRuntimeData)
     {
 
         for(var alertInfo of runtimeData.createdAlerts)

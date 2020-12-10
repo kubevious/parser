@@ -18,111 +18,25 @@ import { ConcreteItem } from '../../../concrete/item';
 
 import { AlertInfo } from '../types';
 
-export class ConcreteProcessorHandlerArgs
+export interface ConcreteProcessorHandlerArgs
 {
-    private _processor: LogicProcessor;
-    private _scope : LogicScope;
-    private _item: ConcreteItem;
-    private _parserInfo : ConcreteParserInfo;
-    private _variableArgs : ConcreteProcessorVariableArgs;
-    private _runtimeData : ConcreteProcessorRuntimeData;
+    readonly logger : ILogger;
+    readonly context : Context;
+    readonly scope : LogicScope;
+    readonly item : ConcreteItem;
+    readonly infraScope : InfraScope;
+    readonly helpers : Helpers;
+    readonly namespaceScope : NamespaceScope;
+    readonly namespaceName : string;
+    readonly app : LogicItem;
+    readonly appScope : AppScope;
+    readonly appName : string;
 
-    constructor(processor: LogicProcessor, scope : LogicScope, item: ConcreteItem, parserInfo : ConcreteParserInfo, variableArgs: ConcreteProcessorVariableArgs, runtimeData : ConcreteProcessorRuntimeData)
-    {
-        this._processor = processor;
-        this._scope = scope;
-        this._item = item;
-        this._parserInfo = parserInfo;
-        this._variableArgs = variableArgs;
-        this._runtimeData = runtimeData;
-    }
-
-    get logger() : ILogger {
-        return this._processor.logger;
-    }
-
-    get context() : Context {
-        return this._processor.context;
-    }
-
-    get scope() : LogicScope {
-        return this._scope;
-    }
-
-    get item() : ConcreteItem {
-        return this._item;
-    }
-
-    get infraScope() : InfraScope {
-        return this._scope.getInfraScope();
-    }
-
-    get helpers() : Helpers {
-        return this._processor.helpers;
-    }
-
-    get namespaceScope() : NamespaceScope {
-        return this._variableArgs.namespaceScope!;
-    }
-
-    get namespaceName() : string {
-        return this._variableArgs.namespaceName!;
-    }
-
-    get app() : LogicItem {
-        return this._variableArgs.app!;
-    }
-
-    get appScope() : AppScope {
-        return this._variableArgs.appScope!;
-    }
-
-    get appName() : string {
-        return this._variableArgs.appName!;
-    }
-
-    hasCreatedItems() {
-        return this._runtimeData.createdItems.length > 0;
-    }
-
-    createItem(parent : LogicItem, name : string, params : any) : LogicItem
-    {
-        params = params || {};
-        params.kind = params.kind || this._parserInfo.kind;
-        if (_.isFunction(params.kind)) {
-            params.kind = params.kind(this._item);
-        }
-        if (!params.kind) {
-            throw new Error("Missing handler or params kind.")
-        }
-        let newObj = parent.fetchByNaming(params.kind, name);
-        if (params.order) {
-            newObj.order = params.order;
-        }
-        this._runtimeData.createdItems.push(newObj);
-        return newObj;
-    }
-
-    createK8sItem(parent : LogicItem, params? : any) : LogicItem
-    {
-        params = params || {};
-        var name = params.name || this._item.config.metadata.name;
-        var newObj = this.createItem(parent, name, params);
-        this._scope.setK8sConfig(newObj, this.item.config);
-        return newObj;
-    }
-
-    createAlert(kind : string, severity : string, msg : string)
-    {
-        this._runtimeData.createdAlerts.push({
-            kind,
-            severity,
-            msg
-        });
-    }
-
+    hasCreatedItems() : boolean;
+    createItem(parent : LogicItem, name : string, params? : any) : LogicItem;
+    createK8sItem(parent : LogicItem, params? : any) : LogicItem;
+    createAlert(kind : string, severity : string, msg : string) : void;
 }
-
 
 export interface ConcreteProcessorVariableArgs
 {
@@ -139,4 +53,85 @@ export interface ConcreteProcessorRuntimeData
 {
     createdItems : LogicItem[];
     createdAlerts : AlertInfo[];
+}
+
+
+export function constructArgs(
+    processor : LogicProcessor,
+    parserInfo : ConcreteParserInfo,
+    scope : LogicScope,
+    item: ConcreteItem,
+    variableArgs : ConcreteProcessorVariableArgs,
+    runtimeData : ConcreteProcessorRuntimeData) : ConcreteProcessorHandlerArgs
+{
+
+    let createItem = (parent : LogicItem, name : string, params? : any) =>
+        {
+            params = params || {};
+            params.kind = params.kind || parserInfo.kind;
+            if (_.isFunction(params.kind)) {
+                params.kind = params.kind(item);
+            }
+            if (!params.kind) {
+                throw new Error("Missing handler or params kind.")
+            }
+            let newObj = parent.fetchByNaming(params.kind, name);
+            if (params.order) {
+                newObj.order = params.order;
+            }
+            runtimeData.createdItems.push(newObj);
+            return newObj;
+        };
+
+
+    return {
+
+        logger: processor.logger,
+    
+        context: processor.context,
+    
+        scope: scope,
+    
+        item: item,
+    
+        infraScope: scope.getInfraScope(),
+    
+        helpers: processor.helpers,
+    
+        namespaceScope: variableArgs.namespaceScope!,
+    
+        namespaceName: variableArgs.namespaceName!,
+    
+        app: variableArgs.app!,
+    
+        appScope: variableArgs.appScope!,
+    
+        appName: variableArgs.appName!,
+
+        hasCreatedItems : () => 
+        {
+            return runtimeData.createdItems.length > 0;
+        },
+
+        createItem : createItem,
+
+        createK8sItem : (parent : LogicItem, params? : any) =>
+        {
+            params = params || {};
+            var name = params.name || item.config.metadata.name;
+            var newObj = createItem(parent, name, params);
+            scope.setK8sConfig(newObj, item.config);
+            return newObj;
+        },
+
+        createAlert : (kind : string, severity : string, msg : string) => 
+        {
+            runtimeData.createdAlerts.push({
+                kind,
+                severity,
+                msg
+            });
+        }
+
+    }
 }

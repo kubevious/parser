@@ -11,7 +11,7 @@ import { LogicParserInfo } from './builder'
 
 import { BaseParserExecutor } from '../base/executor';
 import { LogicItem } from '../../item';
-import { LogicProcessorHandlerArgs, LogicProcessorRuntimeData, LogicProcessorVariableArgs } from './handler-args';
+import { constructArgs, LogicProcessorHandlerArgs, LogicProcessorRuntimeData, LogicProcessorVariableArgs } from './handler-args';
 
 export class LogicParserExecutor implements BaseParserExecutor
 {
@@ -72,21 +72,21 @@ export class LogicParserExecutor implements BaseParserExecutor
             createdAlerts : []
         };
 
-        let handlerArgs = new LogicProcessorHandlerArgs(
-            this._processor,
-            scope,
-            item,
-            this._parserInfo,
-            variableArgs,
-            runtimeData
-        )
-
-
         try
         {
-            this._preprocessHandler(variableArgs, handlerArgs);
+            this._preprocessHandler(scope, item, variableArgs);
+
+            let handlerArgs = constructArgs(
+                this._processor,
+                this._parserInfo,
+                scope,
+                item,
+                variableArgs,
+                runtimeData);
+                
             this._parserInfo.handler!(handlerArgs);
-            this._postProcessHandler(variableArgs, handlerArgs, runtimeData);
+
+            this._postProcessHandler(runtimeData);
         }
         catch(reason)
         {
@@ -95,31 +95,33 @@ export class LogicParserExecutor implements BaseParserExecutor
 
     }
 
-    private _preprocessHandler(variableArgs : LogicProcessorVariableArgs, handlerArgs : LogicProcessorHandlerArgs)
+    private _preprocessHandler(scope : LogicScope, item: LogicItem, variableArgs : LogicProcessorVariableArgs)
     {
         variableArgs.namespaceName = null;
         if (this._parserInfo.needNamespaceScope || this._parserInfo.needAppScope)
         {
             if (this._parserInfo.namespaceNameCb) {
-                variableArgs.namespaceName = this._parserInfo.namespaceNameCb(handlerArgs.item);
+                variableArgs.namespaceName = this._parserInfo.namespaceNameCb(item);
             } else {
-                variableArgs.namespaceName = handlerArgs.item.config.metadata.namespace;
+                this._logger.info("******** DN: %s", item.dn);
+                this._logger.info("********", item.config);
+                variableArgs.namespaceName = item.config.metadata.namespace;
             }
             if (_.isNotNullOrUndefined(variableArgs.namespaceName))
             {
-                variableArgs.namespaceScope = handlerArgs.scope.getNamespaceScope(variableArgs.namespaceName!);
+                variableArgs.namespaceScope = scope.getNamespaceScope(variableArgs.namespaceName!);
             }
         }
 
         variableArgs.appName = null;
         if (this._parserInfo.appNameCb) {
-            variableArgs.appName = this._parserInfo.appNameCb(handlerArgs.item);
+            variableArgs.appName = this._parserInfo.appNameCb(item);
         }
         if (variableArgs.namespaceName && variableArgs.namespaceScope)
         {
             if (this._parserInfo.needAppScope && variableArgs.appName)
             {
-                let appScope = handlerArgs.namespaceScope.getAppAndScope(
+                let appScope = variableArgs.namespaceScope.getAppAndScope(
                     variableArgs.appName!,
                     this._parserInfo.canCreateAppIfMissing!);
 
@@ -131,7 +133,7 @@ export class LogicParserExecutor implements BaseParserExecutor
         }
     }
 
-    private _postProcessHandler(variableArgs : LogicProcessorVariableArgs, handlerArgs : LogicProcessorHandlerArgs, runtimeData : LogicProcessorRuntimeData)
+    private _postProcessHandler(runtimeData : LogicProcessorRuntimeData)
     {
 
         for(var alertInfo of runtimeData.createdAlerts)
