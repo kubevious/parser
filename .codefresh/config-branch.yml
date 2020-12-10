@@ -21,22 +21,19 @@ steps:
     repo: "kubevious/${{CF_REPO_NAME}}"
     revision: "${{CF_BRANCH}}"
 
-  prepare_test:
-    title: Prepare Test
-    stage: test
+  prepare:
+    title: Prepare Dependencies
+    stage: build
     image: 'kubevious/node-builder:12'
-    working_directory: ${{main_clone}}/src
+    working_directory: ${{main_clone}}
     commands:
-      - npm install
-      - npm install --only=dev
+      - npm ci
     
-  run_test:
-    title: Test
-    stage: test
+  compile:
+    title: Compile
+    stage: build
     image: 'kubevious/node-builder:12'
-    working_directory: ${{main_clone}}/src
+    working_directory: ${{main_clone}}
     commands:
-      - pwd
-      - ls -la
-      - npm test
+      - npm run build
     
