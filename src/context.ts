@@ -22,7 +22,7 @@ export class Context
 {
     private backend : Backend;
     private _logger : ILogger;
-    private _tracker: any;
+    private _tracker: ProcessingTracker;
     private _loaders: any[] = [];
     private _concreteRegistry: ConcreteRegistry;
     private _k8sParser: K8sParser;
