@@ -58,7 +58,8 @@ export class JobDampener
 
         if (toRemoveCount > 0)
         {
-            var toRemove = _(timeDeltas).orderBy(['diff']).take(toRemoveCount).value();
+            let orderedTimeDeltas = _.orderBy(timeDeltas, ['diff']);
+            let toRemove = _.take(orderedTimeDeltas, toRemoveCount);
             toRemove = _.orderBy(toRemove, ['index'], ['desc']);
             for(var x of toRemove)
             {

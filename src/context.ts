@@ -4,40 +4,39 @@ import { Promise } from 'the-promise';
 import { Backend, TimerFunction } from '@kubevious/helper-backend'
 
 import { ProcessingTracker } from '@kubevious/helpers/dist/processing-tracker';
-const { WorldviousClient } = require('@kubevious/worldvious-client');
 
 import { ConcreteRegistry } from './concrete/registry';
 
 import { K8sParser } from './parsers/k8s';
 import { FacadeRegistry } from './facade/registry';
+import { WorldviousClient } from '@kubevious/worldvious-client';
 
 import { LogicProcessor } from './logic/processor';
 import { SnapshotReporter } from './reporting/reporter';
 import { DebugObjectLogger } from './utils/debug-object-logger';
 import { WebServer } from './server';
 
-import * as VERSION from './version'
+import VERSION from './version'
 
 export class Context
 {
-    private backend : Backend;
+    private _backend : Backend;
     private _logger : ILogger;
-    private _tracker: any;
+    private _tracker: ProcessingTracker;
     private _loaders: any[] = [];
     private _concreteRegistry: ConcreteRegistry;
     private _k8sParser: K8sParser;
-    private _logicProcessor: any;
-    private _reporter: any;
+    private _logicProcessor: LogicProcessor;
+    private _reporter: SnapshotReporter;
     private _facadeRegistry: FacadeRegistry;
     private _debugObjectLogger: DebugObjectLogger;
-    private _worldvious: any;
+    private _worldvious: WorldviousClient;
     private _server: WebServer;
-    private _k8sClient: any;
     private _areLoadersReady = false;
 
     constructor(backend : Backend)
     {
-        this.backend = backend;
+        this._backend = backend;
         this._logger = backend.logger.sublogger('Context');
 
         this._tracker = new ProcessingTracker(this.logger.sublogger("Tracker"));
@@ -55,12 +54,14 @@ export class Context
 
         this._server = new WebServer(this);
 
-        this._k8sClient = null;
-
-        backend.registerErrorHandler((reason) => {
+        this.backend.registerErrorHandler((reason) => {
             return this.worldvious.acceptError(reason);
         });
     }
+
+    get backend() {
+        return this._backend;
+    } 
 
     get logger() : ILogger {
         return this._logger;
@@ -82,11 +83,11 @@ export class Context
         return this._k8sParser;
     }
 
-    get logicProcessor() {
+    get logicProcessor() : LogicProcessor {
         return this._logicProcessor;
     }
 
-    get reporter() {
+    get reporter() : SnapshotReporter {
         return this._reporter;
     }
 
@@ -98,7 +99,7 @@ export class Context
         return this._debugObjectLogger;
     }
 
-    get worldvious() {
+    get worldvious() : WorldviousClient {
         return this._worldvious;
     }
 
@@ -115,11 +116,6 @@ export class Context
         }
         loader.setupReadyHandler(loaderInfo.readyHandler);
         this._loaders.push(loaderInfo);
-    }
-
-    setupK8sClient(client : any)
-    {
-        this._k8sClient = client;
     }
 
     run()
