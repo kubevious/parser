@@ -20,7 +20,7 @@ import VERSION from './version'
 
 export class Context
 {
-    private backend : Backend;
+    private _backend : Backend;
     private _logger : ILogger;
     private _tracker: ProcessingTracker;
     private _loaders: any[] = [];
@@ -36,7 +36,7 @@ export class Context
 
     constructor(backend : Backend)
     {
-        this.backend = backend;
+        this._backend = backend;
         this._logger = backend.logger.sublogger('Context');
 
         this._tracker = new ProcessingTracker(this.logger.sublogger("Tracker"));
@@ -54,10 +54,14 @@ export class Context
 
         this._server = new WebServer(this);
 
-        backend.registerErrorHandler((reason) => {
+        this.backend.registerErrorHandler((reason) => {
             return this.worldvious.acceptError(reason);
         });
     }
+
+    get backend() {
+        return this._backend;
+    } 
 
     get logger() : ILogger {
         return this._logger;
