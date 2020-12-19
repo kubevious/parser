@@ -5,11 +5,12 @@ import { ILogger } from 'the-logger';
 import { Snapshot } from './snapshot'
 
 import * as VERSION from '../version'
+import { ReporterTarget } from './target';
 
 export class SnapshotReporter
 {
     private _logger: ILogger;
-    private _reporterTarget : any;
+    private _reporterTarget : ReporterTarget;
 
     private _snapshot: Snapshot;
     private _latestSnapshot: Snapshot | null;
@@ -18,7 +19,7 @@ export class SnapshotReporter
     private _isReported = false;
     private _diffId : any;
 
-    constructor(reporterTarget: any, logger: ILogger, snapshot: Snapshot, latestSnapshot: Snapshot | null, latestSnapshotId: string | null)
+    constructor(reporterTarget: ReporterTarget, logger: ILogger, snapshot: Snapshot, latestSnapshot: Snapshot | null, latestSnapshotId: string | null)
     {
         this._reporterTarget = reporterTarget;
         this._logger = logger;
@@ -49,7 +50,7 @@ export class SnapshotReporter
         return this._execute();
     }
 
-    _execute() : Promise<any>
+    private _execute() : Promise<any>
     {
         this.logger.info("[_execute]");
         return Promise.resolve()
@@ -70,7 +71,7 @@ export class SnapshotReporter
             });
     }
 
-    _reportAsSnapshot() : Promise<any>
+    private _reportAsSnapshot() : Promise<any>
     {
         this.logger.info("[_reportAsSnapshot]");
         return Promise.resolve()
@@ -81,7 +82,7 @@ export class SnapshotReporter
             ;
     }
 
-    _createSnapshot() : Promise<any>
+    private _createSnapshot() : Promise<any>
     {
         this.logger.info("[_createSnapshot]");
         var body = {
@@ -95,7 +96,7 @@ export class SnapshotReporter
             })
     }
 
-    _publishSnapshotItems() : Promise<any> | void
+    private _publishSnapshotItems() : Promise<any> | void
     {
         if (!this._snapshotId) {
             return;
@@ -105,7 +106,7 @@ export class SnapshotReporter
         return Promise.serial(reportableItems, this._publishSnapshotItem.bind(this));
     }
 
-    _publishSnapshotItem(item : any) : Promise<any> | void
+    private _publishSnapshotItem(item : any) : Promise<any> | void
     {
         if (!this._snapshotId) {
             return;
@@ -129,7 +130,7 @@ export class SnapshotReporter
             });
     }
 
-    _activateSnapshot() : Promise<any> | void
+    private _activateSnapshot() : Promise<any> | void
     {
         if (!this._snapshotId) {
             return;
@@ -154,7 +155,7 @@ export class SnapshotReporter
             });
     }
 
-    _reportAsDiff()
+    private _reportAsDiff()
     {
         this.logger.info("[_reportAsDiff]");
         return Promise.resolve()
@@ -164,7 +165,7 @@ export class SnapshotReporter
             .then(() => this._execute())
     }
 
-    _createDiff() : Promise<any> | void
+    private _createDiff() : Promise<any> | void
     {
         if (!this._snapshotId) {
             return;
@@ -189,7 +190,7 @@ export class SnapshotReporter
             })
     }
 
-    _publishDiffItems() : Promise<any> | void
+    private _publishDiffItems() : Promise<any> | void
     {
         if (!this._snapshotId) {
             return;
@@ -203,7 +204,7 @@ export class SnapshotReporter
         return Promise.serial(reportableItems, this._publishDiffItem.bind(this));
     }
 
-    _publishDiffItem(item : any) : Promise<any> | void
+    private _publishDiffItem(item : any) : Promise<any> | void
     {
         if (!this._snapshotId) {
             return;
@@ -230,7 +231,7 @@ export class SnapshotReporter
             });
     }
 
-    _activateDiff() : Promise<any> | void
+    private _activateDiff() : Promise<any> | void
     {
         if (!this._snapshotId) {
             return;
@@ -260,7 +261,7 @@ export class SnapshotReporter
             });
     }
 
-    _request(url : string, data : any)
+    private _request(url : string, data : any)
     {
         this.logger.verbose("[_request] url: %s", url);
         this.logger.silly("[_request] url: %s, data: ", url, data);

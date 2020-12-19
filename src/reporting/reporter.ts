@@ -6,6 +6,8 @@ import { Context } from '../context';
 
 import { Snapshot } from './snapshot'
 import { ReporterTarget } from './target'
+import { LogicItem } from '../logic/item';
+import { SnapshotConfigKind } from '@kubevious/helpers/dist/snapshot/types';
 
 export class SnapshotReporter
 {
@@ -30,7 +32,7 @@ export class SnapshotReporter
         return this._logger;
     }
 
-    _determineCollectors()
+    private _determineCollectors()
     {
         this._collectors = [];
         for(var x of _.keys(process.env))
@@ -47,7 +49,7 @@ export class SnapshotReporter
         this.logger.info("[_determineCollectors] Collectors: ", this._collectors);
     }
 
-    _loadCollector(urlEnvName: string)
+    private _loadCollector(urlEnvName: string)
     {
         var collectorConfig = {
             url: process.env[urlEnvName],
@@ -65,7 +67,7 @@ export class SnapshotReporter
         })
     }
 
-    acceptLogicItems(date: string, items: any[])
+    acceptLogicItems(date: Date, items: LogicItem[])
     {
         this._logger.info("[acceptLogicItems] item count: %s", items.length);
         var snapshot = this._transforItems(date, items);
@@ -78,7 +80,7 @@ export class SnapshotReporter
         return Promise.serial(this._collectors, x => x.target.report(snapshot));
     }
 
-    _transforItems(date: string, items: any[])
+    private _transforItems(date: Date, items: LogicItem[])
     {
         var snapshot = new Snapshot(date);
 
@@ -87,7 +89,7 @@ export class SnapshotReporter
             snapshot.addItem({
                 dn: item.dn,
                 kind: item.kind,
-                config_kind: 'node',
+                config_kind: SnapshotConfigKind.node,
                 config: item.exportNode()
             });
 
@@ -97,7 +99,7 @@ export class SnapshotReporter
                 snapshot.addItem({
                     dn: item.dn,
                     kind: item.kind,
-                    config_kind: 'alerts',
+                    config_kind: SnapshotConfigKind.alerts,
                     config: alerts
                 });
             }
@@ -108,8 +110,7 @@ export class SnapshotReporter
                 snapshot.addItem({
                     dn: item.dn,
                     kind: item.kind,
-                    config_kind: 'props',
-                    name: props.id,
+                    config_kind: SnapshotConfigKind.props,
                     config: props
                 })
             }

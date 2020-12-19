@@ -23,7 +23,7 @@ export class ReporterTarget
 
     private _axiosAuth : any;
 
-    private _jobDampener : JobDampener;
+    private _jobDampener : JobDampener<Snapshot>;
 
     private _latestSnapshot : Snapshot | null = null;
     private _latestSnapshotId : string | null = null;
@@ -49,7 +49,7 @@ export class ReporterTarget
             });
         }
 
-        this._jobDampener = new JobDampener(this._logger.sublogger("ReporterDampener"), this._processSnapshot.bind(this));
+        this._jobDampener = new JobDampener<Snapshot>(this._logger.sublogger("ReporterDampener"), this._processSnapshot.bind(this));
     }
 
     get logger() {
@@ -62,13 +62,13 @@ export class ReporterTarget
         this._jobDampener.acceptJob(snapshot.date, snapshot);
     }
 
-    _processSnapshot(date : any, snapshot : Snapshot) : Promise<any>
+    private _processSnapshot(date : Date, snapshot : Snapshot) : Promise<any>
     {
         this._logger.info("[_processSnapshot] date: %s, item count: %s", date.toISOString(), snapshot.count);
         return this._reportSnapshot(snapshot);
     }
 
-    _reportSnapshot(snapshot : Snapshot) : Promise<any>
+    private _reportSnapshot(snapshot : Snapshot) : Promise<any>
     {
         this._logger.info("[_reportSnapshot] Begin");
 
@@ -93,7 +93,7 @@ export class ReporterTarget
             })
     }
 
-    _retrySnapshotReport(snapshot : Snapshot) : Promise<any>
+    private _retrySnapshotReport(snapshot : Snapshot) : Promise<any>
     {
         return Promise.timeout(3000)
             .then(() => this._reportSnapshot(snapshot));
@@ -117,7 +117,7 @@ export class ReporterTarget
         return action.run();
     }
 
-    _rawRequest(url: string, data: any)
+    private _rawRequest(url: string, data: any)
     {
         this.logger.verbose("[request] url: %s%s", this._baseUrl, url);
         this.logger.silly("[request] url: %s%s, data: ", this._baseUrl, url, data);
@@ -144,7 +144,7 @@ export class ReporterTarget
             });
     }
 
-    _prepareRequest()
+    private _prepareRequest()
     {
         if (!this._axiosAuth) {
             return Promise.resolve();
@@ -166,7 +166,7 @@ export class ReporterTarget
             })
     }
 
-    _getApiKey()
+    private _getApiKey()
     {
         if (this._apiKeyData) {
             return Promise.resolve(this._apiKeyData);
@@ -179,7 +179,7 @@ export class ReporterTarget
             });
     }
 
-    _createCollectorClient()
+    private _createCollectorClient()
     {
         let headers : Record<string, string> = {};
         let options = {
