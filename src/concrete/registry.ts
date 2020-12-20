@@ -8,7 +8,6 @@ import { EventDampener } from '@kubevious/helpers/dist/event-dampener';
 
 import { ConcreteItem } from './item';
 
-// export type ItemId = string | object;
 export interface ItemId {
     infra: string,
     api: string,
@@ -79,10 +78,16 @@ export class ConcreteRegistry
 
         let item = this._flatItemsDict[rawId];
         if (item) {
-            delete this._itemsKindDict[item.groupKey][rawId];
-            if (_.keys(this._itemsKindDict[item.groupKey]).length !== 0)
-            {
-                delete this._itemsKindDict[item.groupKey];
+
+            const groupDict = this._itemsKindDict[item.groupKey];
+            if (groupDict) {
+                delete groupDict[rawId];
+                if (_.keys(groupDict).length !== 0)
+                {
+                    delete this._itemsKindDict[item.groupKey];
+                }
+            } else {
+                this.logger.warn("[remove] Failed to remove kind group key %s for %s", item.groupKey, rawId);
             }
 
             delete this._flatItemsDict[rawId];

@@ -12,6 +12,7 @@ const helpers = new Helpers();
 
 import * as DocsHelper from '@kubevious/helpers/dist/docs';
 
+import { Alert, SnapshotNodeConfig, SnapshotPropsConfig } from '@kubevious/helpers/dist/snapshot/types'
 
 import { DumpWriter } from 'the-logger';
 
@@ -30,8 +31,8 @@ export class LogicItem
     private _config : Record<string, any> = {};
     private _order = 100;
     private _children : Record<string, LogicItem> = {};
-    private _properties : Record<string, any> = {};
-    private _alerts : Record<string, any> = {};
+    private _properties : Record<string, SnapshotPropsConfig> = {};
+    private _alerts : Record<string, Alert> = {};
     private _flags : Record<string, any> = {};
     private _usedBy : Record<string, any> = {};
     private _dn : string;
@@ -250,7 +251,7 @@ export class LogicItem
 
     addAlert(kind: string, severity: string, msg: string)
     {
-        var info = {
+        var info : Alert = {
             id: kind,
             severity: severity,
             msg: msg
@@ -266,7 +267,7 @@ export class LogicItem
         }
     }
 
-    extractProperties() {
+    extractProperties() : SnapshotPropsConfig[] {
         var myProps = _.values(this._properties);
 
         // if (_.keys(this._flags).length > 0) {
@@ -293,24 +294,6 @@ export class LogicItem
         {
             var props = myProps[i];
             props = _.clone(props);
-
-            let tooltip : string | null = null;
-
-            let tooltipInfo : any = DocsHelper.propertyGroupTooltip(props.id);
-            if (tooltipInfo) {
-                if (_.isObject(tooltipInfo)) {
-                    let str = _.get(tooltipInfo, 'owner.' + this.kind);
-                    if (str) {
-                        tooltip = str;
-                    } else {
-                        tooltip = _.get(tooltipInfo, 'default');
-                    }
-                }
-            }
-
-            if (tooltip) {
-                props.tooltip = tooltip;
-            }
 
             if (props.kind == "resources")
             {
@@ -348,7 +331,7 @@ export class LogicItem
         return myProps;
     }
 
-    extractAlerts() {
+    extractAlerts() : Alert[] {
         var alerts = _.values(this._alerts);
         alerts = _.deepClean(alerts);
         return alerts;
@@ -381,7 +364,7 @@ export class LogicItem
         }
     }
 
-    exportNode() : any
+    exportNode() : SnapshotNodeConfig
     {
         let node = {
             rn: this.rn,
@@ -391,17 +374,6 @@ export class LogicItem
             flags: this._flags
         };
         return _.deepClean(node);
-    }
-
-    exportTree() : object[]
-    {
-        var node = this.exportNode();
-        node.children = [];
-        for(var child of this.getChildren())
-        {
-            node.children.push(child.exportTree());
-        }
-        return node;
     }
 
     static constructTop(scope: LogicScope) : LogicItem {

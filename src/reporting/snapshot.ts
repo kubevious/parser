@@ -1,18 +1,19 @@
+import { SnapshotItemInfo } from '@kubevious/helpers/dist/snapshot/types';
 import _ from 'the-lodash';
 
-const crypto = require('crypto');
+import * as HashUtils from '@kubevious/helpers/dist/hash-utils';
 
 export class Snapshot
 {
-    private _date : any;
-    private _items : Record<string, any> = {};
+    private _date : Date;
+    private _items : Record<string, SnapshotItemInfo> = {};
 
-    constructor(date : any)
+    constructor(date : Date)
     {
         this._date = date;
     }
 
-    get date() : any {
+    get date() {
         return this._date;
     }
 
@@ -35,7 +36,7 @@ export class Snapshot
         return false;
     }
 
-    getById(id: string) {
+    getById(id: string) : SnapshotItemInfo | null {
         let item = this._items[id];
         if (item) {
             return item;
@@ -43,13 +44,13 @@ export class Snapshot
         return null;
     }
 
-    setDate(date: any) {
+    setDate(date: Date) {
         this._date = date;
     }
     
-    addItem(item: any)
+    addItem(item: SnapshotItemInfo)
     {
-        let hash = this._makeHash(item);
+        let hash = HashUtils.calculateObjectHashStr(item);
         this._items[hash] = item;
     }
 
@@ -89,16 +90,6 @@ export class Snapshot
         }
 
         return result;
-    }
-
-    _makeHash(item: any)
-    {
-        let str = _.stableStringify(item);
-
-        const sha256 = crypto.createHash('sha256');
-        sha256.update(str);
-        let value = sha256.digest('hex');
-        return value;
     }
 
 }

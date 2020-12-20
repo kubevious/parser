@@ -5,6 +5,7 @@ import { ILogger } from 'the-logger';
 import { Context } from '../context';
 
 import { JobDampener } from '../utils/job-dampener';
+import { LogicItem } from '../logic/item';
 
 export class FacadeRegistry
 {
@@ -18,7 +19,7 @@ export class FacadeRegistry
         this._context = context;
         this._logger = context.logger.sublogger("FacadeRegistry");
 
-        this._jobDampener = new JobDampener(this._logger.sublogger("FacadeDampener"), this._processItems.bind(this));
+        this._jobDampener = new JobDampener<LogicItem[]>(this._logger.sublogger("FacadeDampener"), this._processItems.bind(this));
 
         this._context.concreteRegistry.onChanged(this._handleConcreteRegistryChange.bind(this));
     }
@@ -27,13 +28,13 @@ export class FacadeRegistry
         return this._logger;
     }
 
-    acceptLogicItems(items: any)
+    acceptLogicItems(items: LogicItem[])
     {
         this._logger.info("[acceptLogicItems] item count: %s", items.length);
         this._jobDampener.acceptJob(new Date(), items);
     }
 
-    _processItems(date: any, items: any)
+    _processItems(date: Date, items: LogicItem[])
     {
         this._logger.info("[_processItems] Date: %s. item count: %s", date.toISOString(), items.length);
         return this._context.reporter.acceptLogicItems(date, items);

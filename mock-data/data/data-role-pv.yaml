@@ -60,7 +60,7 @@ items:
     finalizers:
     - kubernetes.io/pv-protection
     labels:
-      failure-domain.beta.kubernetes.io/region: us-central1
+      failure-domain.beta.kubernetes.io/region: us-central2
       failure-domain.beta.kubernetes.io/zone: us-central1-a
     name: pvc-09728c28-398e-11ea-97ba-42010a800159
     resourceVersion: "2021123"
@@ -158,7 +158,7 @@ items:
     finalizers:
     - kubernetes.io/pv-protection
     labels:
-      failure-domain.beta.kubernetes.io/region: us-central1
+      failure-domain.beta.kubernetes.io/region: us-central2
       failure-domain.beta.kubernetes.io/zone: us-central1-a
     name: pvc-8b2d52c7-398c-11ea-b115-42010a8001d6
     resourceVersion: "2018936"

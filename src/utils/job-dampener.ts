@@ -6,21 +6,21 @@ import * as DateUtils from '@kubevious/helpers/dist/date-utils';
 import { HandledError } from '@kubevious/helpers/dist/handled-error';
 
 
-export type JobDampenerHandler = (date : any, data : any) => void;
+export type JobDampenerHandler<T> = (date : Date, data : T) => void;
 
-export class JobDampener
+export class JobDampener<T>
 {
     private _logger : ILogger;
 
-    private _handlerCb : JobDampenerHandler;
+    private _handlerCb : JobDampenerHandler<T>;
 
-    private _jobQueue : any[] = [];
+    private _jobQueue : Job<T>[] = [];
     private _isProcessing = false;
     private _isScheduled = false;
     private _queueSize = 5;
     private _rescheduleTimeoutMs = 5000;
 
-    constructor(logger: ILogger, handler : JobDampenerHandler)
+    constructor(logger: ILogger, handler : JobDampenerHandler<T>)
     {
         this._logger = logger;
         this._handlerCb = handler;
@@ -30,7 +30,7 @@ export class JobDampener
         return this._logger;
     }
 
-    acceptJob(date : any, data : any)
+    acceptJob(date : Date, data : T)
     {
         this._jobQueue.push({ date: date, data: data});
         this._logger.info("[acceptJob] job date: %s. queue size: %s", date.toISOString(), this._jobQueue.length);
@@ -68,7 +68,7 @@ export class JobDampener
         }
     }
 
-    _processJob(job: any)
+    _processJob(job: Job<T>)
     {
         this.logger.info("[_processJob] BEGIN. Date: %s", job.date.toISOString());
 
@@ -105,7 +105,7 @@ export class JobDampener
             return;
         }
 
-        var job = _.head(this._jobQueue);
+        var job = _.head(this._jobQueue)!;
         this._isProcessing = true;
         this._processJob(job)
             .then(result => {
@@ -146,4 +146,10 @@ export class JobDampener
         }, this._rescheduleTimeoutMs);
     }
 
+}
+
+interface Job<T>
+{
+    date: Date;
+    data: T
 }

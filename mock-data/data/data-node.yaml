@@ -16,7 +16,7 @@ items:
       beta.kubernetes.io/os: linux
       cloud.google.com/gke-nodepool: pool-2
       cloud.google.com/gke-os-distribution: cos
-      failure-domain.beta.kubernetes.io/region: us-central1
+      failure-domain.beta.kubernetes.io/region: us-central3
       failure-domain.beta.kubernetes.io/zone: us-central1-a
       kubernetes.io/arch: amd64
       kubernetes.io/hostname: gke-kubevious-samples-pool-2-d17eaa99-95cn
