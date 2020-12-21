@@ -18,6 +18,12 @@ import { ConcreteItem } from '../../../concrete/item';
 
 import { AlertInfo } from '../types';
 
+export interface CreateItemParams
+{
+    kind? : string | ((item: ConcreteItem) => string),
+    order? : number
+}
+
 export interface ConcreteProcessorHandlerArgs
 {
     readonly logger : ILogger;
@@ -33,7 +39,7 @@ export interface ConcreteProcessorHandlerArgs
     readonly appName : string;
 
     hasCreatedItems() : boolean;
-    createItem(parent : LogicItem, name : string, params? : any) : LogicItem;
+    createItem(parent : LogicItem, name : string, params? : CreateItemParams) : LogicItem;
     createK8sItem(parent : LogicItem, params? : any) : LogicItem;
     createAlert(kind : string, severity : string, msg : string) : void;
 }
@@ -65,20 +71,32 @@ export function constructArgs(
     runtimeData : ConcreteProcessorRuntimeData) : ConcreteProcessorHandlerArgs
 {
 
-    let createItem = (parent : LogicItem, name : string, params? : any) =>
+    let createItem = (parent : LogicItem, name : string, params? : CreateItemParams) =>
         {
-            params = params || {};
-            params.kind = params.kind || parserInfo.kind;
-            if (_.isFunction(params.kind)) {
-                params.kind = params.kind(item);
+            let kindX : string | ((item: ConcreteItem) => string) | undefined = parserInfo.kind;
+            if (params)
+            {
+                if (params.kind) {
+                    kindX = params.kind;
+                }
             }
-            if (!params.kind) {
+
+            let kind : string;
+            if (_.isFunction(kindX)) {
+                kind = kindX(item);
+            } else {
+                kind = kindX!;
+            }
+
+            if (!kind) {
                 throw new Error("Missing handler or params kind.")
             }
-            let newObj = parent.fetchByNaming(params.kind, name);
-            if (params.order) {
+
+            let newObj = parent.fetchByNaming(kind!, name);
+            if (params && params.order) {
                 newObj.order = params.order;
             }
+
             runtimeData.createdItems.push(newObj);
             return newObj;
         };

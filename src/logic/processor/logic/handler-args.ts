@@ -17,6 +17,11 @@ import { LogicParserInfo } from './builder'
 
 import { AlertInfo } from '../types';
 
+export interface CreateItemParams
+{
+    kind? : string | ((item: LogicItem) => string),
+    order? : number
+}
 
 export interface LogicProcessorHandlerArgs
 {
@@ -33,7 +38,7 @@ export interface LogicProcessorHandlerArgs
     readonly appName : string;
 
     hasCreatedItems() : boolean;
-    createItem(parent : LogicItem, name : string, params? : any) : LogicItem;
+    createItem(parent : LogicItem, name : string, params? : CreateItemParams) : LogicItem;
     createAlert(kind : string, severity : string, msg : string) : void;
 }
 
@@ -63,20 +68,32 @@ export function constructArgs(
     runtimeData : LogicProcessorRuntimeData) : LogicProcessorHandlerArgs
 {
 
-    let createItem = (parent : LogicItem, name : string, params? : any) =>
+    let createItem = (parent : LogicItem, name : string, params? : CreateItemParams) =>
         {
-            params = params || {};
-            params.kind = params.kind || parserInfo.kind;
-            if (_.isFunction(params.kind)) {
-                params.kind = params.kind(item);
+            let kindX : string | ((item: LogicItem) => string) | undefined = parserInfo.kind;
+            if (params)
+            {
+                if (params.kind) {
+                    kindX = params.kind;
+                }
             }
-            if (!params.kind) {
+
+            let kind : string;
+            if (_.isFunction(kindX)) {
+                kind = kindX(item);
+            } else {
+                kind = kindX!;
+            }
+
+            if (!kind) {
                 throw new Error("Missing handler or params kind.")
             }
-            let newObj = parent.fetchByNaming(params.kind, name);
-            if (params.order) {
+
+            let newObj = parent.fetchByNaming(kind!, name);
+            if (params && params.order) {
                 newObj.order = params.order;
             }
+
             runtimeData.createdItems.push(newObj);
             return newObj;
         };
