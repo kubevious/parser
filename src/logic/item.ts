@@ -23,8 +23,8 @@ export class LogicItem
     private _kind : string;
     private _naming : any;
 
-    private _itemScope? : ItemScope;
-    private _namespaceScope? : NamespaceScope;
+    // private _itemScope? : ItemScope;
+    // private _namespaceScope? : NamespaceScope;
     private _appScope? : AppScope;
 
     private _rn : any;
@@ -113,25 +113,25 @@ export class LogicItem
         this._order = value;
     }
 
-    get scope() : ItemScope {
-        return this._itemScope!;
-    }
+    // get scope() : ItemScope {
+    //     return this._itemScope!;
+    // }
 
     get appScope() : AppScope {
         return this._appScope!;
     }
 
-    get namespaceScope() : NamespaceScope {
-        return this._namespaceScope!;
-    }
+    // get namespaceScope() : NamespaceScope {
+    //     return this._namespaceScope!;
+    // }
 
-    associateScope(scope: ItemScope) {
-        this._itemScope = scope;
-    }
+    // associateScope(scope: ItemScope) {
+    //     this._itemScope = scope;
+    // }
 
-    associateNamespaceScope(scope: NamespaceScope) {
-        this._namespaceScope = scope;
-    }
+    // associateNamespaceScope(scope: NamespaceScope) {
+    //     this._namespaceScope = scope;
+    // }
 
     associateAppScope(scope: AppScope) {
         this._appScope = scope;

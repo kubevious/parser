@@ -17,7 +17,7 @@ export default ConcreteParser()
         {
             var rawContainer = scope.fetchRawContainer(item, "ServiceAccounts");
             var logicItem = createK8sItem(rawContainer);
-            logicItem.associateScope(serviceAccountScope);
+            // logicItem.associateScope(serviceAccountScope);
 
             if (logicItem.naming != 'default')
             {
@@ -29,7 +29,7 @@ export default ConcreteParser()
             for(var owner of serviceAccountScope.owners)
             {
                 var logicItem = createK8sItem(owner);
-                logicItem.associateScope(serviceAccountScope);
+                // logicItem.associateScope(serviceAccountScope);
                 serviceAccountScope.registerItem(logicItem);
                 serviceAccountScope.markUsedBy(logicItem);
             }
