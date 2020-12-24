@@ -1,4 +1,5 @@
 import _ from 'the-lodash';
+import { PropertyValueWithUnit } from '../helpers/resources';
 import { LogicParser } from '../parser-builder';
 
 export default LogicParser()
@@ -8,10 +9,10 @@ export default LogicParser()
     })
     .handler(({ scope, item, logger, helpers }) => {
 
-        var usedResourcesProps : Record<string, any>  = {
+        let usedResourcesProps : Record<string, PropertyValueWithUnit>  = {
         }
-        var clusterConsumptionProps : Record<string, any>  = {};
-        var appsByConsumptionTable = {
+        let clusterConsumptionProps : Record<string, PropertyValueWithUnit>  = {};
+        let appsByConsumptionTable = {
             headers: <any[]>[
                 {
                     id: 'dn',
@@ -21,51 +22,65 @@ export default LogicParser()
             ],
             rows: <any[]>[]
         }
-        var appsByConsumptionDict : Record<string, any>  = {};
-        for(var metric of helpers.resources.METRICS) {
-            usedResourcesProps[metric] = { request: 0 };
-            clusterConsumptionProps[metric] = 0;
+        let appsByConsumptionDict : Record<string, {
+            dn: string,
+            max: number,
+            metrics: Record<string, number>
+        }>  = {};
+        for(let metric of helpers.resources.METRICS) {
+            usedResourcesProps[metric + ' ' + 'request'] = {
+                value: 0,
+                unit: helpers.resources.METRIC_UNITS[metric]
+            }
+            clusterConsumptionProps[metric] = {
+                value: 0,
+                unit: '%'
+            };
             appsByConsumptionTable.headers.push(metric);
         }
 
-        for(var app of item.getChildrenByKind('app'))
+        for(let app of item.getChildrenByKind('app'))
         {
-            var appResourcesProps = app.getProperties('resources');
+            let appResourcesProps = app.getProperties('resources');
             if (appResourcesProps)
             {
-                for(var metric of helpers.resources.METRICS)
+                let appResources = <Record<string, PropertyValueWithUnit>>appResourcesProps.config;
+                for(let metric of helpers.resources.METRICS)
                 {
-                    var value = _.get(appResourcesProps.config, metric + '.request');
+                    let value = _.get(appResources, metric + ' ' + 'request');
                     if (value)
                     {
-                        usedResourcesProps[metric].request += value;
+                        usedResourcesProps[metric + ' ' + 'request'].value += value!.value;
                     }
                 }
             }
 
-            var appUsedResourcesProps = app.getProperties('cluster-consumption');
+            let appUsedResourcesProps = app.getProperties('cluster-consumption');
             if (appUsedResourcesProps)
             {
-                for(var metric of helpers.resources.METRICS)
+                let appUsedResources : Record<string, PropertyValueWithUnit> = appUsedResourcesProps.config;
+                for(let metric of helpers.resources.METRICS)
                 {
-                    var value = appUsedResourcesProps.config[metric];
+                    let value = appUsedResources[metric];
                     if (value)
                     {
-                        clusterConsumptionProps[metric] += value;
+                        clusterConsumptionProps[metric].value += value.value;
 
                         if (!appsByConsumptionDict[app.dn]) {
                             appsByConsumptionDict[app.dn] = {
-                                dn: app.dn
+                                dn: app.dn,
+                                max: 0,
+                                metrics: {}
                             }
                         }
-                        appsByConsumptionDict[app.dn][metric] = value;
+                        appsByConsumptionDict[app.dn].metrics[metric] = value.value;
                     }
                 }
             }
         }
 
         item.addProperties({
-            kind: "resources",
+            kind: "key-value",
             id: "resources",
             title: "Resources",
             order: 6,
@@ -73,7 +88,7 @@ export default LogicParser()
         });
 
         item.addProperties({
-            kind: "percentage",
+            kind: "key-value",
             id: "cluster-consumption",
             title: "Cluster Consumption",
             order: 7,
@@ -81,34 +96,37 @@ export default LogicParser()
         });
 
         /********/
-        for(var appConsumption of _.values(appsByConsumptionDict))
+
+        for(let appConsumption of _.values(appsByConsumptionDict))
         {
-            for(var metric of helpers.resources.METRICS)
+            for(let metric of helpers.resources.METRICS)
             {
-                if (_.isNullOrUndefined(appConsumption[metric]))
+                if (_.isNullOrUndefined(appConsumption.metrics[metric]))
                 {
-                    appConsumption[metric] = 0;
+                    appConsumption.metrics[metric] = 0;
                 }
             }
-            appConsumption['max'] = _.max(helpers.resources.METRICS.map(metric => appConsumption[metric]));
+            appConsumption.max = _.max(helpers.resources.METRICS.map(metric => appConsumption.metrics[metric]))!;
         }
-        appsByConsumptionTable.rows = _.values(appsByConsumptionDict);
-        appsByConsumptionTable.rows = _.orderBy(appsByConsumptionTable.rows, ['max'], 'desc');
-        for(var appConsumption of _.values(appsByConsumptionDict))
-        {
-            delete appConsumption['max'];
-        }
-        for(var appConsumption of _.values(appsByConsumptionDict))
-        {
-            for(var metric of helpers.resources.METRICS)
-            {
-                if (_.isNullOrUndefined(appConsumption[metric]))
-                {
-                    appConsumption[metric] = 0;
-                }
-                appConsumption[metric] = helpers.resources.percentage(appConsumption[metric]);
+
+        appsByConsumptionTable.rows = _.orderBy(_.values(appsByConsumptionDict), x => x.max, 'desc').map(x => {
+            let row : Record<string, any> = {
+                dn: x.dn
             }
-        }
+            for(let metric of helpers.resources.METRICS)
+            {
+                let value = x.metrics[metric];
+                if (!value) {
+                    value = 0;
+                }
+                row[metric] = {
+                    value: value,
+                    unit: '%'
+                };
+            }
+            return row;
+        });
+        
         item.addProperties({
             kind: "table",
             id: "app-consumption",

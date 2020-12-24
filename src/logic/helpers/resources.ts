@@ -2,6 +2,11 @@ import _ from 'the-lodash';
 
 export const METRICS = ['cpu', 'memory'];
 
+export const METRIC_UNITS : Record<string, string> = {
+    'cpu': 'cores',
+    'memory': 'bytes'
+}
+
 const MEMORY_MULTIPLIER : Record<string, number> = {
     'K': Math.pow(1000, 1),
     'M': Math.pow(1000, 2),
@@ -19,31 +24,43 @@ const MEMORY_MULTIPLIER : Record<string, number> = {
 
 const MEMORY_SIZES = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
 
+export interface PropertyValueWithUnit {
+    value: number,
+    unit: string
+}
+
 export class ResourceHelpers {
 
     get METRICS() {
         return METRICS;
     }
 
-    parseCpu(value : any) : number
+    get METRIC_UNITS() {
+        return METRIC_UNITS;
+    }
+
+    parseCpu(value : any) : PropertyValueWithUnit
     {
         let valueStr = value.toString();
         valueStr = _.trim(valueStr, "\'\"");
+        let valueF : number; 
         if (_.endsWith(valueStr, 'm'))
         {
             valueStr = valueStr.substring(0, valueStr.length - 1);
-            let valueF = parseFloat(valueStr);
+            valueF = parseFloat(valueStr);
             valueF = valueF / 1000;
-            return valueF;
         }
         else
         {
-            let valueF = parseFloat(valueStr);
-            return valueF;
+            valueF = parseFloat(valueStr);
         }
+        return {
+            value: valueF,
+            unit: 'cores'
+        };
     }
 
-    parseMemory(value : any) {
+    parseMemory(value : any) : PropertyValueWithUnit {
         let valueStr = value.toString();
         let unit = valueStr.slice(-1);
         if (unit == 'i') {
@@ -57,17 +74,23 @@ export class ResourceHelpers {
             valueF = valueF * MEMORY_MULTIPLIER[unit];
         }
         valueF = Math.floor(valueF);
-        return valueF;
+        return {
+            value: valueF,
+            unit: 'bytes'
+        };
     }
 
-    parse(metric : string, value : any) {
+    parse(metric : string, value : any) : PropertyValueWithUnit {
         if (metric == 'cpu') {
             return this.parseCpu(value);
         }
         if (metric == 'memory') {
             return this.parseMemory(value);
         }
-        return value;
+        return {
+            value: value,
+            unit: '?'
+        };
     }
 
     stringifyCpu(value : any) : string {

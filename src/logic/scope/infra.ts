@@ -1,5 +1,6 @@
 import _ from 'the-lodash';
 import { ILogger } from 'the-logger';
+import { PropertyValueWithUnit } from '../helpers/resources';
 
 import { ItemsScope } from './items';
 
@@ -11,8 +12,8 @@ export class InfraScope
     private _items : ItemsScope;
 
     private _nodeCount = 0;
-    private _nodeResources : Record<string, any> = {};
-    private _clusterResources : Record<string, any> = {};
+    private _nodeResources : Record<string, PropertyValueWithUnit> = {};
+    private _clusterResources : Record<string, PropertyValueWithUnit> = {};
 
     constructor(parent: any)
     {
@@ -50,12 +51,12 @@ export class InfraScope
         this._nodeCount += 1;
     }
 
-    setClusterResources(value: Record<string, any>)
+    setClusterResources(value: Record<string, PropertyValueWithUnit>)
     {
         this._clusterResources = value;
     }
 
-    setNodeResources(value: Record<string, any>)
+    setNodeResources(value: Record<string, PropertyValueWithUnit>)
     {
         this._nodeResources = value;
     }

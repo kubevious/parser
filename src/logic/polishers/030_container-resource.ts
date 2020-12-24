@@ -15,7 +15,7 @@ export default LogicParser()
         }
 
         item.addProperties({
-            kind: "resources",
+            kind: "key-value",
             id: "resources",
             title: "Resources",
             order: 7,
@@ -26,9 +26,6 @@ export default LogicParser()
 
         function collectResourceMetric(metric : string)
         {
-            if (!resourcesProps[metric]) {
-                resourcesProps[metric] = {};
-            }
             collectResourceMetricCounter(metric, 'request');
             collectResourceMetricCounter(metric, 'limit');
         }
@@ -42,7 +39,7 @@ export default LogicParser()
                     return;
                 }
             }
-            resourcesProps[metric][counter] = helpers.resources.parse(metric, rawValue);
+            resourcesProps[metric + ' ' + counter] = helpers.resources.parse(metric, rawValue);
         }
 
         function getDefaultMetric(metric: string, counter: string)

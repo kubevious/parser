@@ -1,4 +1,5 @@
 import _ from 'the-lodash';
+import { PropertyValueWithUnit } from '../helpers/resources';
 import { LogicParser } from '../parser-builder';
 
 export default LogicParser()
@@ -8,30 +9,34 @@ export default LogicParser()
     })
     .handler(({ item, infraScope, helpers }) => {
 
-        var perPodResourcesProps : Record<string, any> = {
+        let perPodResourcesProps : Record<string, PropertyValueWithUnit> = {
         }
-        for(var metric of helpers.resources.METRICS) {
-            perPodResourcesProps[metric] = { request: 0 };
+        for(let metric of helpers.resources.METRICS) {
+            perPodResourcesProps[metric + ' ' + 'request'] = {
+                value: 0,
+                unit: helpers.resources.METRIC_UNITS[metric]
+            }
         }
 
-        for(var container of item.getChildrenByKind('cont'))
+        for(let container of item.getChildrenByKind('cont'))
         {
-            var contProps = container.getProperties('resources');
-            if (contProps)
+            let contResourceProps = container.getProperties('resources');
+            if (contResourceProps)
             {
-                for(var metric of helpers.resources.METRICS)
+                let contResource = <Record<string, PropertyValueWithUnit>> contResourceProps.config;
+                for(let metric of helpers.resources.METRICS)
                 {
-                    var value = _.get(contProps.config, metric + '.request');
+                    let value = _.get(contResource, metric + ' ' + 'request');
                     if (value)
                     {
-                        perPodResourcesProps[metric].request += value;
+                        perPodResourcesProps[metric + ' ' + 'request'].value += value.value;
                     }
                 }
             }
         }
 
         item.addProperties({
-            kind: "resources",
+            kind: "key-value",
             id: "resources-per-pod",
             title: "Resources Per Pod",
             order: 8,
@@ -40,8 +45,8 @@ export default LogicParser()
 
         // ***
 
-        var multiplier = 0;
-        var launcher = _.head(item.getChildrenByKind("launcher"));
+        let multiplier = 0;
+        let launcher = _.head(item.getChildrenByKind("launcher"));
         if (launcher) 
         {
             if (launcher.config.kind == 'Deployment' || 
@@ -55,17 +60,18 @@ export default LogicParser()
             }
         }
         
-        var usedResourcesProps : Record<string, any> = {
-        }
-        for(var metric of helpers.resources.METRICS)
+        let usedResourcesProps : Record<string, PropertyValueWithUnit> = { }
+        for(let metric of helpers.resources.METRICS)
         {
-            usedResourcesProps[metric] = { 
-                request: perPodResourcesProps[metric].request * multiplier
+            const perPod = perPodResourcesProps[metric + ' ' + 'request'];
+            usedResourcesProps[metric + ' ' + 'request'] = { 
+                value: perPod.value * multiplier,
+                unit: perPod.unit
             };
         }
 
         item.addProperties({
-            kind: "resources",
+            kind: "key-value",
             id: "resources",
             title: "Resources",
             order: 7,
@@ -73,24 +79,24 @@ export default LogicParser()
         });
 
         // ***
-        var myUsedResources : Record<string, any> = {};
-        var availableResources = null;
+        let myUsedResources : Record<string, PropertyValueWithUnit> = {};
+        let availableResources : Record<string, PropertyValueWithUnit> | null = null;
         if (launcher) 
         {
             if (launcher.config.kind == 'Deployment' || 
                 launcher.config.kind == 'StatefulSet')
             {
-                for(var metric of helpers.resources.METRICS)
+                for(let metric of helpers.resources.METRICS)
                 {
-                    myUsedResources[metric] = usedResourcesProps[metric].request;
+                    myUsedResources[metric] = usedResourcesProps[metric + ' ' + 'request'];
                 }
                 availableResources = infraScope.clusterResources;
             }
             else if (launcher.config.kind == 'DaemonSet')
             {
-                for(var metric of helpers.resources.METRICS)
+                for(let metric of helpers.resources.METRICS)
                 {
-                    myUsedResources[metric] = perPodResourcesProps[metric].request;
+                    myUsedResources[metric] = perPodResourcesProps[metric + ' ' + 'request'];
                 }
                 availableResources = infraScope.nodeResources;
             }
@@ -98,21 +104,26 @@ export default LogicParser()
 
         if (availableResources)
         {
-            var clusterConsumptionProps : Record<string, any> = {};
-            for(var metric of _.keys(myUsedResources))
+            let clusterConsumptionProps : Record<string, PropertyValueWithUnit> = {};
+            for(let metric of _.keys(myUsedResources))
             {
-                var value = myUsedResources[metric];
-                var avail = availableResources[metric];
-                if (!avail) {
-                    value = 0;
+                let usedValue = myUsedResources[metric];
+                let availValue = availableResources[metric];
+                let consumption: number;
+                if (!availValue) {
+                    consumption = 0;
                 } else {
-                    value = value / avail;
+                    consumption = usedValue.value / availValue.value;
                 }
-                clusterConsumptionProps[metric] = value;
+                clusterConsumptionProps[metric] = {
+                    value: consumption,
+                    unit: '%'
+                }
+                ;
             }
 
             item.addProperties({
-                kind: "percentage",
+                kind: "key-value",
                 id: "cluster-consumption",
                 title: "Cluster Consumption",
                 order: 9,

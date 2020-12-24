@@ -1,4 +1,5 @@
 import _ from 'the-lodash';
+import { PropertyValueWithUnit } from '../helpers/resources';
 import { LogicParser } from '../parser-builder';
 
 export default LogicParser()
@@ -8,59 +9,73 @@ export default LogicParser()
     })
     .handler(({ item, infraScope, helpers }) => {
 
-        var nodesResourcesProps : Record<string, any> = {
+        let nodesResourcesProps : Record<string, PropertyValueWithUnit> = {
         }
-        var perNodeResources : Record<string, any> = {}
-        for(var metric of helpers.resources.METRICS) {
-            nodesResourcesProps[metric] = { allocatable: 0, capacity: 0 };
+        let perNodeResources : Record<string, PropertyValueWithUnit | null> = {}
+        for(let metric of helpers.resources.METRICS) {
+            for(let counter of ['allocatable', 'capacity'])
+            {
+                nodesResourcesProps[metric + ' ' + counter] = { 
+                    value: 0,
+                    unit: helpers.resources.METRIC_UNITS[metric]
+                };
+            }
             perNodeResources[metric] = null;
         }
 
-        for(var node of item.getChildrenByKind('node'))
+        for(let node of item.getChildrenByKind('node'))
         {
-            var nodeProps = node.getProperties('resources');
+            let nodeProps = node.getProperties('resources');
             if (nodeProps)
             {
-                for(var metric of helpers.resources.METRICS)
+                for(let metric of helpers.resources.METRICS)
                 {
-                    for(var counter of _.keys(nodeProps.config[metric]))
+                    for(let counter of ['allocatable', 'capacity'])
                     {
-                        var value = nodeProps.config[metric][counter];
-                        nodesResourcesProps[metric][counter] += value;
+                        let value = <PropertyValueWithUnit>nodeProps.config[metric + ' ' + counter];
+                        if (value) {
+                            nodesResourcesProps[metric + ' ' + counter].value += value.value;
+                        }
                     }
 
-                    var value = nodeProps.config[metric]['allocatable'];
-                    if (value)
                     {
-                        if (perNodeResources[metric] != null)
+                        let value = <PropertyValueWithUnit>nodeProps.config[metric + ' ' + 'allocatable'];
+                        if (value)
                         {
-                            perNodeResources[metric] = Math.min(perNodeResources[metric], value);
-                        }
-                        else
-                        {
-                            perNodeResources[metric] = value;
+                            if (perNodeResources[metric] != null)
+                            {
+                                perNodeResources[metric] = {
+                                    value: Math.min(perNodeResources[metric]!.value, value.value),
+                                    unit: perNodeResources[metric]!.unit
+                                };
+                            }
+                            else
+                            {
+                                perNodeResources[metric] = value;
+                            }
                         }
                     }
                 }
             }
         }
 
-        var nodeResourcesProps : Record<string, any> = {}
-        for(var metric of helpers.resources.METRICS)
+        let nodeResourcesProps : Record<string, PropertyValueWithUnit> = {}
+        for(let metric of helpers.resources.METRICS)
         {
             if (perNodeResources[metric] == null)
             {
-                perNodeResources[metric] = 0;
+                perNodeResources[metric] = {
+                    value: 0,
+                    unit: helpers.resources.METRIC_UNITS[metric]
+                }
             }
-            nodeResourcesProps[metric] = {
-                'per node': perNodeResources[metric]
-            }
+            nodeResourcesProps[metric] = perNodeResources[metric]!;
         }
 
-        infraScope.setNodeResources(perNodeResources);
+        infraScope.setNodeResources(nodeResourcesProps);
 
         item.addProperties({
-            kind: "resources",
+            kind: "key-value",
             id: "cluster-resources",
             title: "Cluster Resources",
             order: 7,
@@ -68,7 +83,7 @@ export default LogicParser()
         });
 
         item.addProperties({
-            kind: "resources",
+            kind: "key-value",
             id: "node-resources",
             title: "Node Resources",
             order: 8,
@@ -76,10 +91,10 @@ export default LogicParser()
         });
 
 
-        var clusterAllocatableResources : Record<string, any> = {}
-        for(var metric of helpers.resources.METRICS)
+        let clusterAllocatableResources : Record<string, PropertyValueWithUnit> = {}
+        for(let metric of helpers.resources.METRICS)
         {
-            clusterAllocatableResources[metric] = nodesResourcesProps[metric].allocatable;
+            clusterAllocatableResources[metric] = nodesResourcesProps[metric + ' ' + 'allocatable'];
         }
         infraScope.setClusterResources(clusterAllocatableResources);
 

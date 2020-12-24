@@ -25,7 +25,7 @@ export default ConcreteParser()
         }
 
         node.addProperties({
-            kind: "resources",
+            kind: "key-value",
             id: "resources",
             title: "Resources",
             order: 7,
@@ -36,9 +36,6 @@ export default ConcreteParser()
 
         function collectResourceMetric(metric: string)
         {
-            if (!resourcesProps[metric]) {
-                resourcesProps[metric] = {};
-            }
             collectResourceMetricCounter(metric, 'capacity');
             collectResourceMetricCounter(metric, 'allocatable');
         }
@@ -49,7 +46,7 @@ export default ConcreteParser()
             if (!rawValue) {
                 return;
             }
-            resourcesProps[metric][counter] = helpers.resources.parse(metric, rawValue);
+            resourcesProps[metric + ' ' + counter] = helpers.resources.parse(metric, rawValue);
         }
 
     })
