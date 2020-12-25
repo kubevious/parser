@@ -8,7 +8,7 @@ export default ConcreteParser()
         api: "extensions",
         kind: "Ingress"
     })
-    .kind('service')
+    .kind('ingress')
     .needNamespaceScope(true)
     .handler(({ scope, item, createK8sItem, createAlert, hasCreatedItems, namespaceScope }) => {
         namespaceScope.items.register(item.config);

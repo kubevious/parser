@@ -4,7 +4,7 @@ import { ILogger } from 'the-logger';
 
 import { Snapshot } from './snapshot'
 
-import * as VERSION from '../version'
+import VERSION from '../version'
 import { ReporterTarget } from './target';
 
 export class SnapshotReporter
