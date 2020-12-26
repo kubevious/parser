@@ -1,6 +1,7 @@
 import _ from 'the-lodash';
 
 export type PostBuildActionFunc = (props: Record<string, any>) => Record<string, any>;
+export type FormatterFunc = (value: any) => any;
 
 export class PropertiesBuilder
 {
@@ -15,17 +16,22 @@ export class PropertiesBuilder
         this._postBuildAction = postBuildAction;
     }
 
-    fromConfig(name: string, valuePath: string, defaultValue?: any) : PropertiesBuilder
+    fromConfig(name: string, valuePath: string, defaultValue?: any, formatter?: FormatterFunc) : PropertiesBuilder
     {
-        return this.fromObject(this._itemConfig, name, valuePath, defaultValue);
+        return this.fromObject(this._itemConfig, name, valuePath, defaultValue, formatter);
     }
 
-    fromObject(obj: any, name: string, valuePath: string, defaultValue?: any) : PropertiesBuilder
+    fromObject(obj: any, name: string, valuePath: string, defaultValue?: any, formatter?: FormatterFunc) : PropertiesBuilder
     {
         var value = _.get(obj, valuePath);
         if (_.isUndefined(value)) {
             if (!_.isUndefined(defaultValue)) {
                 value = defaultValue;
+            }
+        }
+        if (formatter) {
+            if (!_.isUndefined(value)) {
+                value = formatter(value);
             }
         }
         if (!_.isUndefined(value)) {
