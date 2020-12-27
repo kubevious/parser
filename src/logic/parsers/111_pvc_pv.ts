@@ -26,6 +26,7 @@ export default ScopeParser()
             }
         }
 
+
         {
             let storageClassName = _.get(itemScope.config, 'spec.storageClassName');
             if (!storageClassName) {
@@ -35,8 +36,12 @@ export default ScopeParser()
             let storage = infra.fetchByNaming("storage", "Storage");
             let storageClass = storage.fetchByNaming("storclass", storageClassName);
             let pvItem = createK8sItem(storageClass);
-            createAlert('Unused', 'warn', 'PersistentVolume not attached.');
             itemScope.registerItem(pvItem);
+        }
+
+        if (itemScope.isNotUsed)
+        {
+            createAlert('Unused', 'warn', 'PersistentVolume not attached.');
         }
 
         itemScope.buildProperties()
@@ -44,7 +49,6 @@ export default ScopeParser()
             .fromConfig('Status', 'status.phase')
             .fromConfig('Finalizers', 'metadata.finalizers')
             .fromConfig('Capacity', 'spec.capacity.storage', undefined, x => helpers.resources.parseMemory(x))
-            .fromConfig('Used Capacity', 'status.capacity.storage', undefined, x => helpers.resources.parseMemory(x))
             .fromConfig('Access Modes', 'spec.accessModes')
             .fromConfig('Volume Mode', 'spec.volumeMode')
             .fromConfig('Reclaim Policy', 'spec.persistentVolumeReclaimPolicy')

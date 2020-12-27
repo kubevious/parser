@@ -10,8 +10,7 @@ export default LogicParser()
     .handler(({ item, infraScope, helpers }) => {
 
         let classProps : Record<string, PropertyValueWithUnit> = {
-            'Capacity': { value: 0, unit: 'bytes' },
-            'Used Capacity': { value: 0, unit: 'bytes' },
+            'Capacity': { value: 0, unit: 'bytes' }
         }
 
         classProps['StorageClass'] = item.naming;
@@ -26,14 +25,7 @@ export default LogicParser()
                     if (value) {
                         classProps['Capacity'].value += value.value;
                     }
-                } 
-
-                {
-                    let value = <PropertyValueWithUnit> pvProps!.config['Used Capacity'];
-                    if (value) {
-                        classProps['Used Capacity'].value += value.value;
-                    }
-                } 
+                }
             }
         }
 
