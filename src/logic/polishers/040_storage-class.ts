@@ -9,13 +9,17 @@ export default LogicParser()
     })
     .handler(({ item, infraScope, helpers }) => {
 
-        let classProps : Record<string, PropertyValueWithUnit> = {
+        let classProps : Record<string, any> = {
             'Capacity': { value: 0, unit: 'bytes' }
         }
 
-        classProps['StorageClass'] = item.naming;
+        classProps['Storage Class'] = item.naming;
 
-        for(let pv of item.getChildrenByKind('pv'))
+        let persistentVolumes = item.getChildrenByKind('pv');
+
+        classProps['Volume Count'] = persistentVolumes.length;
+
+        for(let pv of persistentVolumes)
         {
             let pvProps = pv.getProperties('properties');
             if (pvProps)

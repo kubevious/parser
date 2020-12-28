@@ -9,8 +9,9 @@ export default LogicParser()
     })
     .handler(({ item, infraScope, helpers }) => {
 
-        let classProps : Record<string, PropertyValueWithUnit> = {
+        let classProps : Record<string, any> = {
             'Capacity': { value: 0, unit: 'bytes' },
+            'Volume Count': 0
         }
 
         for(let pv of item.getChildrenByKind('storclass'))
@@ -18,6 +19,8 @@ export default LogicParser()
             let pvProps = pv.getProperties('properties');
             if (pvProps)
             {
+                classProps['Volume Count'] += pvProps!.config['Volume Count'];
+
                 {
                     let value = <PropertyValueWithUnit> pvProps!.config['Capacity'];
                     if (value) {
