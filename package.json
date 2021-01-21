@@ -30,7 +30,7 @@
     "moment": "^2.29.1",
     "the-lodash": "^2.0.0",
     "the-logger": "^2.0.5",
-    "the-promise": "^2.0.3"
+    "the-promise": "^2.0.4"
   },
   "devDependencies": {
     "@types/js-yaml": "^3.12.5",

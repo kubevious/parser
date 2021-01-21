@@ -96,7 +96,7 @@ export class ConcreteRegistry
         }
     }
 
-    _triggerChange()
+    private _triggerChange()
     {
         this.logger.debug("[_triggerChange]");
         this._changeEvent.trigger();
@@ -122,7 +122,7 @@ export class ConcreteRegistry
         return result;
     }
 
-    _makeDictId(id: ItemId) : string {
+    private _makeDictId(id: ItemId) : string {
         if (_.isString(id)) {
             return id;
         }

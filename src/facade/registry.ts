@@ -34,17 +34,20 @@ export class FacadeRegistry
         this._jobDampener.acceptJob(new Date(), items);
     }
 
-    _processItems(date: Date, items: LogicItem[])
+    private _processItems(date: Date, items: LogicItem[])
     {
         this._logger.info("[_processItems] Date: %s. item count: %s", date.toISOString(), items.length);
         return this._context.reporter.acceptLogicItems(date, items);
     }
 
-    _handleConcreteRegistryChange()
+    private _handleConcreteRegistryChange()
     {
         this._logger.info("[_handleConcreteRegistryChange] BEGIN");
 
         return Promise.resolve()
+            .then(() => {
+                return this._context.newReporter.process();
+            })
             .then(() => {
                 if (this._context.areLoadersReady) {
                     this._context.logicProcessor.process();
