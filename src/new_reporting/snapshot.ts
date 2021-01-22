@@ -60,47 +60,62 @@ export class Snapshot
         this._configHasheDict[snapshotItem.configHash] = snapshotItem;
     }
 
-    extractDiff(snapshot : Snapshot)
+    extractDiff(snapshot? : Snapshot)
     {
         let result : DiffItem[] = [];
 
-        for(let newIdHash of this.keys)
+        if (!snapshot)
         {
-            let newItem = this.getByIdHash(newIdHash)!;
-
-            let oldItem = snapshot.getByIdHash(newIdHash);
-            if (oldItem)
+            for(let newIdHash of this.keys)
             {
-                if (oldItem.configHash != newItem.configHash)
-                {
-                    result.push({
-                        idHash: newIdHash,
-                        present: true,
-                        configHash: newItem.configHash
-                    });
-                }
-            }
-            else
-            {
+                let newItem = this.getByIdHash(newIdHash)!;
                 result.push({
                     idHash: newIdHash,
                     present: true,
                     configHash: newItem.configHash
-            });
-            }
-        }
-
-        for(let oldKey of snapshot.keys)
-        {
-            if (!this.hasIdHash(oldKey))
-            {
-                result.push({
-                    idHash: oldKey,
-                    present: false
                 });
             }
         }
-
+        else
+        {
+            for(let newIdHash of this.keys)
+            {
+                let newItem = this.getByIdHash(newIdHash)!;
+    
+                let oldItem = snapshot!.getByIdHash(newIdHash);
+                if (oldItem)
+                {
+                    if (oldItem.configHash != newItem.configHash)
+                    {
+                        result.push({
+                            idHash: newIdHash,
+                            present: true,
+                            configHash: newItem.configHash
+                        });
+                    }
+                }
+                else
+                {
+                    result.push({
+                            idHash: newIdHash,
+                            present: true,
+                            configHash: newItem.configHash
+                    });
+                }
+            }
+    
+            for(let oldKey of snapshot!.keys)
+            {
+                if (!this.hasIdHash(oldKey))
+                {
+                    result.push({
+                        idHash: oldKey,
+                        present: false
+                    });
+                }
+            }
+        }
+        
         return result;
     }
 
