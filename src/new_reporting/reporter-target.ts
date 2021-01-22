@@ -157,11 +157,9 @@ export class ReporterTarget
         return Promise.resolve()
             .then(() => this._getApiKey())
             .then(data => {
-                this.logger.error('[_prepareRequest] ', data);
                 return this._axiosAuth.post('/', data)
             })
             .then(result => {
-                this.logger.error('[_prepareRequest] JWT: ', result.data);
                 this._token = result.data.token;
                 this._createCollectorClient();
             })

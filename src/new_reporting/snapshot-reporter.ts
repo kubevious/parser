@@ -18,7 +18,6 @@ export class SnapshotReporter
     private _snapshotId: string | null;
 
     private _isReported = false;
-    private _diffId : any;
 
     constructor(reporterTarget: ReporterTarget, logger: ILogger, snapshot: Snapshot, latestSnapshot: Snapshot | null, latestSnapshotId: string | null)
     {
@@ -30,7 +29,6 @@ export class SnapshotReporter
         this._snapshotId = latestSnapshotId;
 
         this._isReported = false;
-        this._diffId = null;
     }
 
     get logger() {
@@ -68,27 +66,8 @@ export class SnapshotReporter
                     .then(() => this._execute())
                     ;
                     
-                // if (this._snapshotId)
-                // {
-                //     return this._reportAsDiff();
-                // }
-                // else
-                // {
-                //     return this._reportAsSnapshot();
-                // }
             });
     }
-
-    // private _reportAsSnapshot() : Promise<any>
-    // {
-    //     this.logger.info("[_reportAsSnapshot]");
-    //     return Promise.resolve()
-    //         .then(() => this._createSnapshot())
-    //         .then(() => this._publishSnapshotItems())
-    //         .then(() => this._activateSnapshot())
-    //         .then(() => this._execute())
-    //         ;
-    // }
 
     private _createSnapshot() : Promise<any>
     {
@@ -177,118 +156,6 @@ export class SnapshotReporter
             });
     }
 
-    // private _reportAsDiff()
-    // {
-    //     this.logger.info("[_reportAsDiff]");
-    //     return Promise.resolve()
-    //         .then(() => this._createDiff())
-    //         .then(() => this._publishDiffItems())
-    //         .then(() => this._activateDiff())
-    //         .then(() => this._execute())
-    // }
-
-    // private _createDiff() : Promise<any> | void
-    // {
-    //     if (!this._snapshotId) {
-    //         return;
-    //     }
-    //     this.logger.info("[_createDiff]");
-
-    //     var body = {
-    //         date: this._snapshot.date.toISOString(),
-    //         snapshot_id: this._snapshotId
-    //     }
-    //     return this._request('/diff', body)
-    //         .then((result : any) => {
-    //             this.logger.info("[_createDiff] result: ", result);
-
-    //             if (result.new_snapshot) {
-    //                 this.logger.info("[_createDiff] resetting snapshot.");
-    //                 this._snapshotId = null;
-    //             } else {
-    //                 this._diffId = result.id;
-    //                 this.logger.info("[_createDiff] new diff: %s", this._diffId);
-    //             }
-    //         })
-    // }
-
-    // private _publishDiffItems() : Promise<any> | void
-    // {
-    //     if (!this._snapshotId) {
-    //         return;
-    //     }
-    //     if (!this._diffId) {
-    //         return;
-    //     }
-
-    //     this.logger.info("[_publishSnapshotItems]");
-    //     const reportableItems = this._snapshot.extractDiff(this._latestSnapshot!);
-    //     const itemChunks = _.chunk(reportableItems, 10);
-    //     return Promise.serial(itemChunks, this._publishDiffChunks.bind(this));
-    // }
-
-    // private _publishDiffChunks(items : DiffItem[]) : Promise<any> | void
-    // {
-    //     if (!this._snapshotId) {
-    //         return;
-    //     }
-    //     if (!this._diffId) {
-    //         return;
-    //     }
-
-    //     this.logger.verbose("[_publishDiffChunks] count: %s", items.length);
-
-    //     var data = {
-    //         diff_id: this._diffId,
-    //         items: items
-    //     }
-    //     return this._request('/diff/items', data)
-    //         .then((result : any) => {
-    //             this.logger.silly("[_publishDiffItem] result: ", result);
-
-    //             if (result.new_snapshot) {
-    //                 this.logger.info("[_publishDiffItem] resetting snapshot.");
-    //                 this._snapshotId = null;
-    //                 return
-    //             }
-
-    //             if (result.needed_configs && result.needed_configs.length > 0)
-    //             {
-    //                 return this._publishNeededConfigs(result.needed_configs);
-    //             }
-    //         });
-    // }
-
-    // private _activateDiff() : Promise<any> | void
-    // {
-    //     if (!this._snapshotId) {
-    //         return;
-    //     }
-    //     if (!this._diffId) {
-    //         return;
-    //     }
-
-    //     this.logger.info("[_activateDiff]");
-
-    //     var data = {
-    //         diff_id: this._diffId
-    //     }
-    //     return this._request('/diff/activate', data)
-    //         .then((result : any) => {
-    //             this.logger.info("[_activateDiff] result: ", result);
-
-    //             if (result.new_snapshot) {
-    //                 this.logger.info("[_activateDiff] resetting snapshot.");
-    //                 this._snapshotId = null;
-    //                 this._diffId = null;
-    //             } else {
-    //                 this._snapshotId = result.id;
-    //                 this._isReported = true;
-    //                 this.logger.info("[_activateDiff] activated: %s. new snapshot id: %s.", this._diffId, this._snapshotId);
-    //             }
-    //         });
-    // }
-
     private _publishNeededConfigs(configHashes : string[])
     {
         this.logger.info("[_publishNeededConfigs] count: %s", configHashes.length);
@@ -296,13 +163,12 @@ export class SnapshotReporter
         return Promise.serial(configHashes, hash => {
             const item = this._snapshot.getByConfigHash(hash)!;
             const data = {
-                configHash: hash,
+                hash: hash,
                 config: item.config
             }
             return this._request('/config', data)
         });
     }
-
 
     private _request(url : string, data : any)
     {
