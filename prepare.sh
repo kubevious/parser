@@ -8,8 +8,7 @@ cd $MY_DIR
 # npm install
 # cd ..
 
-# cd src
 rm -rf node_modules/
-npm install # --ignore-scripts
-npm install --only=dev # --ignore-scripts
-npm update @kubevious/helpers k8s-super-client the-lodash the-logger the-promise @kubevious/worldvious-client @kubevious/helper-backend
+npm install
+npm install --only=dev
+npm update k8s-super-client the-lodash the-logger the-promise @kubevious/helpers  @kubevious/worldvious-client @kubevious/helper-backend @kubevious/helper-logic-processor

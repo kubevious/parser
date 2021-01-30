@@ -13,7 +13,6 @@ import { WorldviousClient } from '@kubevious/worldvious-client';
 
 import { LogicProcessor } from './logic/processor';
 import { SnapshotReporter } from './reporting/reporter';
-import { NewSnapshotReporter } from './new_reporting/reporter';
 import { DebugObjectLogger } from './utils/debug-object-logger';
 import { WebServer } from './server';
 
@@ -29,7 +28,6 @@ export class Context
     private _k8sParser: K8sParser;
     private _logicProcessor: LogicProcessor;
     private _reporter: SnapshotReporter;
-    private _newReporter: NewSnapshotReporter;
     private _facadeRegistry: FacadeRegistry;
     private _debugObjectLogger: DebugObjectLogger;
     private _worldvious: WorldviousClient;
@@ -47,7 +45,6 @@ export class Context
         this._k8sParser = new K8sParser(this);
         this._logicProcessor = new LogicProcessor(this);
         this._reporter = new SnapshotReporter(this);
-        this._newReporter = new NewSnapshotReporter(this);
 
         this._facadeRegistry = new FacadeRegistry(this);
 
@@ -92,10 +89,6 @@ export class Context
 
     get reporter() : SnapshotReporter {
         return this._reporter;
-    }
-
-    get newReporter() : NewSnapshotReporter {
-        return this._newReporter;
     }
 
     get areLoadersReady() : boolean {

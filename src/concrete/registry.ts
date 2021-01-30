@@ -7,16 +7,10 @@ import { Context } from '../context';
 import { EventDampener } from '@kubevious/helpers/dist/event-dampener';
 
 import { ConcreteItem } from './item';
+import { ItemId } from './types';
+import { IConcreteRegistry } from '@kubevious/helper-logic-processor';
 
-export interface ItemId {
-    infra: string,
-    api: string,
-    kind: string,
-    namespace?: string, 
-    name: string
-};
-
-export class ConcreteRegistry
+export class ConcreteRegistry implements IConcreteRegistry
 {
     private _context : Context;
     private _logger : ILogger;

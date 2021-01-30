@@ -1,7 +1,7 @@
 import _ from 'the-lodash';
 
 import { ConcreteItem } from '../concrete/item';
-import { ItemId } from '../concrete/registry';
+import { ItemId } from '../concrete/types';
 
 export class SnapshotItem
 {

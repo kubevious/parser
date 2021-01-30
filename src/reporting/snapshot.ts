@@ -1,12 +1,13 @@
-import { SnapshotItemInfo } from '@kubevious/helpers/dist/snapshot/types';
 import _ from 'the-lodash';
+import { ConcreteItem } from '../concrete/item';
 
-import * as HashUtils from '@kubevious/helpers/dist/hash-utils';
+import { SnapshotItem } from './snapshot-item';
 
 export class Snapshot
 {
     private _date : Date;
-    private _items : Record<string, SnapshotItemInfo> = {};
+    private _items : Record<string, SnapshotItem> = {};
+    private _configHasheDict: Record<string, SnapshotItem> = {};
 
     constructor(date : Date)
     {
@@ -29,67 +30,100 @@ export class Snapshot
         return _.values(this._items);
     }
 
-    hasKey(id : string) {
+    hasIdHash(id : string) {
         if (this._items[id]) {
             return true;
         }
         return false;
     }
 
-    getById(id: string) : SnapshotItemInfo | null {
-        let item = this._items[id];
+    getByIdHash(hash: string) : SnapshotItem | null {
+        let item = this._items[hash];
         if (item) {
             return item;
         }
         return null;
     }
 
-    setDate(date: Date) {
-        this._date = date;
-    }
-    
-    addItem(item: SnapshotItemInfo)
-    {
-        let hash = HashUtils.calculateObjectHashStr(item);
-        this._items[hash] = item;
+    getByConfigHash(hash: string) : SnapshotItem | null {
+        let item = this._configHasheDict[hash];
+        if (item) {
+            return item;
+        }
+        return null;
     }
 
-    extractSnapshot()
+    addItem(item: ConcreteItem)
     {
-        return this.keys.map(x => ({
-            hash: x,
-            data: this._items[x]
-        }))
+        let snapshotItem = new SnapshotItem(item);
+        this._items[snapshotItem.idHash] = snapshotItem;
+        this._configHasheDict[snapshotItem.configHash] = snapshotItem;
     }
 
-    extractDiff(snapshot : Snapshot)
+    extractDiff(snapshot? : Snapshot)
     {
-        let result = [];
+        let result : DiffItem[] = [];
 
-        for(let newKey of this.keys)
+        if (!snapshot)
         {
-            if (!snapshot.hasKey(newKey))
+            for(let newIdHash of this.keys)
             {
+                let newItem = this.getByIdHash(newIdHash)!;
                 result.push({
-                    hash: newKey,
+                    idHash: newIdHash,
                     present: true,
-                    data: this.getById(newKey)
+                    configHash: newItem.configHash
                 });
             }
         }
-
-        for(let oldKey of snapshot.keys)
+        else
         {
-            if (!this.hasKey(oldKey))
+            for(let newIdHash of this.keys)
             {
-                result.push({
-                    hash: oldKey,
-                    present: false
-                });
+                let newItem = this.getByIdHash(newIdHash)!;
+    
+                let oldItem = snapshot!.getByIdHash(newIdHash);
+                if (oldItem)
+                {
+                    if (oldItem.configHash != newItem.configHash)
+                    {
+                        result.push({
+                            idHash: newIdHash,
+                            present: true,
+                            configHash: newItem.configHash
+                        });
+                    }
+                }
+                else
+                {
+                    result.push({
+                            idHash: newIdHash,
+                            present: true,
+                            configHash: newItem.configHash
+                    });
+                }
+            }
+    
+            for(let oldKey of snapshot!.keys)
+            {
+                if (!this.hasIdHash(oldKey))
+                {
+                    result.push({
+                        idHash: oldKey,
+                        present: false
+                    });
+                }
             }
         }
-
+        
         return result;
     }
 
+}
+
+export interface DiffItem
+{
+    idHash: string
+    present: boolean
+    configHash?: string
 }

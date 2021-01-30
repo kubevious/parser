@@ -3,7 +3,7 @@ import { ILogger } from 'the-logger';
 
 import { Context } from '../context';
 
-import { ItemId } from '../concrete/registry';
+import { ItemId } from '../concrete/types';
 
 import { ApiGroup, API_GROUPS } from './api-groups'
 

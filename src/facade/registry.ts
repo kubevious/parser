@@ -19,7 +19,7 @@ export class FacadeRegistry
         this._context = context;
         this._logger = context.logger.sublogger("FacadeRegistry");
 
-        this._jobDampener = new JobDampener<LogicItem[]>(this._logger.sublogger("FacadeDampener"), this._processItems.bind(this));
+        // this._jobDampener = new JobDampener<LogicItem[]>(this._logger.sublogger("FacadeDampener"), this._processItems.bind(this));
 
         this._context.concreteRegistry.onChanged(this._handleConcreteRegistryChange.bind(this));
     }
@@ -30,15 +30,15 @@ export class FacadeRegistry
 
     acceptLogicItems(items: LogicItem[])
     {
-        this._logger.info("[acceptLogicItems] item count: %s", items.length);
-        this._jobDampener.acceptJob(new Date(), items);
+        // this._logger.info("[acceptLogicItems] item count: %s", items.length);
+        // this._jobDampener.acceptJob(new Date(), items);
     }
 
-    private _processItems(date: Date, items: LogicItem[])
-    {
-        this._logger.info("[_processItems] Date: %s. item count: %s", date.toISOString(), items.length);
-        return this._context.reporter.acceptLogicItems(date, items);
-    }
+    // private _processItems(date: Date, items: LogicItem[])
+    // {
+    //     this._logger.info("[_processItems] Date: %s. item count: %s", date.toISOString(), items.length);
+    //     return this._context.reporter.acceptLogicItems(date, items);
+    // }
 
     private _handleConcreteRegistryChange()
     {
@@ -46,13 +46,13 @@ export class FacadeRegistry
 
         return Promise.resolve()
             .then(() => {
-                return this._context.newReporter.process();
+                return this._context.reporter.process();
             })
-            .then(() => {
-                if (this._context.areLoadersReady) {
-                    this._context.logicProcessor.process();
-                }
-            })
+            // .then(() => {
+            //     if (this._context.areLoadersReady) {
+            //         this._context.logicProcessor.process();
+            //     }
+            // })
             .then(() => {
                 this._logger.info("[_handleConcreteRegistryChange] END");
             })

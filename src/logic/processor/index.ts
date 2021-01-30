@@ -168,9 +168,9 @@ export class LogicProcessor
 
     _report(scope : LogicScope, tracker : any)
     {
-        return tracker.scope("report", () => {
-            return this._context.facadeRegistry.acceptLogicItems(scope.extractItems());
-        });
+        // return tracker.scope("report", () => {
+        //     return this._context.facadeRegistry.acceptLogicItems(scope.extractItems());
+        // });
     }
 
     private _processParsers(scope : LogicScope)
