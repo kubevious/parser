@@ -100,7 +100,7 @@ export class ReporterTarget
             .then(() => this._reportSnapshot(snapshot));
     }
 
-    request(url : string, data : any)
+    request<TRequest, TResponse>(url : string, data : TRequest) : Promise<TResponse | null>
     {
         let action = new RetryableAction(this.logger, () => {
             return this._rawRequest(url, data);
@@ -115,23 +115,29 @@ export class ReporterTarget
             }
             return false;
         })
-        return action.run();
+        return action.run()
+            .then(response => {
+                if (!response) {
+                    return null;
+                }
+                return <TResponse>response;
+            });
     }
 
-    private _rawRequest(url: string, data: any)
+    private _rawRequest<TRequest, TResponse>(url: string, data: TRequest) : Promise<TResponse | null>
     {
         this.logger.verbose("[request] url: %s%s", this._baseUrl, url);
         this.logger.silly("[request] url: %s%s, data: ", this._baseUrl, url, data);
         return this._prepareRequest()
             .then(() => this._axiosCollector.post(url, data))
-            .then(res => res.data)
+            .then(res => <TResponse>res.data)
             .catch(reason => {
                 if (reason.response) {
                     this.logger.error('[request] URL: %s, RESPONSE STATUS: %s', url, reason.response.status)
                     if (reason.response.status == 413) {
                         var size = _.get(reason, 'request._redirectable._requestBodyLength');
-                        this.logger.warn('[request] Request too big. Ingoring. URL: %s, Size: %s bytes', url, size)
-                        return {};
+                        this.logger.warn('[request] Request too big. Ignoring. URL: %s, Size: %s bytes', url, size)
+                        return null;
                     } else {
                         throw new HandledError("HTTP Error " + reason.response.status);
                     }

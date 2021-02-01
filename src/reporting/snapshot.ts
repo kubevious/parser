@@ -1,4 +1,5 @@
 import _ from 'the-lodash';
+import { ReportableSnapshotItem } from '@kubevious/helpers/dist/reportable/types'
 import { ConcreteItem } from '../concrete/item';
 
 import { SnapshotItem } from './snapshot-item';
@@ -60,9 +61,9 @@ export class Snapshot
         this._configHasheDict[snapshotItem.configHash] = snapshotItem;
     }
 
-    extractDiff(snapshot? : Snapshot)
+    extractDiff(snapshot? : Snapshot) 
     {
-        let result : DiffItem[] = [];
+        let result : ReportableSnapshotItem[] = [];
 
         if (!snapshot)
         {
@@ -119,11 +120,4 @@ export class Snapshot
         return result;
     }
 
-}
-
-export interface DiffItem
-{
-    idHash: string
-    present: boolean
-    configHash?: string
 }

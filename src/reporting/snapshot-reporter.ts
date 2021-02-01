@@ -1,12 +1,12 @@
 import _ from 'the-lodash';
 import { Promise } from 'the-promise';
 import { ILogger } from 'the-logger';
+import { ReportableSnapshotItem, RequestReportSnapshot, ResponseReportSnapshot, RequestReportSnapshotItems, ResponseReportSnapshotItems, RequestActivateSnapshot, ResponseActivateSnapshot } from '@kubevious/helpers/dist/reportable/types'
 
-import { DiffItem, Snapshot } from './snapshot'
+import { Snapshot } from './snapshot'
 
 import VERSION from '../version'
 import { ReporterTarget } from './reporter-target';
-import { SnapshotItem } from './snapshot-item';
 
 export class SnapshotReporter
 {
@@ -72,7 +72,7 @@ export class SnapshotReporter
     private _createSnapshot() : Promise<any>
     {
         this.logger.info("[_createSnapshot]");
-        let body : CreateSnapshotBody = {
+        let body : RequestReportSnapshot = {
             version: VERSION,
             date: this._snapshot.date.toISOString()
         }
@@ -81,9 +81,9 @@ export class SnapshotReporter
             body.snapshot_id = this._snapshotId;
         }
 
-        return this._request('/snapshot', body)
-            .then((result : any) => {
-                this._snapshotId = result.id;
+        return this._request<RequestReportSnapshot, ResponseReportSnapshot>('/snapshot', body)
+            .then((result) => {
+                this._snapshotId = result!.id;
                 this.logger.info("[_createSnapshot] id: %s", this._snapshotId);
             })
     }
@@ -102,7 +102,7 @@ export class SnapshotReporter
         return Promise.serial(itemChunks, this._publishSnapshotChunks.bind(this));
     }
 
-    private _publishSnapshotChunks(items : DiffItem[]) : Promise<any> | void
+    private _publishSnapshotChunks(items : ReportableSnapshotItem[]) : Promise<any> | void
     {
         if (!this._snapshotId) {
             return;
@@ -110,13 +110,17 @@ export class SnapshotReporter
 
         this.logger.info("[_publishSnapshotChunks] count: %s", items.length);
 
-        const data = {
+        const body : RequestReportSnapshotItems = {
             snapshot_id: this._snapshotId,
             items: items
         }
-        return this._request('/snapshot/items', data)
-            .then((result : any) => {
+        return this._request<RequestReportSnapshotItems, ResponseReportSnapshotItems>('/snapshot/items', body)
+            .then((result) => {
                 this.logger.silly("[_publishSnapshotChunks] result: ", result);
+
+                if(!result) {
+                    return;
+                }
 
                 if (result.new_snapshot) {
                     this.logger.info("[_publishSnapshotItem] resetting snapshot.");
@@ -139,10 +143,10 @@ export class SnapshotReporter
 
         this.logger.info("[_activateSnapshot]");
 
-        var data = {
+        const data : RequestActivateSnapshot = {
             snapshot_id: this._snapshotId
         }
-        return this._request('/snapshot/activate', data)
+        return this._request<RequestActivateSnapshot, ResponseActivateSnapshot>('/snapshot/activate', data)
             .then((result : any) => {
                 this.logger.info("[_activateSnapshot] result: ", result);
 
@@ -170,16 +174,10 @@ export class SnapshotReporter
         });
     }
 
-    private _request(url : string, data : any)
+    private _request<TRequest, TResponse>(url : string, data : TRequest)
     {
         this.logger.verbose("[_request] url: %s", url);
         this.logger.silly("[_request] url: %s, data: ", url, data);
-        return this._reporterTarget.request(url, data);
+        return this._reporterTarget.request<TRequest, TResponse>(url, data);
     }
-}
-
-interface CreateSnapshotBody {
-    version: string,
-    date: string,
-    snapshot_id? : string
 }
