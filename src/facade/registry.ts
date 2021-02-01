@@ -5,7 +5,6 @@ import { ILogger } from 'the-logger';
 import { Context } from '../context';
 
 import { JobDampener } from '../utils/job-dampener';
-import { LogicItem } from '../logic/item';
 
 export class FacadeRegistry
 {
@@ -28,11 +27,11 @@ export class FacadeRegistry
         return this._logger;
     }
 
-    acceptLogicItems(items: LogicItem[])
-    {
-        // this._logger.info("[acceptLogicItems] item count: %s", items.length);
-        // this._jobDampener.acceptJob(new Date(), items);
-    }
+    // acceptLogicItems(items: LogicItem[])
+    // {
+    //     this._logger.info("[acceptLogicItems] item count: %s", items.length);
+    //     this._jobDampener.acceptJob(new Date(), items);
+    // }
 
     // private _processItems(date: Date, items: LogicItem[])
     // {
@@ -48,11 +47,6 @@ export class FacadeRegistry
             .then(() => {
                 return this._context.reporter.process();
             })
-            // .then(() => {
-            //     if (this._context.areLoadersReady) {
-            //         this._context.logicProcessor.process();
-            //     }
-            // })
             .then(() => {
                 this._logger.info("[_handleConcreteRegistryChange] END");
             })
