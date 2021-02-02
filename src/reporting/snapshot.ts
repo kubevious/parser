@@ -8,7 +8,7 @@ export class Snapshot
 {
     private _date : Date;
     private _items : Record<string, SnapshotItem> = {};
-    private _configHasheDict: Record<string, SnapshotItem> = {};
+    private _configHashDict: Record<string, SnapshotItem> = {};
 
     constructor(date : Date)
     {
@@ -47,7 +47,7 @@ export class Snapshot
     }
 
     getByConfigHash(hash: string) : SnapshotItem | null {
-        let item = this._configHasheDict[hash];
+        let item = this._configHashDict[hash];
         if (item) {
             return item;
         }
@@ -58,7 +58,7 @@ export class Snapshot
     {
         let snapshotItem = new SnapshotItem(item);
         this._items[snapshotItem.idHash] = snapshotItem;
-        this._configHasheDict[snapshotItem.configHash] = snapshotItem;
+        this._configHashDict[snapshotItem.configHash] = snapshotItem;
     }
 
     extractDiff(snapshot? : Snapshot) 

@@ -36,8 +36,8 @@ export class ReporterTarget
 
     constructor(logger : ILogger, config : CollectorConfig)
     {
-        this._logger = logger.sublogger("NewReporterTarget");
-        this._snapshotLogger = logger.sublogger("NewSnapshotReporter");
+        this._logger = logger.sublogger("ReporterTarget");
+        this._snapshotLogger = logger.sublogger("SnapshotReporter");
 
         this._config = config;
         this._baseUrl = config.url;
@@ -50,7 +50,7 @@ export class ReporterTarget
             });
         }
 
-        this._jobDampener = new JobDampener<Snapshot>(this._logger.sublogger("NewReporterDampener"), this._processSnapshot.bind(this));
+        this._jobDampener = new JobDampener<Snapshot>(this._logger.sublogger("ReporterDampener"), this._processSnapshot.bind(this));
     }
 
     get logger() {

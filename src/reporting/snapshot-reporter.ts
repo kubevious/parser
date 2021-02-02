@@ -83,7 +83,13 @@ export class SnapshotReporter
 
         return this._request<RequestReportSnapshot, ResponseReportSnapshot>('/snapshot', body)
             .then((result) => {
-                this._snapshotId = result!.id;
+                if (!result || result.new_snapshot) {
+                    this.logger.info("[_createSnapshot] resetting snapshot.");
+                    this._snapshotId = null;
+                    return;
+                }
+
+                this._snapshotId = result!.id!;
                 this.logger.info("[_createSnapshot] id: %s", this._snapshotId);
             })
     }
@@ -114,10 +120,9 @@ export class SnapshotReporter
             snapshot_id: this._snapshotId,
             items: items
         }
+
         return this._request<RequestReportSnapshotItems, ResponseReportSnapshotItems>('/snapshot/items', body)
             .then((result) => {
-                this.logger.silly("[_publishSnapshotChunks] result: ", result);
-
                 if(!result) {
                     return;
                 }
@@ -162,10 +167,12 @@ export class SnapshotReporter
 
     private _publishNeededConfigs(configHashes : string[])
     {
-        this.logger.info("[_publishNeededConfigs] count: %s", configHashes.length);
+        // this.logger.info("[_publishNeededConfigs] count: %s", configHashes.length);
 
         return Promise.serial(configHashes, hash => {
+
             const item = this._snapshot.getByConfigHash(hash)!;
+
             const data = {
                 hash: hash,
                 config: item.config
