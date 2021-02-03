@@ -19,7 +19,7 @@ export class FacadeRegistry
         this._context = context;
         this._logger = context.logger.sublogger("FacadeRegistry");
 
-        this._jobDampener = new JobDampener<ConcreteRegistry>(this._logger.sublogger("FacadeDampener"), this._processItems.bind(this));
+        this._jobDampener = new JobDampener<ConcreteRegistry>(this._logger.sublogger("FacadeDampener"), this._processConcreteRegistry.bind(this));
 
         this._context.concreteRegistry.onChanged(this._handleConcreteRegistryChange.bind(this));
     }
@@ -28,9 +28,9 @@ export class FacadeRegistry
         return this._logger;
     }
 
-    private _processItems(data: ConcreteRegistry, date: Date)
+    private _processConcreteRegistry(data: ConcreteRegistry, date: Date)
     {
-        this._logger.info("[_processItems] Date: %s. item count: %s", date.toISOString(), data.allItems.length);
+        this._logger.info("[_processConcreteRegistry] Date: %s. item count: %s", date.toISOString(), data.allItems.length);
 
         return this._context.reporter.process(data, date);
     }

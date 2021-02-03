@@ -7,6 +7,7 @@ import { Snapshot } from './snapshot'
 
 import VERSION from '../version'
 import { ReporterTarget } from './reporter-target';
+import { HandledError } from '@kubevious/helpers/dist/handled-error';
 
 export class SnapshotReporter
 {
@@ -57,6 +58,7 @@ export class SnapshotReporter
     private _createSnapshot() : Promise<any>
     {
         this.logger.info("[_createSnapshot]");
+
         let body : RequestReportSnapshot = {
             version: VERSION,
             date: this._snapshot.date.toISOString()
@@ -68,7 +70,18 @@ export class SnapshotReporter
 
         return this._request<RequestReportSnapshot, ResponseReportSnapshot>('/snapshot', body)
             .then((result) => {
-                if (!result || result.new_snapshot) {
+                if (!result)
+                {
+                    throw new HandledError('No response');
+                }
+
+                if (result!.delay)
+                {
+                    throw new HandledError('Delaying snapshot reporting');
+                }
+
+                if (result!.new_snapshot)
+                {
                     this.logger.info("[_createSnapshot] resetting snapshot.");
                     this._snapshotId = null;
                     return;

@@ -57,9 +57,9 @@ export class ReporterTarget
         return this._logger;
     }
 
-    setNextSnapshot(snapshot: Snapshot)
+    reportSnapshot(snapshot: Snapshot)
     {
-        this._logger.info("[report] date: %s, item count: %s", snapshot.date.toISOString(), snapshot.count);
+        this._logger.info("[reportSnapshot] Date: %s, Item count: %s", snapshot.date.toISOString(), snapshot.count);
         this._jobDampener.acceptJob(snapshot, snapshot.date);
     }
 
@@ -86,12 +86,6 @@ export class ReporterTarget
                     throw new HandledError('Failed to report snapshot.');
                 }
             })
-    }
-
-    private _retrySnapshotReport(snapshot : Snapshot) : Promise<any>
-    {
-        return Promise.timeout(3000)
-            .then(() => this._reportSnapshot(snapshot));
     }
 
     request<TRequest, TResponse>(url : string, data : TRequest) : Promise<TResponse | null>

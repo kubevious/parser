@@ -43,7 +43,7 @@ export class SnapshotReporter
 
         for(let reporter of this._reporterTargets)
         {
-            reporter.setNextSnapshot(snapshot);
+            reporter.reportSnapshot(snapshot);
         }
     }
 
