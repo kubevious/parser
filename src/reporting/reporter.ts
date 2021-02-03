@@ -52,9 +52,9 @@ export class SnapshotReporter
         this._collectors = [];
         for(let x of _.keys(process.env))
         {
-            if (_.startsWith(x, 'KUBEVIOUS_V2_COLLECTOR'))
+            if (_.startsWith(x, 'KUBEVIOUS_COLLECTOR'))
             {
-                let namePart = x.replace('KUBEVIOUS_V2_COLLECTOR', '');
+                let namePart = x.replace('KUBEVIOUS_COLLECTOR', '');
                 if (!namePart.includes('_'))
                 {
                     this._loadCollector(x);
