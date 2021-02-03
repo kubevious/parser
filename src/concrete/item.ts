@@ -3,9 +3,9 @@ import { ILogger, DumpWriter } from 'the-logger';
 import { ConcreteRegistry } from './registry';
 
 import * as HashUtils from '@kubevious/helpers/dist/hash-utils';
-import { ItemId } from './types';
 
-import { IConcreteItem } from '@kubevious/helper-logic-processor';
+import { ItemId, IConcreteItem } from '@kubevious/helper-logic-processor';
+
 export class ConcreteItem implements IConcreteItem
 {
     private _registry : ConcreteRegistry;

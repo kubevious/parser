@@ -7,8 +7,7 @@ import { Context } from '../context';
 import { EventDampener } from '@kubevious/helpers/dist/event-dampener';
 
 import { ConcreteItem } from './item';
-import { ItemId } from './types';
-import { IConcreteRegistry } from '@kubevious/helper-logic-processor';
+import { ItemId, IConcreteRegistry } from '@kubevious/helper-logic-processor';
 
 export class ConcreteRegistry implements IConcreteRegistry
 {
@@ -34,6 +33,10 @@ export class ConcreteRegistry implements IConcreteRegistry
 
     get logger() : ILogger {
         return this._logger;
+    }
+
+    get date() {
+        return new Date();
     }
 
     get allItems() : ConcreteItem[] {
