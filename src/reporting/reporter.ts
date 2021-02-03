@@ -7,6 +7,7 @@ import { Context } from '../context';
 import { Snapshot } from './snapshot'
 import { ReporterTarget } from './reporter-target';
 import { CollectorConfig } from './types';
+import { ConcreteRegistry } from '../concrete/registry';
 
 export class SnapshotReporter
 {
@@ -30,21 +31,16 @@ export class SnapshotReporter
         return this._logger;
     }
 
-    process()
+    process(concreteRegistry: ConcreteRegistry, date: Date)
     {
-        this.logger.info("[process] count: %s", this._context.concreteRegistry.allItems.length)
+        this.logger.info("[process] count: %s", concreteRegistry.allItems.length)
 
-        const snapshot = new Snapshot(new Date());
-        for(let item of this._context.concreteRegistry.allItems)
+        const snapshot = new Snapshot(date);
+        for(let item of concreteRegistry.allItems)
         {
             snapshot.addItem(item);
         }
 
-        this._setNextSnapshot(snapshot)
-    }
-
-    private _setNextSnapshot(snapshot: Snapshot)
-    {
         for(let reporter of this._reporterTargets)
         {
             reporter.setNextSnapshot(snapshot);

@@ -4,21 +4,22 @@ import { ILogger } from 'the-logger';
 
 import { Context } from '../context';
 
-import { JobDampener } from '../utils/job-dampener';
+import { JobDampener } from '@kubevious/helpers';
+import { ConcreteRegistry } from '../concrete/registry';
 
 export class FacadeRegistry
 {
     private _context : Context;
     private _logger : ILogger;
 
-    private _jobDampener : any;
+    private _jobDampener : JobDampener<ConcreteRegistry>;
 
     constructor(context : Context)
     {
         this._context = context;
         this._logger = context.logger.sublogger("FacadeRegistry");
 
-        // this._jobDampener = new JobDampener<LogicItem[]>(this._logger.sublogger("FacadeDampener"), this._processItems.bind(this));
+        this._jobDampener = new JobDampener<ConcreteRegistry>(this._logger.sublogger("FacadeDampener"), this._processItems.bind(this));
 
         this._context.concreteRegistry.onChanged(this._handleConcreteRegistryChange.bind(this));
     }
@@ -27,29 +28,18 @@ export class FacadeRegistry
         return this._logger;
     }
 
-    // acceptLogicItems(items: LogicItem[])
-    // {
-    //     this._logger.info("[acceptLogicItems] item count: %s", items.length);
-    //     this._jobDampener.acceptJob(new Date(), items);
-    // }
+    private _processItems(data: ConcreteRegistry, date: Date)
+    {
+        this._logger.info("[_processItems] Date: %s. item count: %s", date.toISOString(), data.allItems.length);
 
-    // private _processItems(date: Date, items: LogicItem[])
-    // {
-    //     this._logger.info("[_processItems] Date: %s. item count: %s", date.toISOString(), items.length);
-    //     return this._context.reporter.acceptLogicItems(date, items);
-    // }
+        return this._context.reporter.process(data, date);
+    }
 
     private _handleConcreteRegistryChange()
     {
-        this._logger.info("[_handleConcreteRegistryChange] BEGIN");
+        this._logger.info("[_handleConcreteRegistryChange]");
 
-        return Promise.resolve()
-            .then(() => {
-                return this._context.reporter.process();
-            })
-            .then(() => {
-                this._logger.info("[_handleConcreteRegistryChange] END");
-            })
+        this._jobDampener.acceptJob(this._context.concreteRegistry, new Date());
     }
 
     handleAreLoadersReadyChange()

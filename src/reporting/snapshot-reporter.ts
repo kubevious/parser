@@ -46,27 +46,12 @@ export class SnapshotReporter
     run()
     {
         this._logger.info("[run] ");
-        return this._execute();
-    }
 
-    private _execute() : Promise<any>
-    {
-        this.logger.info("[_execute]");
         return Promise.resolve()
-            .then(() => {
-                if (this._isReported)
-                {
-                    return;
-                }
-
-                return Promise.resolve()
-                    .then(() => this._createSnapshot())
-                    .then(() => this._publishSnapshotItems())
-                    .then(() => this._activateSnapshot())
-                    .then(() => this._execute())
-                    ;
-                    
-            });
+            .then(() => this._createSnapshot())
+            .then(() => this._publishSnapshotItems())
+            .then(() => this._activateSnapshot())
+            ;
     }
 
     private _createSnapshot() : Promise<any>

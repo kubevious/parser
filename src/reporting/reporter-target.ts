@@ -5,7 +5,7 @@ import { ILogger } from 'the-logger';
 const fs = require('fs').promises;
 
 const axios = require('axios');
-import { JobDampener } from '../utils/job-dampener';
+import { JobDampener } from '@kubevious/helpers';
 
 import { Snapshot } from './snapshot';
 import { SnapshotReporter } from './snapshot-reporter';
@@ -50,7 +50,7 @@ export class ReporterTarget
             });
         }
 
-        this._jobDampener = new JobDampener<Snapshot>(this._logger.sublogger("ReporterDampener"), this._processSnapshot.bind(this));
+        this._jobDampener = new JobDampener<Snapshot>(this._logger.sublogger("ReporterDampener"), this._reportSnapshot.bind(this));
     }
 
     get logger() {
@@ -60,20 +60,14 @@ export class ReporterTarget
     setNextSnapshot(snapshot: Snapshot)
     {
         this._logger.info("[report] date: %s, item count: %s", snapshot.date.toISOString(), snapshot.count);
-        this._jobDampener.acceptJob(snapshot.date, snapshot);
-    }
-
-    private _processSnapshot(date : Date, snapshot : Snapshot) : Promise<any>
-    {
-        this._logger.info("[_processSnapshot] date: %s, item count: %s", date.toISOString(), snapshot.count);
-        return this._reportSnapshot(snapshot);
+        this._jobDampener.acceptJob(snapshot, snapshot.date);
     }
 
     private _reportSnapshot(snapshot : Snapshot) : Promise<any>
     {
-        this._logger.info("[_reportSnapshot] Begin");
+        this._logger.info("[_reportSnapshot] Date: %s, Item count: %s", snapshot.date.toISOString(), snapshot.count);
 
-        var snapshotReporter = new SnapshotReporter(this, this._snapshotLogger, snapshot, this._latestSnapshot, this._latestSnapshotId);
+        let snapshotReporter = new SnapshotReporter(this, this._snapshotLogger, snapshot, this._latestSnapshot, this._latestSnapshotId);
         return snapshotReporter.run()
             .then(() => {
                 this._logger.info("[_reportSnapshot] Finished");
@@ -89,7 +83,7 @@ export class ReporterTarget
 
                     this._logger.warn("[_reportSnapshot] Failed to report. Will retry.");
 
-                    return this._retrySnapshotReport(snapshot);
+                    throw new HandledError('Failed to report snapshot.');
                 }
             })
     }
@@ -135,7 +129,7 @@ export class ReporterTarget
                 if (reason.response) {
                     this.logger.error('[request] URL: %s, RESPONSE STATUS: %s', url, reason.response.status)
                     if (reason.response.status == 413) {
-                        var size = _.get(reason, 'request._redirectable._requestBodyLength');
+                        let size = _.get(reason, 'request._redirectable._requestBodyLength');
                         this.logger.warn('[request] Request too big. Ignoring. URL: %s, Size: %s bytes', url, size)
                         return null;
                     } else {

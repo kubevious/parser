@@ -17,7 +17,7 @@ export class ConcreteRegistry implements IConcreteRegistry
     private _flatItemsDict : Record<any, ConcreteItem> = {};
     private _itemsKindDict : Record<any, Record<any, ConcreteItem>> = {};
 
-    private _changeEvent : any;
+    private _changeEvent : EventDampener;
 
     constructor(context : Context)
     {
