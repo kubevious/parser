@@ -1,13 +1,19 @@
 import _ from 'the-lodash';
 import { ILogger, DumpWriter } from 'the-logger';
-import { ConcreteRegistry, ItemId } from './registry';
+import { ConcreteRegistry } from './registry';
 
-export class ConcreteItem
+import * as HashUtils from '@kubevious/helpers/dist/hash-utils';
+
+import { ItemId, IConcreteItem } from '@kubevious/helper-logic-processor';
+
+export class ConcreteItem implements IConcreteItem
 {
     private _registry : ConcreteRegistry;
     private _id : ItemId;
     private _config : any;
     private _groupKey : string;
+    private _idHash : string;
+    private _configHash : string;
 
     constructor(registry: ConcreteRegistry, id: ItemId, config : any)
     {
@@ -15,6 +21,9 @@ export class ConcreteItem
         this._id = id;
         this._config = config;
         this._groupKey = `${id.api}:${id.kind}`;
+
+        this._idHash = HashUtils.calculateObjectHashStr(id);
+        this._configHash = HashUtils.calculateObjectHashStr(config);
     }
 
     get logger() : ILogger {
@@ -35,6 +44,14 @@ export class ConcreteItem
     
     get config() : any {
         return this._config;
+    }
+
+    get idHash() {
+        return this._idHash;
+    }
+
+    get configHash() {
+        return this._configHash;
     }
 
     matchesFilter(idFilter? : Record<string, any>) : boolean

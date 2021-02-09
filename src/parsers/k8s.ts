@@ -3,9 +3,10 @@ import { ILogger } from 'the-logger';
 
 import { Context } from '../context';
 
-import { ItemId } from '../concrete/registry';
-
 import { ApiGroup, API_GROUPS } from './api-groups'
+
+import { ItemId, K8sConfig, extractK8sConfigId } from '@kubevious/helper-logic-processor'
+
 
 export class K8sParser
 {
@@ -24,6 +25,7 @@ export class K8sParser
 
     parse(isPresent: boolean, obj: any)
     {
+
         let id = this._extractId(obj);
 
         if (isPresent) {
@@ -33,18 +35,10 @@ export class K8sParser
         }
     }
 
-    _extractId(obj: any) : ItemId
+    private _extractId(obj: any) : ItemId
     {
-        let id : ItemId = {
-            infra: "k8s",
-            api: obj.apiVersion.split('/')[0],
-            kind: obj.kind,
-            name: obj.metadata.name
-        };
-        if (obj.metadata.namespace) {
-            id.namespace = obj.metadata.namespace;
-        }
-        return id;
+        let config = <K8sConfig> obj;
+        return extractK8sConfigId(config);
     }
 
 }

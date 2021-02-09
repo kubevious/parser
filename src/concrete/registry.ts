@@ -7,16 +7,9 @@ import { Context } from '../context';
 import { EventDampener } from '@kubevious/helpers/dist/event-dampener';
 
 import { ConcreteItem } from './item';
+import { ItemId, IConcreteRegistry } from '@kubevious/helper-logic-processor';
 
-export interface ItemId {
-    infra: string,
-    api: string,
-    kind: string,
-    namespace?: string, 
-    name: string
-};
-
-export class ConcreteRegistry
+export class ConcreteRegistry implements IConcreteRegistry
 {
     private _context : Context;
     private _logger : ILogger;
@@ -24,7 +17,7 @@ export class ConcreteRegistry
     private _flatItemsDict : Record<any, ConcreteItem> = {};
     private _itemsKindDict : Record<any, Record<any, ConcreteItem>> = {};
 
-    private _changeEvent : any;
+    private _changeEvent : EventDampener;
 
     constructor(context : Context)
     {
@@ -40,6 +33,10 @@ export class ConcreteRegistry
 
     get logger() : ILogger {
         return this._logger;
+    }
+
+    get date() {
+        return new Date();
     }
 
     get allItems() : ConcreteItem[] {
@@ -96,7 +93,7 @@ export class ConcreteRegistry
         }
     }
 
-    _triggerChange()
+    private _triggerChange()
     {
         this.logger.debug("[_triggerChange]");
         this._changeEvent.trigger();
@@ -122,7 +119,7 @@ export class ConcreteRegistry
         return result;
     }
 
-    _makeDictId(id: ItemId) : string {
+    private _makeDictId(id: ItemId) : string {
         if (_.isString(id)) {
             return id;
         }
