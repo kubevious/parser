@@ -23,7 +23,7 @@
   "dependencies": {
     "@kubevious/helper-backend": "^1.0.19",
     "@kubevious/helper-logic-processor": "^1.0.11",
-    "@kubevious/helpers": "^1.0.51",
+    "@kubevious/helpers": "^1.0.52",
     "@kubevious/worldvious-client": "^1.0.6",
     "axios": "^0.19.2",
     "js-yaml": "^3.13.1",
