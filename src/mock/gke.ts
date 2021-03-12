@@ -8,7 +8,8 @@ import { K8sLoader, ReadyHandler } from '../loaders/k8s';
 
 import { KubernetesClient } from 'k8s-super-client';
 import { ClusterManagerClient } from '@google-cloud/container';
-import axios, { AxiosRequestConfig, AxiosResponse, AxiosError } from 'axios';
+import { HttpClient } from '@kubevious/http-client';
+
 
 const jwt = require('jsonwebtoken');
 
@@ -115,18 +116,15 @@ export class GKELoader
 
     private _loginToK8s()
     {
-        let token = this._buildK8sToken();
+        const client = new HttpClient('');
 
-        const options : AxiosRequestConfig = {
-            url: 'https://www.googleapis.com/oauth2/v4/token',
-            method: 'POST',
-            data: {
-                'grant_type': 'urn:ietf:params:oauth:grant-type:jwt-bearer',
-                'assertion': token
-            }
+        const data = {
+            'grant_type': 'urn:ietf:params:oauth:grant-type:jwt-bearer',
+            'assertion': this._buildK8sToken()
         };
-        this.logger.silly('[loginToK8s] request: ', options);
-        return axios(options)
+
+        this.logger.silly('[loginToK8s] request data: ', data);
+        return client.post<any>('https://www.googleapis.com/oauth2/v4/token', data)
             .then(result => {
                 this.logger.silly('[loginToK8s] result: ', result);
                 return result.data;

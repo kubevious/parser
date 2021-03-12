@@ -6,3 +6,8 @@ export interface CollectorConfig
     authUrl?: string
     keyPath?: string
 }
+
+export interface ReporterAuthResponse
+{
+    token: string
+}

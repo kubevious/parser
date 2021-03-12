@@ -4,15 +4,14 @@ import { ILogger } from 'the-logger';
 
 const fs = require('fs').promises;
 
-const axios = require('axios');
 import { JobDampener } from '@kubevious/helpers';
+import { HttpClient, HttpClientOptions } from '@kubevious/http-client';
 
 import { Snapshot } from './snapshot';
 import { SnapshotReporter } from './snapshot-reporter';
 
 import { HandledError } from '@kubevious/helpers/dist/handled-error';
-import { RetryableAction } from '@kubevious/helpers/dist/retryable-action';
-import { CollectorConfig } from './types';
+import { CollectorConfig, ReporterAuthResponse } from './types';
 
 export class ReporterTarget
 {
@@ -22,17 +21,13 @@ export class ReporterTarget
     private _config : CollectorConfig;
     private _baseUrl : string;
 
-    private _axiosAuth : any;
+    private _authHttpClient? : HttpClient;
+    private _httpClient : HttpClient;
 
     private _jobDampener : JobDampener<Snapshot>;
 
     private _latestSnapshot : Snapshot | null = null;
     private _latestSnapshotId : string | null = null;
-
-    private _axiosCollector : any;
-
-    private _token : string | null = null;
-    private _apiKeyData : object | null = null;
 
     constructor(logger : ILogger, config : CollectorConfig)
     {
@@ -41,14 +36,57 @@ export class ReporterTarget
 
         this._config = config;
         this._baseUrl = config.url;
-        this._createCollectorClient();
+
+        let options : Partial<HttpClientOptions> = {
+            timeout: 10 * 1000,
+            retry: {
+                initRetryDelay: 2 * 1000,
+                maxRetryDelay: 10 * 1000,
+                retryCount: 5,
+                canContinueCb: (reason, requestInfo) => {
+
+                    if (reason.response.status == 413) {
+                        let size = _.get(reason, 'request._redirectable._requestBodyLength');
+                        this.logger.warn('[canContinueCb] Request too big. Ignoring. URL: %s, Size: %s bytes', requestInfo.url, size)
+                        return false;
+                    }
+
+                    return true;
+                }
+            },
+            tracker: {
+                failedAttempt: (requestInfo) => {
+                    this.logger.warn('[FAILED ATTEMPT] %s, ', requestInfo.url, requestInfo.headers);
+                }
+            }
+
+        };
 
         if (config.authUrl) {
-            this._axiosAuth = axios.create({
-                baseURL: config.authUrl,
+            this._authHttpClient = new HttpClient(config.authUrl, {
                 timeout: 10 * 1000,
-            });
+            })
+
+            options.authorizerCb = () => {
+
+
+                this.logger.info("[AUTH-CB] Begin...")
+
+                return this._getApiKey()
+                    .then(apiKeyData => {
+                        this.logger.info("[AUTH-CB] apiKeyData: ", apiKeyData)
+                        return this._authHttpClient!.post<ReporterAuthResponse>('/', apiKeyData)
+                    })
+                    .then(result => {
+                        this.logger.info("[AUTH-CB] result: ", result.data)
+
+                        return `Bearer ${result.data.token}`;
+                    })
+
+            }
         }
+
+        this._httpClient = new HttpClient(this._baseUrl, options);
 
         this._jobDampener = new JobDampener<Snapshot>(this._logger.sublogger("ReporterDampener"), this._reportSnapshot.bind(this));
     }
@@ -61,6 +99,23 @@ export class ReporterTarget
     {
         this._logger.info("[reportSnapshot] Date: %s, Item count: %s", snapshot.date.toISOString(), snapshot.count);
         this._jobDampener.acceptJob(snapshot, snapshot.date);
+    }
+
+    request<TRequest, TResponse>(url : string, data : TRequest) : Promise<TResponse | null>
+    {
+        return this._httpClient.post<TResponse>(url, data)
+            .then(result => {
+                return result.data;
+            })
+            .catch(reason => {
+                if (reason.response.status == 413) {
+                    let size = _.get(reason, 'request._redirectable._requestBodyLength');
+                    this.logger.warn('[request] Request too big. Ignoring. URL: %s, Size: %s bytes', url, size)
+                    return null;
+                }
+                
+                throw reason;
+            })
     }
 
     private _reportSnapshot(snapshot : Snapshot) : Promise<any>
@@ -88,102 +143,13 @@ export class ReporterTarget
             })
     }
 
-    request<TRequest, TResponse>(url : string, data : TRequest) : Promise<TResponse | null>
+    private _getApiKey() : Promise<any>
     {
-        let action = new RetryableAction(this.logger, () => {
-            return this._rawRequest(url, data);
-        }, {
-            initalDelay: 2 * 1000,
-            maxDelay: 10 * 1000,
-            retryCount: 5
-        })
-        action.canRetry((reason : any) => {
-            if (reason instanceof HandledError) {
-                return reason.canRetry;
-            }
-            return false;
-        })
-        return action.run()
-            .then(response => {
-                if (!response) {
-                    return null;
-                }
-                return <TResponse>response;
-            });
-    }
-
-    private _rawRequest<TRequest, TResponse>(url: string, data: TRequest) : Promise<TResponse | null>
-    {
-        this.logger.verbose("[request] url: %s%s", this._baseUrl, url);
-        this.logger.silly("[request] url: %s%s, data: ", this._baseUrl, url, data);
-        return this._prepareRequest()
-            .then(() => this._axiosCollector.post(url, data))
-            .then(res => <TResponse>res.data)
-            .catch(reason => {
-                if (reason.response) {
-                    this.logger.error('[request] URL: %s, RESPONSE STATUS: %s', url, reason.response.status)
-                    if (reason.response.status == 413) {
-                        let size = _.get(reason, 'request._redirectable._requestBodyLength');
-                        this.logger.warn('[request] Request too big. Ignoring. URL: %s, Size: %s bytes', url, size)
-                        return null;
-                    } else {
-                        throw new HandledError("HTTP Error " + reason.response.status);
-                    }
-                } else if (reason.request) {
-                    this.logger.error('[request] URL: %s, ERROR: %s', url, reason.message)
-                    throw new HandledError("Could not connect", true);
-                } else {
-                    this.logger.error('[request] URL: %s. Reason: ', url, reason)
-                    throw new HandledError("Unknown error " + reason.message);
-                }
-            });
-    }
-
-    private _prepareRequest()
-    {
-        if (!this._axiosAuth) {
-            return Promise.resolve();
-        }
-        if (this._token) {
-            return Promise.resolve();
-        }
-
-        return Promise.resolve()
-            .then(() => this._getApiKey())
-            .then(data => {
-                return this._axiosAuth.post('/', data)
-            })
-            .then(result => {
-                this._token = result.data.token;
-                this._createCollectorClient();
-            })
-    }
-
-    private _getApiKey()
-    {
-        if (this._apiKeyData) {
-            return Promise.resolve(this._apiKeyData);
-        }
         return fs.readFile(this._config.keyPath, { encoding: 'utf8' })
             .then((data : any) => {
-                this._apiKeyData = JSON.parse(data);
-                this._token = null;
-                return this._apiKeyData;
+                const apiKeyData = JSON.parse(data);
+                return apiKeyData;
             });
-    }
-
-    private _createCollectorClient()
-    {
-        let headers : Record<string, string> = {};
-        let options = {
-            baseURL: this._baseUrl,
-            timeout: 10 * 1000,
-            headers: headers
-        };
-        if (this._token) {
-            options.headers['Authorization'] = 'Bearer ' + this._token;
-        }
-        this._axiosCollector = axios.create(options);
     }
 
 }

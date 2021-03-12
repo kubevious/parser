@@ -150,10 +150,15 @@ export class SnapshotReporter
             snapshot_id: this._snapshotId
         }
         return this._request<RequestActivateSnapshot, ResponseActivateSnapshot>('/snapshot/activate', data)
-            .then((result : any) => {
+            .then((result) => {
+                if (!result)
+                {
+                    throw new HandledError('No response');
+                }
+                
                 this.logger.info("[_activateSnapshot] result: ", result);
 
-                if (result.new_snapshot) {
+                if (result!.new_snapshot) {
                     this.logger.info("[_activateSnapshot] resetting snapshot.");
                     this._snapshotId = null;
                 } else {
