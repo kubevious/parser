@@ -45,10 +45,16 @@ export class ReporterTarget
                 retryCount: 5,
                 canContinueCb: (reason, requestInfo) => {
 
-                    if (reason.response.status == 413) {
-                        let size = _.get(reason, 'request._redirectable._requestBodyLength');
-                        this.logger.warn('[canContinueCb] Request too big. Ignoring. URL: %s, Size: %s bytes', requestInfo.url, size)
-                        return false;
+                    const status = _.get(reason, 'response.status');
+
+                    this.logger.warn('[canContinueCb] Error Status: %s. Message: %s', status, reason.message);
+
+                    if (status) {
+                        if (status == 413) {
+                            let size = _.get(reason, 'request._redirectable._requestBodyLength');
+                            this.logger.warn('[canContinueCb] Request too big. Ignoring. URL: %s, Size: %s bytes', requestInfo.url, size)
+                            return false;
+                        }
                     }
 
                     return true;
@@ -108,12 +114,18 @@ export class ReporterTarget
                 return result.data;
             })
             .catch(reason => {
-                if (reason.response.status == 413) {
-                    let size = _.get(reason, 'request._redirectable._requestBodyLength');
-                    this.logger.warn('[request] Request too big. Ignoring. URL: %s, Size: %s bytes', url, size)
-                    return null;
+
+                const status = _.get(reason, 'response.status');
+                this.logger.warn('[request] Error Status: %s. Message: %s', status, reason.message);
+
+                if (status) {
+                    if (status == 413) {
+                        let size = _.get(reason, 'request._redirectable._requestBodyLength');
+                        this.logger.warn('[request] Request too big. Ignoring. URL: %s, Size: %s bytes', url, size)
+                        return null;
+                    }
                 }
-                
+
                 throw reason;
             })
     }

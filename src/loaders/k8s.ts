@@ -8,7 +8,9 @@ import * as Path from 'path'
 import { Context } from '../context';
 
 import moment from 'moment';
-import { KubernetesClient } from 'k8s-super-client';
+import { DeltaAction, KubernetesClient } from 'k8s-super-client';
+import { ResourceAccessor } from 'k8s-super-client/dist/resource-accessor';
+import { KubernetesObject } from 'k8s-super-client/dist/types';
 
 export type ReadyHandler = (isReady : boolean) => void;
 
@@ -19,12 +21,12 @@ export class K8sLoader
 
     private _client : KubernetesClient;
     private _info : any;
-    private _apiTargets : Record<string, any> = {};
+    private _apiTargets : Record<string, ApiTargetInfo> = {};
     private _readyHandler? : ReadyHandler;
 
     constructor(context : Context, client : KubernetesClient, info : any)
     {
-        this._logger = context.logger.sublogger("ConcreteRegistry");
+        this._logger = context.logger.sublogger("K8sLoader");
         this._context = context;
 
         this._client = client;
@@ -46,12 +48,17 @@ export class K8sLoader
         }
     }
     
-    _setupApiTargets()
+    private _setupApiTargets()
     {
+        this.logger.info("[_setupApiTargets]");
+
         for(let targetAccessor of this._getTargets())
         {
-            let targetInfo = {
-                id: [targetAccessor.apiName, targetAccessor.kindName].join('-'),
+            const id = [targetAccessor.apiName, targetAccessor.kindName].join('-');
+            this.logger.info("[_setupApiTargets] %s", id);
+
+            let targetInfo : ApiTargetInfo = {
+                id: id,
                 accessor: targetAccessor,
                 allFetched: false,
                 canIgnore: false,
@@ -67,7 +74,7 @@ export class K8sLoader
         this._reportReady();
     }
 
-    _getTargets() : any[] {
+    private _getTargets() : ResourceAccessor[] {
         let groups = this._context.k8sParser.getAPIGroups();
         let targetInfos : { api: string | null, kind : string}[] = [];
         for(let group of groups)
@@ -87,8 +94,8 @@ export class K8sLoader
         });
 
         targets = targets.filter(x => x);
-
-        return targets;
+        
+        return <ResourceAccessor[]>targets;
     }
 
     run() : Promise<any>
@@ -102,10 +109,10 @@ export class K8sLoader
         })
     }
 
-    _watch(targetInfo : any)
+    private _watch(targetInfo : ApiTargetInfo)
     {
-        this.logger.info("Watching %s...", targetInfo.id);
-        return targetInfo.accessor.watchAll(null, (action : string, obj : any) => {
+        this.logger.info("[_watch] setup: %s", targetInfo.id);
+        return targetInfo.accessor.watchAll(null, (action : DeltaAction, obj : KubernetesObject) => {
             this._logger.verbose("[_watch] %s ::: %s %s", targetInfo.id, action, obj.kind);
             this._logger.verbose("%s %s", action, obj.kind);
             this._logger.silly("%s %s :: ", action, obj.kind, obj);
@@ -127,7 +134,7 @@ export class K8sLoader
         });
     }
 
-    _isTargetReady(targetInfo : any) : boolean
+    private _isTargetReady(targetInfo : ApiTargetInfo) : boolean
     {
         this.logger.verbose("[_isTargetReady] %s", targetInfo.id);
 
@@ -158,7 +165,7 @@ export class K8sLoader
         return false;
     }
 
-    _isReady() : boolean
+    private _isReady() : boolean
     {
         for(let targetInfo of _.values(this._apiTargets))
         {
@@ -171,7 +178,7 @@ export class K8sLoader
         return true;
     }
 
-    _reportReady() : void
+    private _reportReady() : void
     {
         if (!this._readyHandler) {
             return;
@@ -179,24 +186,24 @@ export class K8sLoader
         this._readyHandler!(this._isReady());
     }
 
-    _handle(isPresent: boolean, obj: any) : void
+    private _handle(isPresent: boolean, obj: KubernetesObject) : void
     {
         this._logger.verbose("Handle: %s, present: %s", obj.kind, isPresent);
         this._context.k8sParser.parse(isPresent, obj);
     }
 
-    _parseAction(action: string) : boolean
+    private _parseAction(action: DeltaAction) : boolean
     {
-        if (action == 'ADDED' || action == 'MODIFIED') {
+        if (action == DeltaAction.Added || action == DeltaAction.Modified) {
             return true;
         }
-        if (action == 'DELETED') {
+        if (action == DeltaAction.Deleted) {
             return false;
         }
         return false;
     }
     
-    _debugSaveToMock(isPresent: boolean, obj : any)
+    private _debugSaveToMock(isPresent: boolean, obj : any)
     {
         if (isPresent) {
 
@@ -213,4 +220,12 @@ export class K8sLoader
         }
     }
 
+}
+
+interface ApiTargetInfo {
+    id: string,
+    accessor: ResourceAccessor,
+    allFetched: boolean,
+    canIgnore: boolean,
+    connectDate: Date | null
 }

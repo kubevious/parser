@@ -8,6 +8,7 @@ import { EventDampener } from '@kubevious/helpers/dist/event-dampener';
 
 import { ConcreteItem } from './item';
 import { ItemId, IConcreteRegistry } from '@kubevious/helper-logic-processor';
+import { KubernetesObject } from 'k8s-super-client/dist/types';
 
 export class ConcreteRegistry implements IConcreteRegistry
 {
@@ -50,7 +51,7 @@ export class ConcreteRegistry implements IConcreteRegistry
         this._triggerChange();
     }
 
-    add(id: ItemId, obj: any)
+    add(id: ItemId, obj: KubernetesObject)
     {
         this.logger.verbose("[add] ", id);
 

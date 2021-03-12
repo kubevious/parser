@@ -5,7 +5,8 @@ import { Context } from '../context';
 
 import { ApiGroup, API_GROUPS } from './api-groups'
 
-import { ItemId, K8sConfig, extractK8sConfigId } from '@kubevious/helper-logic-processor'
+import { ItemId, extractK8sConfigId } from '@kubevious/helper-logic-processor'
+import { KubernetesObject } from 'k8s-super-client/dist/types';
 
 
 export class K8sParser
@@ -23,9 +24,8 @@ export class K8sParser
         return _.cloneDeep(API_GROUPS);
     }
 
-    parse(isPresent: boolean, obj: any)
+    parse(isPresent: boolean, obj: KubernetesObject)
     {
-
         let id = this._extractId(obj);
 
         if (isPresent) {
@@ -35,10 +35,9 @@ export class K8sParser
         }
     }
 
-    private _extractId(obj: any) : ItemId
+    private _extractId(obj: KubernetesObject) : ItemId
     {
-        let config = <K8sConfig> obj;
-        return extractK8sConfigId(config);
+        return extractK8sConfigId(obj);
     }
 
 }

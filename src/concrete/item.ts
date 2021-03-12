@@ -5,17 +5,18 @@ import { ConcreteRegistry } from './registry';
 import * as HashUtils from '@kubevious/helpers/dist/hash-utils';
 
 import { ItemId, IConcreteItem } from '@kubevious/helper-logic-processor';
+import { KubernetesObject } from 'k8s-super-client/dist/types';
 
 export class ConcreteItem implements IConcreteItem
 {
     private _registry : ConcreteRegistry;
     private _id : ItemId;
-    private _config : any;
+    private _config : KubernetesObject;
     private _groupKey : string;
     private _idHash : string;
     private _configHash : string;
 
-    constructor(registry: ConcreteRegistry, id: ItemId, config : any)
+    constructor(registry: ConcreteRegistry, id: ItemId, config : KubernetesObject)
     {
         this._registry = registry;
         this._id = id;
@@ -42,7 +43,7 @@ export class ConcreteItem implements IConcreteItem
         return this._groupKey;
     }
     
-    get config() : any {
+    get config() : KubernetesObject {
         return this._config;
     }
 
