@@ -50,7 +50,7 @@ export class K8sLoader
     
     private _setupApiTargets()
     {
-        this.logger.info("[_setupApiTargets]");
+        this.logger.info("[_setupApiTargets] BEGIN");
 
         for(let targetAccessor of this._getTargets())
         {
@@ -66,6 +66,8 @@ export class K8sLoader
             }
             this._apiTargets[targetInfo.id] = targetInfo;
         }
+
+        this.logger.info("[_setupApiTargets] END");
     }
 
     setupReadyHandler(handler : ReadyHandler)

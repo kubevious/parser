@@ -38,6 +38,7 @@ export class LocalLoader
     run() : Promise<any>
     {
         return Promise.resolve(connectFromPod(this._logger))
+            .then(client => client.init())
             .then(client => {
                 let info = {
                     infra: "local"
