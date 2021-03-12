@@ -35,10 +35,9 @@ export class LocalLoader
         }
     }
     
-    run() : Promise<any>
+    run()
     {
-        return Promise.resolve(connectFromPod(this._logger))
-            .then(client => client.init())
+        return connectFromPod(this._logger)
             .then(client => {
                 let info = {
                     infra: "local"

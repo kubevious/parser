@@ -8,9 +8,7 @@ import * as Path from 'path'
 import { Context } from '../context';
 
 import moment from 'moment';
-import { DeltaAction, KubernetesClient } from 'k8s-super-client';
-import { ResourceAccessor } from 'k8s-super-client/dist/resource-accessor';
-import { KubernetesObject } from 'k8s-super-client/dist/types';
+import { DeltaAction, KubernetesClient, ResourceAccessor, KubernetesObject } from 'k8s-super-client';
 
 export type ReadyHandler = (isReady : boolean) => void;
 

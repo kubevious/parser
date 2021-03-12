@@ -8,7 +8,7 @@ import { EventDampener } from '@kubevious/helpers/dist/event-dampener';
 
 import { ConcreteItem } from './item';
 import { ItemId, IConcreteRegistry } from '@kubevious/helper-logic-processor';
-import { KubernetesObject } from 'k8s-super-client/dist/types';
+import { KubernetesObject } from 'k8s-super-client';
 
 export class ConcreteRegistry implements IConcreteRegistry
 {

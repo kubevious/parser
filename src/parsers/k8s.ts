@@ -6,7 +6,7 @@ import { Context } from '../context';
 import { ApiGroup, API_GROUPS } from './api-groups'
 
 import { ItemId, extractK8sConfigId } from '@kubevious/helper-logic-processor'
-import { KubernetesObject } from 'k8s-super-client/dist/types';
+import { KubernetesObject } from 'k8s-super-client';
 
 
 export class K8sParser

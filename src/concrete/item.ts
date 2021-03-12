@@ -5,7 +5,7 @@ import { ConcreteRegistry } from './registry';
 import * as HashUtils from '@kubevious/helpers/dist/hash-utils';
 
 import { ItemId, IConcreteItem } from '@kubevious/helper-logic-processor';
-import { KubernetesObject } from 'k8s-super-client/dist/types';
+import { KubernetesObject } from 'k8s-super-client';
 
 export class ConcreteItem implements IConcreteItem
 {
