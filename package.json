@@ -21,15 +21,15 @@
   },
   "homepage": "https://github.com/kubevious/parser",
   "dependencies": {
-    "@kubevious/helper-backend": "^1.0.19",
+    "@kubevious/helper-backend": "^1.0.29",
     "@kubevious/helper-logic-processor": "^1.0.11",
     "@kubevious/helpers": "^1.0.52",
-    "@kubevious/http-client": "^1.0.10",
+    "@kubevious/http-client": "^1.0.11",
     "@kubevious/worldvious-client": "^1.0.6",
     "js-yaml": "^3.13.1",
     "k8s-super-client": "^2.0.7",
     "moment": "^2.29.1",
-    "the-lodash": "^2.0.8",
+    "the-lodash": "^2.0.9",
     "the-logger": "^2.0.9",
     "the-promise": "^2.0.12"
   },
