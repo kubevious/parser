@@ -124,7 +124,7 @@ export class GKELoader
         };
 
         this.logger.silly('[loginToK8s] request data: ', data);
-        return client.post<any>('https://www.googleapis.com/oauth2/v4/token', data)
+        return client.post<any>('https://www.googleapis.com/oauth2/v4/token', {}, data)
             .then(result => {
                 this.logger.silly('[loginToK8s] result: ', result);
                 return result.data;

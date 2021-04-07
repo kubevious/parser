@@ -62,7 +62,7 @@ export class ReporterTarget
             },
             tracker: {
                 failedAttempt: (requestInfo) => {
-                    this.logger.warn('[FAILED ATTEMPT] %s, ', requestInfo.url, requestInfo.headers);
+                    this.logger.warn('[FAILED ATTEMPT] %s, ', requestInfo.url);
                 }
             }
 
@@ -81,7 +81,7 @@ export class ReporterTarget
                 return this._getApiKey()
                     .then(apiKeyData => {
                         this.logger.info("[AUTH-CB] apiKeyData: ", apiKeyData)
-                        return this._authHttpClient!.post<ReporterAuthResponse>('/', apiKeyData)
+                        return this._authHttpClient!.post<ReporterAuthResponse>('/', {}, apiKeyData)
                     })
                     .then(result => {
                         this.logger.info("[AUTH-CB] result: ", result.data)
@@ -109,7 +109,7 @@ export class ReporterTarget
 
     request<TRequest, TResponse>(url : string, data : TRequest) : Promise<TResponse | null>
     {
-        return this._httpClient.post<TResponse>(url, data)
+        return this._httpClient.post<TResponse>(url, {}, data)
             .then(result => {
                 return result.data;
             })
@@ -159,7 +159,8 @@ export class ReporterTarget
     {
         return fs.readFile(this._config.keyPath, { encoding: 'utf8' })
             .then((data : any) => {
-                const apiKeyData = JSON.parse(data);
+                const strData = Buffer.from(data, 'base64').toString()
+                const apiKeyData = JSON.parse(strData);
                 return apiKeyData;
             });
     }

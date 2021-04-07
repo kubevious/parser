@@ -24,7 +24,7 @@
     "@kubevious/helper-backend": "^1.0.29",
     "@kubevious/helper-logic-processor": "^1.0.11",
     "@kubevious/helpers": "^1.0.52",
-    "@kubevious/http-client": "^1.0.11",
+    "@kubevious/http-client": "^1.0.14",
     "@kubevious/worldvious-client": "^1.0.6",
     "js-yaml": "^3.13.1",
     "k8s-super-client": "^2.0.7",
