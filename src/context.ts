@@ -11,7 +11,7 @@ import { K8sParser } from './parsers/k8s';
 import { FacadeRegistry } from './facade/registry';
 import { WorldviousClient } from '@kubevious/worldvious-client';
 
-import { SnapshotReporter } from './reporting/reporter';
+import { Reporter } from './reporting/reporter';
 import { DebugObjectLogger } from './utils/debug-object-logger';
 import { WebServer } from './server';
 
@@ -25,7 +25,7 @@ export class Context
     private _loaders: any[] = [];
     private _concreteRegistry: ConcreteRegistry;
     private _k8sParser: K8sParser;
-    private _reporter: SnapshotReporter;
+    private _reporter: Reporter;
     private _facadeRegistry: FacadeRegistry;
     private _debugObjectLogger: DebugObjectLogger;
     private _worldvious: WorldviousClient;
@@ -41,7 +41,7 @@ export class Context
 
         this._concreteRegistry = new ConcreteRegistry(this);
         this._k8sParser = new K8sParser(this);
-        this._reporter = new SnapshotReporter(this);
+        this._reporter = new Reporter(this);
 
         this._facadeRegistry = new FacadeRegistry(this);
 
@@ -80,7 +80,7 @@ export class Context
         return this._k8sParser;
     }
 
-    get reporter() : SnapshotReporter {
+    get reporter() : Reporter {
         return this._reporter;
     }
 

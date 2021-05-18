@@ -9,7 +9,7 @@ import { ReporterTarget } from './reporter-target';
 import { CollectorConfig } from './types';
 import { ConcreteRegistry } from '../concrete/registry';
 
-export class SnapshotReporter
+export class Reporter
 {
     private _context : Context;
     private _logger : ILogger;
@@ -20,7 +20,7 @@ export class SnapshotReporter
     constructor(context : Context)
     {
         this._context = context;
-        this._logger = context.logger.sublogger("SnapshotReporter");
+        this._logger = context.logger.sublogger("Reporter");
 
         this._determineCollectors();
 

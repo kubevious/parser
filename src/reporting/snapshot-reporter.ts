@@ -1,13 +1,15 @@
 import _ from 'the-lodash';
 import { Promise } from 'the-promise';
 import { ILogger } from 'the-logger';
-import { ReportableSnapshotItem, RequestReportSnapshot, ResponseReportSnapshot, RequestReportSnapshotItems, ResponseReportSnapshotItems, RequestActivateSnapshot, ResponseActivateSnapshot } from '@kubevious/helpers/dist/reportable/types'
+import { ReportableSnapshotItem, RequestReportSnapshot, ResponseReportSnapshot, RequestReportSnapshotItems, ResponseReportSnapshotItems, RequestActivateSnapshot, ResponseActivateSnapshot, ReportableDataItem } from '@kubevious/helpers/dist/reportable/types'
 
 import { Snapshot } from './snapshot'
 
 import VERSION from '../version'
 import { ReporterTarget } from './reporter-target';
 import { HandledError } from '@kubevious/helpers/dist/handled-error';
+import * as ZipUtils from '@kubevious/helpers/dist/zip-utils';
+import { SnapshotItem } from './snapshot-item';
 
 export class SnapshotReporter
 {
@@ -19,6 +21,11 @@ export class SnapshotReporter
     private _snapshotId: string | null;
 
     private _isReported = false;
+
+    private _itemBulkSize : number = 10;
+    private _config_reporter_count : number = 1;
+    private _config_reporter_size : number = 2 * 1024 * 1024; // 2 MB
+    private _config_reporter_compression : boolean = false;
 
     constructor(reporterTarget: ReporterTarget, logger: ILogger, snapshot: Snapshot, latestSnapshot: Snapshot | null, latestSnapshotId: string | null)
     {
@@ -73,21 +80,42 @@ export class SnapshotReporter
                 if (!result)
                 {
                     throw new HandledError('No response');
+                    return;
                 }
 
-                if (result!.delay)
+                if (result.delay)
                 {
-                    throw new HandledError('Delaying snapshot reporting');
+                    const timeout = result.delaySeconds! || 5;
+                    return Promise.timeout(timeout * 1000)
+                        .then(() => {
+                            throw new HandledError('Delaying snapshot reporting');
+                        })
                 }
 
-                if (result!.new_snapshot)
+                if (result.new_snapshot)
                 {
                     this.logger.info("[_createSnapshot] resetting snapshot.");
                     this._snapshotId = null;
                     return;
                 }
 
-                this._snapshotId = result!.id!;
+                if (result.item_reporter_count) {
+                    this._itemBulkSize = result.item_reporter_count;
+                }
+
+                if (result.config_reporter_count) {
+                    this._config_reporter_count = result.config_reporter_count;
+                }
+
+                if (result.config_reporter_size_kb) {
+                    this._config_reporter_size = result.config_reporter_size_kb * 1024;
+                }
+
+                if (result.config_reporter_compression) {
+                    this._config_reporter_compression = true;
+                }
+
+                this._snapshotId = result.id!;
                 this.logger.info("[_createSnapshot] id: %s", this._snapshotId);
             })
     }
@@ -101,7 +129,7 @@ export class SnapshotReporter
         this.logger.info("[_publishSnapshotItems]");
 
         const reportableItems = this._snapshot.extractDiff(this._latestSnapshot!);
-        const itemChunks = _.chunk(reportableItems, 10);
+        const itemChunks = _.chunk(reportableItems, this._itemBulkSize);
 
         return Promise.serial(itemChunks, this._publishSnapshotChunks.bind(this));
     }
@@ -171,17 +199,69 @@ export class SnapshotReporter
     private _publishNeededConfigs(configHashes : string[])
     {
         // this.logger.info("[_publishNeededConfigs] count: %s", configHashes.length);
-
-        return Promise.serial(configHashes, hash => {
-
+        
+        const items : SnapshotItem[] = []
+        for(let hash of configHashes)
+        {
             const item = this._snapshot.getByConfigHash(hash)!;
+            items.push(item);
+        }
 
-            const data = {
-                hash: hash,
-                config: item.config
-            }
-            return this._request('/config', data)
-        });
+        if (this._config_reporter_compression)
+        {
+            let currentCount : number = 0;
+            let currentSize : number = 0;
+
+            let chunks : ReportableDataChunk[] = [];
+            let currentChunk : ReportableDataChunk | null = null;
+
+            return Promise.serial(items, item => {
+                return ZipUtils.compressObj(item.config)
+                    .then(dataStr => {
+                        if (!currentChunk ||
+                            (dataStr.length + currentSize > this._config_reporter_size) || 
+                            (currentCount + 1 > this._config_reporter_count))
+                        {
+                            currentCount = 0;
+                            currentSize = 0;
+                            currentChunk = null;
+                        }
+
+                        if (!currentChunk) {
+                            currentChunk = []
+                            chunks.push(currentChunk);
+                        }
+                        currentChunk.push({ hash: item.configHash, data: dataStr });
+                        currentCount++;
+                        currentSize += dataStr.length;
+                    });
+            })
+            .then(() => {
+                return Promise.serial(chunks, chunk => {
+                    const data = {
+                        chunks: chunk
+                    }
+                    return this._request('/report_chunks', data);
+                });
+            });
+
+        }
+        else
+        {
+            return Promise.serial(items, item => {
+                this._publishSingleObject(item.configHash, item.config);
+            });
+        }
+    }
+
+    private _publishSingleObject(hash: string, config: any)
+    {
+        // this.logger.info("[_publishSingleObject]");
+        const data = {
+            hash: hash,
+            config: config
+        }
+        return this._request('/config', data)
     }
 
     private _request<TRequest, TResponse>(url : string, data : TRequest)
@@ -191,3 +271,5 @@ export class SnapshotReporter
         return this._reporterTarget.request<TRequest, TResponse>(url, data);
     }
 }
+
+type ReportableDataChunk = ReportableDataItem[];
