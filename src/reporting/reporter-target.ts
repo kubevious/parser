@@ -73,23 +73,7 @@ export class ReporterTarget
                 timeout: 10 * 1000,
             })
 
-            options.authorizerCb = () => {
-
-
-                this.logger.info("[AUTH-CB] Begin...")
-
-                return this._getApiKey()
-                    .then(apiKeyData => {
-                        this.logger.info("[AUTH-CB] apiKeyData: ", apiKeyData)
-                        return this._authHttpClient!.post<ReporterAuthResponse>('/', {}, apiKeyData)
-                    })
-                    .then(result => {
-                        this.logger.info("[AUTH-CB] result: ", result.data)
-
-                        return `Bearer ${result.data.token}`;
-                    })
-
-            }
+            options.authorizerCb = this._handleAuthorizeCb.bind(this);
         }
 
         this._httpClient = new HttpClient(this._baseUrl, options);
@@ -152,6 +136,30 @@ export class ReporterTarget
 
                     throw new HandledError('Failed to report snapshot.');
                 }
+            })
+    }
+
+    private _handleAuthorizeCb()
+    {
+        this.logger.info("[_handleAuthorizeCb] Begin...")
+
+        return this._getApiKey()
+            .then(apiKeyData => {
+                if (!apiKeyData || !apiKeyData.key) {
+                    this.logger.error("[_handleAuthorizeCb] Failed to fetch api key.")
+                    throw new Error("FailedToFetchApiKey");
+                }
+                this.logger.info("[_handleAuthorizeCb] Fetched api key.")
+
+                return this._authHttpClient!.post<ReporterAuthResponse>('/', {}, apiKeyData)
+            })
+            .then(result => {
+                if (!result || !result.data || !result.data.token) {
+                    this.logger.error("[_handleAuthorizeCb] Failed to fetch token.")
+                    throw new Error("FailedToFetchToken");
+                }
+                this.logger.info("[_handleAuthorizeCb] Fetched token.")
+                return `Bearer ${result.data.token}`;
             })
     }
 

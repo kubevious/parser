@@ -21,9 +21,9 @@
   },
   "homepage": "https://github.com/kubevious/parser",
   "dependencies": {
-    "@kubevious/helper-backend": "^1.0.32",
+    "@kubevious/helper-backend": "^1.0.33",
     "@kubevious/helper-logic-processor": "^1.0.11",
-    "@kubevious/helpers": "^1.0.55",
+    "@kubevious/helpers": "^1.0.56",
     "@kubevious/http-client": "^1.0.15",
     "@kubevious/worldvious-client": "^1.0.6",
     "js-yaml": "^3.13.1",
@@ -31,7 +31,7 @@
     "moment": "^2.29.1",
     "the-lodash": "^2.0.9",
     "the-logger": "^2.0.9",
-    "the-promise": "^2.0.12"
+    "the-promise": "^2.0.13"
   },
   "devDependencies": {
     "@google-cloud/container": "^1.4.0",
