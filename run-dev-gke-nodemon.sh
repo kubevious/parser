@@ -3,6 +3,8 @@ MY_PATH="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/$(basename "${BASH_SOURCE
 MY_DIR="$(dirname $MY_PATH)"
 cd $MY_DIR
 
+source configuration.sh
+
 export GKE_CREDENTIALS_PATH=credentials.json
 export GKE_REGION=us-central1-a
 export GKE_K8S_CLUSTER=kubevious-samples

@@ -23,7 +23,7 @@ export class DebugObjectLogger
                 return;
             }
     
-            var writer = this._logger.outputStream(name + iteration + ".json");
+            let writer = this._logger.outputStream(name + iteration + ".json");
             if (writer) {
                 writer.write(_.cloneDeep(obj));
                 writer.close();

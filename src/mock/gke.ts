@@ -4,23 +4,24 @@ import { ILogger } from 'the-logger';
 
 import { Context } from '../context';
 
-import { K8sLoader, ReadyHandler } from '../loaders/k8s';
+import { K8sLoader } from '../loaders/k8s';
 
 import { KubernetesClient } from 'k8s-super-client';
 import { ClusterManagerClient } from '@google-cloud/container';
 import { HttpClient } from '@kubevious/http-client';
+import { ApiResourceStatus, ILoader, ReadyHandler } from '../loaders/types';
 
 
 const jwt = require('jsonwebtoken');
 
 
-export class GKELoader 
+export class GKELoader implements ILoader
 {
     private _context : Context;
     private _logger : ILogger;
 
     private _credentials: any;
-    private _loader : any;
+    private _loader : ILoader | null = null;
     private _readyHandler? : ReadyHandler;
     private _name: string;
     private _region: string;
@@ -32,7 +33,6 @@ export class GKELoader
         this._credentials = credentials;
         this._name = name;
         this._region = region;
-        this._loader = null;
 
         this.logger.info("Constructed");
     }
@@ -48,6 +48,11 @@ export class GKELoader
             this._loader.setupReadyHandler(this._readyHandler);
         }
     }
+
+    close()
+    {
+        
+    }
     
     run()
     {
@@ -56,7 +61,7 @@ export class GKELoader
                 return this._connectToCluster(cluster);
             })
             .then(client => {
-                var info = {
+                let info = {
                     infra: "gke",
                     project: this._credentials.project_id,
                     cluster: this._name,
@@ -64,9 +69,17 @@ export class GKELoader
                 }
         
                 this._loader = new K8sLoader(this._context, client, info);
-                this._loader.setupReadyHandler(this._readyHandler);
+                this._loader.setupReadyHandler(this._readyHandler!);
                 return this._loader.run();
             })
+    }
+
+    extractApiStatuses() : ApiResourceStatus[]
+    {
+        if (!this._loader) {
+            return [];
+        }
+        return this._loader.extractApiStatuses();
     }
 
     private _queryCluster()

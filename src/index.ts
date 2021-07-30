@@ -7,7 +7,7 @@ const backend = new Backend("parser");
 backend.initialize(() => {
     const context = new Context(backend);
 
-    var loader = new LocalLoader(context);
+    let loader = new LocalLoader(context);
     context.addLoader(loader);
 
     return context.run();

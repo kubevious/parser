@@ -3,36 +3,74 @@ import { ILogger } from 'the-logger';
 
 import { Context } from '../context';
 
-import { ApiGroup, API_GROUPS } from './api-groups'
-
 import { ItemId, extractK8sConfigId } from '@kubevious/helper-logic-processor'
 import { KubernetesObject } from 'k8s-super-client';
-
+import { ConcreteRegistry } from '../concrete/registry';
+import { makeGroupKey } from '../concrete/utils';
+import { K8sApiSelector } from '../loaders/api-selector';
 
 export class K8sParser
 {
-    private _context : Context;
-    private _logger : ILogger;
+    private _concreteRegistry : ConcreteRegistry;
+    private _apiSelector : K8sApiSelector;
+    private logger : ILogger;
+
+    private _changeSummary : Record<string, { name: string, updated: number, deleted: number }> = {};
 
     constructor(context : Context)
     {
-        this._context = context;
-        this._logger = context.logger.sublogger("K8sParser");
-    }
-
-    getAPIGroups() : ApiGroup[] {
-        return _.cloneDeep(API_GROUPS);
+        this._concreteRegistry = context.concreteRegistry;
+        this._apiSelector = context.apiSelector;
+        this.logger = context.logger.sublogger("K8sParser");
     }
 
     parse(isPresent: boolean, obj: KubernetesObject)
     {
+        obj = this._sanitize(obj);
+
         let id = this._extractId(obj);
 
         if (isPresent) {
-            this._context.concreteRegistry.add(id, obj);
+            this._concreteRegistry.add(id, obj);
         } else {
-            this._context.concreteRegistry.remove(id);
+            this._concreteRegistry.remove(id);
         }
+
+        let groupKey = makeGroupKey(id);
+        let counter = this._changeSummary[groupKey];
+        if (!counter) {
+            counter = { name: groupKey, updated: 0, deleted: 0};
+            this._changeSummary[groupKey] = counter;
+        }
+        if (isPresent) {
+            counter.updated++;
+        } else {
+            counter.deleted++;
+        }
+    }
+
+    debugOutputSummary()
+    {
+        this.logger.info("[changeSummary] >>>>>>>");
+
+        const changes = _.chain(this._changeSummary)
+            .values()
+            .orderBy([(x) => (x.deleted + x.updated), 'name'], ['desc', 'asc'])
+            .value();
+
+        for(let x of changes)
+        {
+            this.logger.info("[changeSummary] %s. Updated: %s, Deleted: %s", x.name, x.updated, x.deleted);
+        }
+
+        this.logger.info("[changeSummary] <<<<<<<");
+
+        this._changeSummary = {};
+    }
+
+    private _sanitize(obj: KubernetesObject) : KubernetesObject
+    {
+        return this._apiSelector.sanitize(obj);
     }
 
     private _extractId(obj: KubernetesObject) : ItemId

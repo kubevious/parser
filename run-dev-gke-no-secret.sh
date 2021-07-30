@@ -3,9 +3,6 @@ MY_PATH="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/$(basename "${BASH_SOURCE
 MY_DIR="$(dirname $MY_PATH)"
 cd $MY_DIR
 
-rm -rf node_modules/
-rm -rf dist/
+export KUBEVIOUS_API_SKIP_SECRET=true
 
-${MY_DIR}/update-dependencies.sh
-
-yarn
+./run-dev-gke.sh

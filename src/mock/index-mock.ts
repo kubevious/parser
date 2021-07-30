@@ -8,12 +8,12 @@ backend.initialize(() => {
 
     const context = new Context(backend);
 
-    var mockDirName = 'mock-data/data';
-    var myArgs = process.argv.slice(2);
+    let mockDirName = 'mock-data/data';
+    let myArgs = process.argv.slice(2);
     if (myArgs.length > 0) {
         mockDirName = myArgs[0];
     }
-    var loader = new K8sMockLoader(context, mockDirName);
+    let loader = new K8sMockLoader(context, mockDirName);
     context.addLoader(loader);
 
     return context.run();

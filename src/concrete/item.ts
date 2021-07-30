@@ -4,24 +4,26 @@ import { ConcreteRegistry } from './registry';
 
 import * as HashUtils from '@kubevious/helpers/dist/hash-utils';
 
-import { ItemId, IConcreteItem } from '@kubevious/helper-logic-processor';
-import { KubernetesObject } from 'k8s-super-client';
+import { ItemId, IConcreteItem, K8sConfig } from '@kubevious/helper-logic-processor';
+import { makeDictId, makeGroupKey } from './utils';
 
 export class ConcreteItem implements IConcreteItem
 {
     private _registry : ConcreteRegistry;
     private _id : ItemId;
-    private _config : KubernetesObject;
+    private _rawId: string;
+    private _config : K8sConfig;
     private _groupKey : string;
     private _idHash : string;
     private _configHash : string;
 
-    constructor(registry: ConcreteRegistry, id: ItemId, config : KubernetesObject)
+    constructor(registry: ConcreteRegistry, id: ItemId, config : K8sConfig)
     {
         this._registry = registry;
         this._id = id;
+        this._rawId = makeDictId(id);
         this._config = config;
-        this._groupKey = `${id.api}:${id.kind}`;
+        this._groupKey = makeGroupKey(id);
 
         this._idHash = HashUtils.calculateObjectHashStr(id);
         this._configHash = HashUtils.calculateObjectHashStr(config);
@@ -34,6 +36,10 @@ export class ConcreteItem implements IConcreteItem
     get registry() : ConcreteRegistry{
         return this._registry;
     }
+
+    get rawId() {
+        return this._rawId;
+    }
     
     get id() : ItemId {
         return this._id;
@@ -43,7 +49,7 @@ export class ConcreteItem implements IConcreteItem
         return this._groupKey;
     }
     
-    get config() : KubernetesObject {
+    get config() : K8sConfig {
         return this._config;
     }
 
@@ -101,7 +107,7 @@ export class ConcreteItem implements IConcreteItem
     }
 
     dump() {
-        var result : Record<any, any> = {
+        let result : Record<any, any> = {
             id: this.id
         }
         if (this.config) {

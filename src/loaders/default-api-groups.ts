@@ -3,7 +3,7 @@ export interface ApiGroup {
     kinds: string[]
 };
 
-export const API_GROUPS : ApiGroup[] = [
+export const DEFAULT_API_GROUPS : ApiGroup[] = [
     {
         api: null,
         kinds: [
@@ -67,5 +67,3 @@ export const API_GROUPS : ApiGroup[] = [
         ]
     }
 ];
-
-// export const API_GROUPS;

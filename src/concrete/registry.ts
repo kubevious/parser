@@ -2,17 +2,15 @@ import _ from 'the-lodash';
 import { Promise } from 'the-promise';
 import { ILogger } from 'the-logger';
 
-import { Context } from '../context';
-
-import { EventDampener } from '@kubevious/helpers/dist/event-dampener';
+import { EventDampener, Handler } from '@kubevious/helpers/dist/event-dampener';
 
 import { ConcreteItem } from './item';
-import { ItemId, IConcreteRegistry } from '@kubevious/helper-logic-processor';
-import { KubernetesObject } from 'k8s-super-client';
+import { ItemId, K8sConfig } from '@kubevious/helper-logic-processor';
+import { ApiGroupInfo } from 'k8s-super-client/dist/cluster-info-fetcher';
+import { makeDictId, makeGroupKey } from './utils';
 
-export class ConcreteRegistry implements IConcreteRegistry
+export class ConcreteRegistry
 {
-    private _context : Context;
     private _logger : ILogger;
 
     private _flatItemsDict : Record<any, ConcreteItem> = {};
@@ -20,10 +18,9 @@ export class ConcreteRegistry implements IConcreteRegistry
 
     private _changeEvent : EventDampener;
 
-    constructor(context : Context)
+    constructor(logger : ILogger)
     {
-        this._logger = context.logger.sublogger("ConcreteRegistry");
-        this._context = context;
+        this._logger = logger.sublogger("ConcreteRegistry");
 
         this._changeEvent = new EventDampener(this.logger);
 
@@ -48,66 +45,81 @@ export class ConcreteRegistry implements IConcreteRegistry
     {
         this._flatItemsDict = {};
         this._itemsKindDict = {};
-        this._triggerChange();
+        this.triggerChange();
     }
 
-    add(id: ItemId, obj: KubernetesObject)
+    add(id: ItemId, obj: K8sConfig)
     {
         this.logger.verbose("[add] ", id);
 
-        let rawId = this._makeDictId(id);
         let item = new ConcreteItem(this, id, obj);
 
-        this._flatItemsDict[rawId] = item;
+        this._flatItemsDict[item.rawId] = item;
 
         if (!this._itemsKindDict[item.groupKey]) {
             this._itemsKindDict[item.groupKey] = {}
         }
-        this._itemsKindDict[item.groupKey][rawId] = item;
+        this._itemsKindDict[item.groupKey][item.rawId] = item;
 
-        this._triggerChange();
+        this.triggerChange();
     }
 
     remove(id: ItemId)
     {
         this.logger.verbose("[remove] %s", id);
 
-        let rawId = this._makeDictId(id);
-
-        let item = this._flatItemsDict[rawId];
+        let item = this._flatItemsDict[makeDictId(id)];
         if (item) {
 
             const groupDict = this._itemsKindDict[item.groupKey];
             if (groupDict) {
-                delete groupDict[rawId];
+                delete groupDict[item.rawId];
                 if (_.keys(groupDict).length !== 0)
                 {
                     delete this._itemsKindDict[item.groupKey];
                 }
             } else {
-                this.logger.warn("[remove] Failed to remove kind group key %s for %s", item.groupKey, rawId);
+                this.logger.warn("[remove] Failed to remove kind group key %s for %s", item.groupKey, item.rawId);
             }
 
-            delete this._flatItemsDict[rawId];
+            delete this._flatItemsDict[item.rawId];
 
-            this._triggerChange();
+            this.triggerChange();
         }
     }
 
-    private _triggerChange()
+    removeApi(apiGroup : ApiGroupInfo)
     {
-        this.logger.debug("[_triggerChange]");
+        this.logger.info("[removeApi] ", apiGroup);
+
+        let itemId : ItemId = {
+            infra: 'k8s',
+            api: apiGroup.apiName,
+            version: apiGroup.apiVersion,
+            kind: apiGroup.kindName,
+            name: ''
+        }
+
+        const groupKey = makeGroupKey(itemId);
+
+        const groupDict = this._itemsKindDict[groupKey];
+        if (groupDict) {
+            for(let item of _.values(groupDict))
+            {
+                delete this._flatItemsDict[item.rawId];
+            }
+
+            delete this._itemsKindDict[groupKey];
+
+            this.triggerChange();
+        }
+
+    }
+
+    triggerChange()
+    {
+        this.logger.debug("[triggerChange]");
         this._changeEvent.trigger();
-    }
-
-    findById(id: ItemId) : ConcreteItem | null
-    {
-        let rawId = this._makeDictId(id);
-        let item = this._flatItemsDict[rawId];
-        if (item) {
-            return item;
-        }
-        return null;
     }
 
     filterItems(idFilter: any) : ConcreteItem[] {
@@ -120,21 +132,14 @@ export class ConcreteRegistry implements IConcreteRegistry
         return result;
     }
 
-    private _makeDictId(id: ItemId) : string {
-        if (_.isString(id)) {
-            return id;
-        }
-        return _.stableStringify(id);
-    }
-
-    onChanged(cb: any)
+    onChanged(cb: Handler)
     {
         return this._changeEvent.on(cb);
     }
 
-    extractCapacity()
+    private _extractCapacity() : CapacityCounter[]
     {
-        let cap = [];
+        let cap : CapacityCounter[] = [];
         for(let groupKey of _.keys(this._itemsKindDict))
         {
             cap.push({
@@ -146,12 +151,12 @@ export class ConcreteRegistry implements IConcreteRegistry
         return cap;
     }
 
-    debugOutputCapacity()
+    outputAndExtractCapacity() : CapacityCounter[]
     {
         this.logger.info("[concreteRegistry] >>>>>>>");
         this.logger.info("[concreteRegistry] Total Count: %s", _.keys(this._flatItemsDict).length);
 
-        const counters = this.extractCapacity();
+        const counters = this._extractCapacity();
         for(let x of counters)
         {
             this.logger.info("[concreteRegistry] %s :: %s", x.name, x.count);
@@ -159,7 +164,7 @@ export class ConcreteRegistry implements IConcreteRegistry
 
         this.logger.info("[concreteRegistry] <<<<<<<");
 
-        this._context.worldvious.acceptCounters(counters);
+        return counters;
     }
 
 
@@ -205,4 +210,11 @@ export class ConcreteRegistry implements IConcreteRegistry
         }
         return result;
     }
+}
+
+
+interface CapacityCounter 
+{
+    name: string,
+    count: number
 }

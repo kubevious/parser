@@ -21,7 +21,7 @@ backend.initialize(() => {
 
     return client.init()
         .then(() => {
-            var loader = new K8sLoader(context,
+            let loader = new K8sLoader(context,
                 client,
                 {});
             context.addLoader(loader);

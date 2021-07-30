@@ -3,6 +3,8 @@ MY_PATH="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/$(basename "${BASH_SOURCE
 MY_DIR="$(dirname $MY_PATH)"
 cd $MY_DIR
 
+source configuration.sh
+
 export LOG_TO_FILE=true
 export NODE_ENV=development
 export KUBEVIOUS_COLLECTOR=http://localhost:4001/api/v1/collect

@@ -3,16 +3,17 @@ import { ILogger } from 'the-logger';
 
 import { Context } from '../context';
 
-import { K8sLoader, ReadyHandler } from './k8s';
+import { K8sLoader } from './k8s';
 
 import { connectFromPod  } from 'k8s-super-client';
+import { ApiResourceStatus, ILoader, ReadyHandler } from './types';
 
-export class LocalLoader 
+export class LocalLoader implements ILoader
 {
     private _context : Context;
     private _logger : ILogger;
 
-    private _loader : any;
+    private _loader : ILoader | null = null;
     private _readyHandler? : ReadyHandler;
 
     constructor(context  : Context)
@@ -25,6 +26,11 @@ export class LocalLoader
 
     get logger() : ILogger {
         return this._logger;
+    }
+
+    close()
+    {
+
     }
 
     setupReadyHandler(handler : ReadyHandler)
@@ -43,8 +49,16 @@ export class LocalLoader
                     infra: "local"
                 }
                 this._loader = new K8sLoader(this._context, client, info);
-                this._loader.setupReadyHandler(this._readyHandler);
+                this._loader.setupReadyHandler(this._readyHandler!);
                 return this._loader.run();
             })
+    }
+
+    extractApiStatuses() : ApiResourceStatus[]
+    {
+        if (!this._loader) {
+            return [];
+        }
+        return this._loader.extractApiStatuses();
     }
 }

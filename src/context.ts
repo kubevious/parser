@@ -16,13 +16,15 @@ import { DebugObjectLogger } from './utils/debug-object-logger';
 import { WebServer } from './server';
 
 import VERSION from './version'
+import { ILoader } from './loaders/types';
+import { K8sApiSelector } from './loaders/api-selector';
 
 export class Context
 {
     private _backend : Backend;
     private _logger : ILogger;
     private _tracker: ProcessingTracker;
-    private _loaders: any[] = [];
+    private _loaders: LoaderInfo[] = [];
     private _concreteRegistry: ConcreteRegistry;
     private _k8sParser: K8sParser;
     private _reporter: Reporter;
@@ -31,6 +33,7 @@ export class Context
     private _worldvious: WorldviousClient;
     private _server: WebServer;
     private _areLoadersReady = false;
+    private _apiSelector: K8sApiSelector;
 
     constructor(backend : Backend)
     {
@@ -39,7 +42,9 @@ export class Context
 
         this._tracker = new ProcessingTracker(this.logger.sublogger("Tracker"));
 
-        this._concreteRegistry = new ConcreteRegistry(this);
+        this._apiSelector = new K8sApiSelector(this._logger);
+
+        this._concreteRegistry = new ConcreteRegistry(this.logger);
         this._k8sParser = new K8sParser(this);
         this._reporter = new Reporter(this);
 
@@ -96,9 +101,17 @@ export class Context
         return this._worldvious;
     }
 
-    addLoader(loader : any)
+    get apiSelector() {
+        return this._apiSelector;
+    }
+
+    get loaders() {
+        return this._loaders.map(x => x.loader);
+    }
+
+    addLoader(loader : ILoader)
     {
-        var loaderInfo = {
+        let loaderInfo : LoaderInfo = {
             loader: loader,
             isReady: false,
             readyHandler: (value : any) => {
@@ -146,7 +159,7 @@ export class Context
 
     private _checkLoadersReady()
     {
-        var areLoadersReady = this._calculateLoadersReady();
+        let areLoadersReady = this._calculateLoadersReady();
         if (areLoadersReady != this._areLoadersReady) {
             this._areLoadersReady = areLoadersReady;
             this.logger.info("[_checkLoadersReady] areLoadersReady: %s", areLoadersReady);
@@ -160,7 +173,7 @@ export class Context
 
     private _calculateLoadersReady()
     {
-        for(var loader of this._loaders)
+        for(let loader of this._loaders)
         {
             if (!loader.isReady) {
                 return false;
@@ -168,4 +181,11 @@ export class Context
         }
         return true;
     }
+}
+
+interface LoaderInfo 
+{
+    loader: ILoader,
+    isReady: boolean,
+    readyHandler: (value : any) => void,
 }

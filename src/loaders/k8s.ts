@@ -7,20 +7,25 @@ import * as Path from 'path'
 
 import { Context } from '../context';
 
-import moment from 'moment';
-import { DeltaAction, KubernetesClient, ResourceAccessor, KubernetesObject } from 'k8s-super-client';
+import { KubernetesClient } from 'k8s-super-client';
 
-export type ReadyHandler = (isReady : boolean) => void;
+import { K8sApiLoader } from './k8s-api';
+import { ApiResourceStatus, ILoader, ReadyHandler } from './types';
+import { ApiGroupInfo } from 'k8s-super-client/dist/cluster-info-fetcher';
+import { ItemId, K8sConfig } from '@kubevious/helper-logic-processor';
 
-export class K8sLoader 
+export class K8sLoader implements ILoader
 {
     private _context : Context;
     private _logger : ILogger;
 
     private _client : KubernetesClient;
     private _info : any;
-    private _apiTargets : Record<string, ApiTargetInfo> = {};
     private _readyHandler? : ReadyHandler;
+
+    private _apiLoaders : Record<string, K8sApiLoader> = {};
+
+    private _readyTimer : NodeJS.Timeout | null = null;
 
     constructor(context : Context, client : KubernetesClient, info : any)
     {
@@ -32,153 +37,78 @@ export class K8sLoader
 
         this.logger.info("Constructed");
 
-        this._setupApiTargets();
+        this._monitorApis();
     }
 
     get logger() {
         return this._logger;
     }
 
-    stop()
+    close()
     {
-        if (this._client) {
-            this._client.close();
+        if (this._readyTimer) {
+            clearInterval(this._readyTimer);
+            this._readyTimer = null;
         }
-    }
-    
-    private _setupApiTargets()
-    {
-        this.logger.info("[_setupApiTargets] BEGIN");
 
-        for(let targetAccessor of this._getTargets())
+        for(let apiLoader of _.values(this._apiLoaders))
         {
-            const id = [targetAccessor.apiName, targetAccessor.kindName].join('-');
-            this.logger.info("[_setupApiTargets] %s", id);
-
-            let targetInfo : ApiTargetInfo = {
-                id: id,
-                accessor: targetAccessor,
-                allFetched: false,
-                canIgnore: false,
-                connectDate: null
-            }
-            this._apiTargets[targetInfo.id] = targetInfo;
+            apiLoader.close();
         }
 
-        this.logger.info("[_setupApiTargets] END");
+        this._client.close();
+    }
+
+    private _monitorApis()
+    {
+        this._client.watchClusterApi((isPresent, apiGroup, client) => {
+
+            const key = this._makeGroupKey(apiGroup);
+
+            const currLoader = this._apiLoaders[key];
+            if (currLoader) {
+                currLoader.terminate();
+                currLoader.close();
+                delete this._apiLoaders[key]
+            }
+
+            
+            if (isPresent && apiGroup.isEnabled)
+            {
+                if (this._context.apiSelector.isEnabled(apiGroup.apiName, apiGroup.apiVersion, apiGroup.kindName)) {
+                    this._apiLoaders[key] = new K8sApiLoader(key, this, this._context, apiGroup, client!);
+                }
+            }
+
+            this._context.concreteRegistry.triggerChange();
+        })
     }
 
     setupReadyHandler(handler : ReadyHandler)
     {
         this._readyHandler = handler;
-        this._reportReady();
+        this.reportReady();
     }
 
-    private _getTargets() : ResourceAccessor[] {
-        let groups = this._context.k8sParser.getAPIGroups();
-        let targetInfos : { api: string | null, kind : string}[] = [];
-        for(let group of groups)
-        {
-            for(let kind of group.kinds)
-            {
-                targetInfos.push({
-                    api: group.api,
-                    kind: kind
-                });
-            }
-        }
-        this.logger.info("Targets: ", targetInfos);
-
-        let targets = targetInfos.map(x => {
-            return this._client.client(x.kind, x.api);
-        });
-
-        targets = targets.filter(x => x);
-        
-        return <ResourceAccessor[]>targets;
-    }
-
-    run() : Promise<any>
+    run()
     {
-        setInterval(() => {
-            this._reportReady()
-        }, 1000);
-
-        return Promise.serial(_.values(this._apiTargets), x => {
-            return this._watch(x);
-        })
-    }
-
-    private _watch(targetInfo : ApiTargetInfo)
-    {
-        this.logger.info("[_watch] setup: %s", targetInfo.id);
-        return targetInfo.accessor.watchAll(null, (action : DeltaAction, obj : KubernetesObject) => {
-            this._logger.verbose("[_watch] %s ::: %s %s", targetInfo.id, action, obj.kind);
-            this._logger.verbose("%s %s", action, obj.kind);
-            this._logger.silly("%s %s :: ", action, obj.kind, obj);
-            let isPresent = this._parseAction(action);
-
-            // this._debugSaveToMock(isPresent, obj);
-            this._handle(isPresent, obj);
-        }, () => {
-            this._logger.info("[_watch] Connected: %s", targetInfo.id);
-            targetInfo.connectDate = new Date();
-            this._reportReady();
-        }, (resourceAccessor : any, data: any) => {
-            this._logger.info("[_watch] Disconnected: %s", targetInfo.id);
-            targetInfo.connectDate = null;
-            if (data.status) {
-                targetInfo.canIgnore = true;
-            }
-            this._reportReady();
-        });
-    }
-
-    private _isTargetReady(targetInfo : ApiTargetInfo) : boolean
-    {
-        this.logger.verbose("[_isTargetReady] %s", targetInfo.id);
-
-        if (targetInfo.canIgnore) {
-            this.logger.silly("[_isTargetReady] %s, canIgnore: %s", targetInfo.id, targetInfo.canIgnore);
-            return true;
-        }
-
-        if (!targetInfo.connectDate) {
-            this.logger.silly("[_isTargetReady] %s, NO connectDate", targetInfo.id);
-            return false;
-        }
-
-        this.logger.silly("[_isTargetReady] %s, date: %s", targetInfo.id, targetInfo.connectDate);
-        let now = moment(new Date());
-        let connectDate = moment(targetInfo.connectDate);
-        let duration = moment.duration(now.diff(connectDate));
-        let seconds = duration.asSeconds();
-        this.logger.silly("[_isTargetReady] %s, seconds: %s", targetInfo.id, seconds);
-
-        if (seconds > 5) {
-            this.logger.verbose("[_isTargetReady] %s, is ready", targetInfo.id);
-
-            return true;
-        }
-        
-        this.logger.silly("[_isTargetReady] %s, is not ready", targetInfo.id);
-        return false;
+        this._readyTimer = setInterval(() => {
+            this.reportReady()
+        }, 5 * 1000);
     }
 
     private _isReady() : boolean
     {
-        for(let targetInfo of _.values(this._apiTargets))
+        for(let apiLoader of _.values(this._apiLoaders))
         {
-            let isReady = this._isTargetReady(targetInfo);
-            if (!isReady)
-            {
+            if (!apiLoader.isTargetReady()) {
                 return false;
             }
         }
         return true;
     }
 
-    private _reportReady() : void
+    reportReady() : void
     {
         if (!this._readyHandler) {
             return;
@@ -186,46 +116,52 @@ export class K8sLoader
         this._readyHandler!(this._isReady());
     }
 
-    private _handle(isPresent: boolean, obj: KubernetesObject) : void
+    extractApiStatuses() : ApiResourceStatus[]
     {
-        this._logger.verbose("Handle: %s, present: %s", obj.kind, isPresent);
-        this._context.k8sParser.parse(isPresent, obj);
+        if (!this._client.clusterInfo) {
+            return [];
+        }
+        
+        let statuses : ApiResourceStatus[] = [];
+        for(let apiGroup of _.values(this._client.clusterInfo.apiGroups))
+        {
+            const key = this._makeGroupKey(apiGroup);
+            const loader = this._apiLoaders[key];
+
+            const status : ApiResourceStatus = {
+                apiName: apiGroup.apiName,
+                apiVersion: apiGroup.apiVersion,
+                kindName: apiGroup.kindName
+            }
+
+            if (!loader || !loader.isConnected)
+            {
+                status.isDisconnected = true;
+            }
+
+            if (!apiGroup.isEnabled) {
+                status.isDisabled = true;
+            }
+
+            if (loader) {
+                if (loader.errorCode || loader.errorMessage)
+                {
+                    status.error = {
+                        code: loader.errorCode,
+                        message: loader.errorMessage
+                    }
+                }
+            }
+
+            statuses.push(status);
+        }
+
+        return statuses;
     }
 
-    private _parseAction(action: DeltaAction) : boolean
+    private _makeGroupKey(apiGroup: ApiGroupInfo)
     {
-        if (action == DeltaAction.Added || action == DeltaAction.Modified) {
-            return true;
-        }
-        if (action == DeltaAction.Deleted) {
-            return false;
-        }
-        return false;
+        const key = `${apiGroup.apiName}::${apiGroup.apiVersion}::${apiGroup.kindName}`;
+        return key;
     }
-    
-    private _debugSaveToMock(isPresent: boolean, obj : any)
-    {
-        if (isPresent) {
-
-            let parts = [obj.apiVersion, obj.kind, obj.namespace, obj.metadata.name];
-            parts = parts.filter(x => x);
-            let fileName =  parts.join('-');
-            fileName = fileName.replace(/\./g, "-");
-            fileName = fileName.replace(/\//g, "-");
-            fileName = fileName.replace(/\\/g, "-");
-            fileName = fileName + '.json';
-            fileName = Path.resolve(__dirname, '..', '..', 'mock', 'data', fileName);
-            this._logger.info(fileName);
-            writeFileSync(fileName, JSON.stringify(obj, null, 4));
-        }
-    }
-
-}
-
-interface ApiTargetInfo {
-    id: string,
-    accessor: ResourceAccessor,
-    allFetched: boolean,
-    canIgnore: boolean,
-    connectDate: Date | null
 }

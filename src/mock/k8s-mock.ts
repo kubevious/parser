@@ -6,10 +6,10 @@ import { readdirSync, statSync, readFileSync } from 'fs';
  
 import * as Path from 'path';
 import * as yaml from 'js-yaml';
+import { ApiResourceStatus, ILoader, ReadyHandler } from '../loaders/types';
+import { KubernetesObject } from 'k8s-super-client';
 
-type ReadyHandler = (isReady: boolean) => void;
-
-export class K8sMockLoader 
+export class K8sMockLoader implements ILoader
 {
     private _context : Context;
     private _logger : ILogger;
@@ -17,8 +17,9 @@ export class K8sMockLoader
     private _name : string;
     private _isReady : boolean = false;
 
-    private _targets : Record<string, (string | null)[]> = {};
     private _readyHandler? : ReadyHandler;
+
+    private _statuses : Record<string, ApiResourceStatus> = {}
 
     constructor(context : Context, name: string)
     {
@@ -27,8 +28,6 @@ export class K8sMockLoader
         this._name = name;
 
         this.logger.info("Constructed");
-
-        this._loadTargets();
     }
 
     get logger() {
@@ -43,16 +42,21 @@ export class K8sMockLoader
         }
     }
 
+    close()
+    {
+        
+    }
+
     run()
     {
-        var dirName = Path.resolve(__dirname, '..', '..', this._name);
+        let dirName = Path.resolve(__dirname, '..', '..', this._name);
         this.logger.info('[run] DataDir: %s', dirName);
 
-        var files = this._getAllFiles(dirName);
-        for(var fullPath of files)
+        let files = this._getAllFiles(dirName);
+        for(let fullPath of files)
         {
-            var contents = readFileSync(fullPath, { encoding: 'utf8' });
-            var obj : any = null;
+            let contents = readFileSync(fullPath, { encoding: 'utf8' });
+            let obj : any = null;
             if (fullPath.endsWith('.json')) {
                 obj = JSON.parse(contents);
             } else if (fullPath.endsWith('.yaml')) {
@@ -77,7 +81,13 @@ export class K8sMockLoader
         }, 3000);
     }
 
-    _getAllFiles(dirPath: string, arrayOfFiles? : string[]) : string[] {
+
+    extractApiStatuses() : ApiResourceStatus[]
+    {
+        return _.values(this._statuses);
+    }
+
+    private _getAllFiles(dirPath: string, arrayOfFiles? : string[]) : string[] {
         let files = readdirSync(dirPath)
       
         arrayOfFiles = arrayOfFiles || []
@@ -94,11 +104,11 @@ export class K8sMockLoader
         return arrayOfFiles
     }
 
-    _handle(isPresent: boolean, obj : any)
+    private _handle(isPresent: boolean, obj : KubernetesObject) 
     {
         if (obj.kind == 'List')
         {
-            for(var item of obj.items)
+            for(let item of <KubernetesObject[]>(obj.items))
             {
                 this._handle(isPresent, item);
             }
@@ -110,43 +120,37 @@ export class K8sMockLoader
                 return;
             }
 
-            this._logger.info("Handle: %s, present: %s", obj.kind, isPresent);
+            this._logger.debug("Handle: %s, present: %s", obj.kind, isPresent);
             this._context.k8sParser.parse(isPresent, obj);
-        }
-    }
 
-    _isTrackedObject(obj : any)
-    {
-        if (!this._targets[obj.kind]) {
-            return false;
-        }
-
-        var apiParts = obj.apiVersion.split('/');
-        var api = null;
-        if (apiParts.length == 2) {
-            api = apiParts[0]
-        } else {
-            api = null;
-        }
-
-        return _.includes(this._targets[obj.kind], api);
-    }
-
-    _loadTargets()
-    {
-        this._targets = {};
-
-        var groups = this._context.k8sParser.getAPIGroups();
-        for(var group of groups)
-        {
-            for(var kind of group.kinds)
             {
-                if (!this._targets[kind]) {
-                    this._targets[kind] = [];
+                const key = `${obj.apiVersion}:${obj.kind}`;
+                let status = this._statuses[key];
+                if (!status) {
+                    status = { 
+                        apiName: obj.apiVersion,
+                        apiVersion: obj.apiVersion,
+                        kindName: obj.kind
+                    }
+                    this._statuses[key] = status;
                 }
-                this._targets[kind].push(group.api);
             }
         }
-        this.logger.info("Targets: ", this._targets);
+    }
+
+    private _isTrackedObject(obj : KubernetesObject)
+    {
+        let apiParts = obj.apiVersion.split('/');
+        let api : string | null = null;
+        let version : string;
+        if (apiParts.length == 2) {
+            api = apiParts[0];
+            version = apiParts[1];
+        } else {
+            api = null;
+            version = apiParts[0];
+        }
+
+        return this._context.apiSelector.isEnabled(api, version, obj.kind);
     }
 }
