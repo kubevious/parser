@@ -22,10 +22,11 @@ export class K8sApiLoader
     private _apiGroup: ApiGroupInfo;
     private _client: ResourceAccessor;
 
-    private _canIgnore: boolean = false;
     private _connectDate: Date | null = null;
+    private _disconnectDate: Date | null = null;
 
     private _isConnected: boolean = false;
+    private _isDisconnected: boolean = false;
     private _errorCode: number | undefined = undefined;
     private _errorMessage: string | undefined = undefined;
 
@@ -42,6 +43,10 @@ export class K8sApiLoader
         this.logger.info("Constructed %s", this._id);
 
         this._watch();
+    }
+
+    get id() {
+        return this._id;
     }
 
     get logger() {
@@ -88,13 +93,19 @@ export class K8sApiLoader
             this._logger.info("[_watch] Connected: %s", this._id);
             this._connectDate = new Date();
             this._isConnected = true;
+            this._isDisconnected = false;
+            this._disconnectDate = null;
             this._errorCode = undefined;
             this._errorMessage = undefined;
-            this._reportReady();
         }, (resourceAccessor : any, data: any) => {
-            this._logger.info("[_watch] Disconnected: %s", this._id);
+
+            if (!this._isDisconnected) {
+                this._disconnectDate = new Date();
+            }
+            this._isDisconnected = true;
             this._connectDate = null;
             this._isConnected = false;
+
             this._errorCode = undefined;
             this._errorMessage = undefined;
         
@@ -106,10 +117,10 @@ export class K8sApiLoader
                     this._errorMessage = data.message;
                 }
             }
-            if (data.status) {
-                this._canIgnore = true;
-            }
-            this._reportReady();
+
+            this._logger.error("[_watch] Disconnected: %s. Error Code: %s. Msg: %s", this._id, this._errorCode, this._errorMessage);
+
+            this._reportNotReady();
         });
     }
 
@@ -117,27 +128,29 @@ export class K8sApiLoader
     {
         this.logger.verbose("[isTargetReady] %s", this._id);
 
-        if (this._canIgnore) {
-            this.logger.silly("[isTargetReady] %s, canIgnore: %s", this._id, this._canIgnore);
-            return true;
+        if (this._isConnected)
+        {
+            this.logger.silly("[isTargetReady] %s, IsConnected. date: %s", this._id, this._connectDate);
+
+            const seconds = getDiffInSeconds(this._connectDate!);
+            this.logger.silly("[isTargetReady] %s, Connected %s seconds ago.", this._id, seconds);
+    
+            if (seconds > 5) {
+                this.logger.verbose("[isTargetReady] %s, is ready", this._id);
+    
+                return true;
+            }
         }
 
-        if (this._connectDate) {
-            this.logger.silly("[isTargetReady] %s, NO connectDate", this._id);
-            return false;
-        }
-
-        this.logger.silly("[isTargetReady] %s, date: %s", this._id, this._connectDate);
-        let now = moment(new Date());
-        let connectDate = moment(this._connectDate);
-        let duration = moment.duration(now.diff(connectDate));
-        let seconds = duration.asSeconds();
-        this.logger.silly("[isTargetReady] %s, seconds: %s", this._id, seconds);
-
-        if (seconds > 5) {
-            this.logger.verbose("[isTargetReady] %s, is ready", this._id);
-
-            return true;
+        if (this._isDisconnected)
+        {
+            const seconds = getDiffInSeconds(this._disconnectDate!);
+            this.logger.warn("[isTargetReady] %s, Disconnected on %s, %s seconds ago.", this._id, this._disconnectDate!.toISOString(), seconds);
+    
+            if (seconds > 10) {
+                this.logger.warn("[isTargetReady] %s. Could not recover, so marking ready. Last Error Code: %s. Msg: %s. ", this._id, this._errorCode, this._errorMessage);
+                return true;
+            }
         }
         
         this.logger.silly("[isTargetReady] %s, is not ready", this._id);
@@ -146,7 +159,7 @@ export class K8sApiLoader
     
     private _handle(isPresent: boolean, obj: KubernetesObject) : void
     {
-        this._logger.verbose("Handle: %s, present: %s", obj.kind, isPresent);
+        this._logger.silly("Handle: %s, present: %s", obj.kind, isPresent);
         this._context.k8sParser.parse(isPresent, obj);
     }
 
@@ -161,9 +174,9 @@ export class K8sApiLoader
         return false;
     }
 
-    private _reportReady() : void
+    private _reportNotReady() : void
     {
-        this._loader.reportReady();
+        this._loader.determineReady(true);
     }
     
     private _debugSaveToMock(isPresent: boolean, obj : any)
@@ -183,4 +196,13 @@ export class K8sApiLoader
         }
     }
 
+}
+
+function getDiffInSeconds(date: Date) : number
+{
+    let now = moment();
+    let eventDate = moment(date);
+    let duration = moment.duration(now.diff(eventDate));
+    let seconds = duration.asSeconds();
+    return seconds;
 }

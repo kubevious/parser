@@ -1572,10 +1572,10 @@ jws@^4.0.0:
     jwa "^2.0.0"
     safe-buffer "^5.0.1"
 
-k8s-super-client@^2.0.13:
-  version "2.0.13"
-  resolved "https://registry.yarnpkg.com/k8s-super-client/-/k8s-super-client-2.0.13.tgz#b3fe656cd88a5e2adf0379c639785227f818bff2"
-  integrity sha512-S0Z5rdHLhJ3GgbddVz63N7BlFvuIOP28i0KgfGO8zPSFlH2XhvjhVkoHAtA4uS5zKTftLP53uGLSczZXXeeKrA==
+k8s-super-client@^2.0.14:
+  version "2.0.14"
+  resolved "https://registry.yarnpkg.com/k8s-super-client/-/k8s-super-client-2.0.14.tgz#c277658cb55b1251a39369b1c36a96da53f1c128"
+  integrity sha512-bYtc4ajHD4/FYztMZFKRyjfcC5IrXYW72H+337FQMN9bEgSJsJH/5VXAtUVx/gLYLxuX+XkwRLF2bpZD05l0dw==
   dependencies:
     "@types/ndjson" "^2.0.0"
     "@types/uuid" "^8.3.0"

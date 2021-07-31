@@ -46,8 +46,12 @@ export class FacadeRegistry
 
     private _handleConcreteRegistryChange()
     {
-        this._logger.info("[_handleConcreteRegistryChange]");
+        if (!this._context.areLoadersReady) {
+            this._logger.warn("[_handleConcreteRegistryChange] Skipping. Loaders not ready.");
+            return;
+        }
 
+        this._logger.info("[_handleConcreteRegistryChange]");
         this._jobDampener.acceptJob(this._context.concreteRegistry, new Date());
     }
 

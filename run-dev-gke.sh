@@ -28,5 +28,7 @@ if [ $RESULT -ne 0 ]; then
 fi
 
 # export LOG_LEVEL_GKELoader=verbose
+# export LOG_LEVEL_K8sApiLoader=silly
+
 
 node dist/mock/index-gke

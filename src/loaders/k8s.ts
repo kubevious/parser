@@ -2,9 +2,6 @@ import _ from 'the-lodash';
 import { Promise } from 'the-promise';
 import { ILogger } from 'the-logger';
 
-import { writeFileSync } from 'fs';
-import * as Path from 'path' 
-
 import { Context } from '../context';
 
 import { KubernetesClient } from 'k8s-super-client';
@@ -12,7 +9,6 @@ import { KubernetesClient } from 'k8s-super-client';
 import { K8sApiLoader } from './k8s-api';
 import { ApiResourceStatus, ILoader, ReadyHandler } from './types';
 import { ApiGroupInfo } from 'k8s-super-client/dist/cluster-info-fetcher';
-import { ItemId, K8sConfig } from '@kubevious/helper-logic-processor';
 
 export class K8sLoader implements ILoader
 {
@@ -26,6 +22,8 @@ export class K8sLoader implements ILoader
     private _apiLoaders : Record<string, K8sApiLoader> = {};
 
     private _readyTimer : NodeJS.Timeout | null = null;
+
+    private _isReady : boolean = false;
 
     constructor(context : Context, client : KubernetesClient, info : any)
     {
@@ -57,6 +55,9 @@ export class K8sLoader implements ILoader
         }
 
         this._client.close();
+
+        this._isReady = false;
+        this._reportReadiness();
     }
 
     private _monitorApis()
@@ -87,33 +88,64 @@ export class K8sLoader implements ILoader
     setupReadyHandler(handler : ReadyHandler)
     {
         this._readyHandler = handler;
-        this.reportReady();
+        this._reportReadiness();
     }
 
     run()
     {
         this._readyTimer = setInterval(() => {
-            this.reportReady()
+            this.determineReady()
         }, 5 * 1000);
     }
 
-    private _isReady() : boolean
+    determineReady(skipIfNotReady? : boolean) : void
     {
-        for(let apiLoader of _.values(this._apiLoaders))
-        {
-            if (!apiLoader.isTargetReady()) {
-                return false;
+        if (skipIfNotReady) {
+            if (!this._isReady) {
+                return;
             }
         }
-        return true;
+
+        this._checkReady();
+
+        this._reportReadiness();
     }
 
-    reportReady() : void
+    private _reportReadiness()
     {
         if (!this._readyHandler) {
             return;
         }
-        this._readyHandler!(this._isReady());
+        this._readyHandler!(this._isReady);
+    }
+
+    private _checkReady()
+    {
+        if (_.keys(this._apiLoaders).length == 0) {
+            this.logger.warn("[_checkReady] Not ready. No API services discovered yet.");
+            this._isReady = false;
+            return;
+        }
+
+        let isFinalReady = true;
+        for(let apiLoader of _.values(this._apiLoaders))
+        {
+            const isReady = apiLoader.isTargetReady();
+            if (isReady) {
+                this.logger.info("[_checkReady] API Ready: %s", apiLoader.id);
+            } else {
+                this.logger.warn("[_checkReady] API Not Ready: %s", apiLoader.id);
+                isFinalReady = false;
+            }
+        }
+
+        if (isFinalReady) {
+            this.logger.warn("[_checkReady] Is ready");
+        } else {
+            this.logger.warn("[_checkReady] Not ready");
+        }
+
+        this._isReady = isFinalReady;
     }
 
     extractApiStatuses() : ApiResourceStatus[]
