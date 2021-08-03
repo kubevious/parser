@@ -83,9 +83,12 @@ export class SnapshotReporter
                     return;
                 }
 
+                this.logger.info("[_createSnapshot] response:", result);
+
                 if (result.delay)
                 {
                     const timeout = result.delaySeconds! || 5;
+                    this.logger.info("[_createSnapshot] postponing reporting for %s seconds.", timeout);
                     return Promise.timeout(timeout * 1000)
                         .then(() => {
                             throw new HandledError('Delaying snapshot reporting');
