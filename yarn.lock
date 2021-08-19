@@ -105,10 +105,10 @@
     the-promise "^2.0.13"
     uuid "^8.3.0"
 
-"@kubevious/helper-logic-processor@^1.0.18":
-  version "1.0.18"
-  resolved "https://registry.yarnpkg.com/@kubevious/helper-logic-processor/-/helper-logic-processor-1.0.18.tgz#fbbaf6258367d149264d3e9dd7b28fcbd8ddcd42"
-  integrity sha512-FwyKUWcXFMe3erWJbtfoljcwwkJB/RqbWqxE67H0TP0duVYIk1wBacusUJ+Jt6Sh6M3QdASwLhMwjmzPwOzYFg==
+"@kubevious/helper-logic-processor@^1.0.19":
+  version "1.0.19"
+  resolved "https://registry.yarnpkg.com/@kubevious/helper-logic-processor/-/helper-logic-processor-1.0.19.tgz#292bec6039c95a725249b50e5ba9b95f41545346"
+  integrity sha512-xi1NVF6XbLeIQFBHiN/Qf3DOxIU4IabVnhzXs7DfsrKs0LsbMl1IZNMWBig4hgsV8wzO1DKYNpwoTz6u7cDmyg==
   dependencies:
     "@kubevious/helpers" "^1.0.57"
     the-lodash "^2.0.9"
@@ -119,6 +119,16 @@
   version "1.0.57"
   resolved "https://registry.yarnpkg.com/@kubevious/helpers/-/helpers-1.0.57.tgz#17f00d17f463320bd23af64c0ae64f837d29b92e"
   integrity sha512-baNO0/zIh1mo96eJH80+NsDIW0c0tdvtShKP2R8JXMPvWBbpVksG9AQ76LYbp24VWXXQaSOju/K98fdDYrcONQ==
+  dependencies:
+    moment "^2.29.1"
+    the-lodash "^2.0.9"
+    the-logger "^2.0.9"
+    the-promise "^2.0.13"
+
+"@kubevious/helpers@^1.0.61":
+  version "1.0.61"
+  resolved "https://registry.yarnpkg.com/@kubevious/helpers/-/helpers-1.0.61.tgz#95079e05da4b1af44d42bcf526e42d4ba4bc21de"
+  integrity sha512-da+OOMMGmQYi6biYr6RI87CJGUhAS8bj9+W/nNZgzj1rXdLQEiARVMu9u7BtYN1skUB0RMYgeZPFMZP0j9bKqQ==
   dependencies:
     moment "^2.29.1"
     the-lodash "^2.0.9"
@@ -1572,10 +1582,10 @@ jws@^4.0.0:
     jwa "^2.0.0"
     safe-buffer "^5.0.1"
 
-k8s-super-client@^2.0.14:
-  version "2.0.14"
-  resolved "https://registry.yarnpkg.com/k8s-super-client/-/k8s-super-client-2.0.14.tgz#c277658cb55b1251a39369b1c36a96da53f1c128"
-  integrity sha512-bYtc4ajHD4/FYztMZFKRyjfcC5IrXYW72H+337FQMN9bEgSJsJH/5VXAtUVx/gLYLxuX+XkwRLF2bpZD05l0dw==
+k8s-super-client@^2.0.16:
+  version "2.0.16"
+  resolved "https://registry.yarnpkg.com/k8s-super-client/-/k8s-super-client-2.0.16.tgz#dbfc5ca7043e3372efce1c99919b2a85079e9d5a"
+  integrity sha512-rF42JmFUyGXDOd0JKdrRXXEQmZ+7sl4MGXcvH3zeAjz4D928/07hppnnGR+30THFlgNItv07QH3R1+5mNNYbbg==
   dependencies:
     "@types/ndjson" "^2.0.0"
     "@types/uuid" "^8.3.0"
