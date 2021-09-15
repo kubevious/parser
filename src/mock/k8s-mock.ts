@@ -8,6 +8,7 @@ import * as Path from 'path';
 import * as yaml from 'js-yaml';
 import { ApiResourceStatus, ILoader, ReadyHandler } from '../loaders/types';
 import { KubernetesObject } from 'k8s-super-client';
+import { extractK8sConfigId } from '@kubevious/helper-logic-processor'
 
 export class K8sMockLoader implements ILoader
 {
@@ -115,7 +116,8 @@ export class K8sMockLoader implements ILoader
         }
         else
         {
-            if (!this._isTrackedObject(obj)) {
+            const id = extractK8sConfigId(obj);
+            if (!this._context.apiSelector.isEnabled(id.api, id.version, obj.kind)) {
                 this._logger.warn("Object %s :: %s is not tracked.", obj.apiVersion, obj.kind);
                 return;
             }
@@ -128,8 +130,8 @@ export class K8sMockLoader implements ILoader
                 let status = this._statuses[key];
                 if (!status) {
                     status = { 
-                        apiName: obj.apiVersion,
-                        apiVersion: obj.apiVersion,
+                        apiName: id.api,
+                        apiVersion: id.version,
                         kindName: obj.kind
                     }
                     this._statuses[key] = status;
@@ -138,7 +140,7 @@ export class K8sMockLoader implements ILoader
         }
     }
 
-    private _isTrackedObject(obj : KubernetesObject)
+    private _parseAPIVersion(obj : KubernetesObject)
     {
         let apiParts = obj.apiVersion.split('/');
         let api : string | null = null;
@@ -151,6 +153,9 @@ export class K8sMockLoader implements ILoader
             version = apiParts[0];
         }
 
-        return this._context.apiSelector.isEnabled(api, version, obj.kind);
+        return {
+            api: api,
+            version: version
+        }
     }
 }

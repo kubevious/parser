@@ -105,30 +105,20 @@
     the-promise "^2.0.13"
     uuid "^8.3.0"
 
-"@kubevious/helper-logic-processor@^1.0.19":
-  version "1.0.19"
-  resolved "https://registry.yarnpkg.com/@kubevious/helper-logic-processor/-/helper-logic-processor-1.0.19.tgz#292bec6039c95a725249b50e5ba9b95f41545346"
-  integrity sha512-xi1NVF6XbLeIQFBHiN/Qf3DOxIU4IabVnhzXs7DfsrKs0LsbMl1IZNMWBig4hgsV8wzO1DKYNpwoTz6u7cDmyg==
+"@kubevious/helper-logic-processor@^1.0.22":
+  version "1.0.22"
+  resolved "https://registry.yarnpkg.com/@kubevious/helper-logic-processor/-/helper-logic-processor-1.0.22.tgz#40de45e93329201886b14bad42c74410d330d7f0"
+  integrity sha512-qpR+UPzpIOWrD2VdmdldB7wfUgklvc2HHzcN4R4fxQ9tJ5/lXme//nqj9Ddn/aDYbhpOh0gwl+xT7xcw086TYA==
   dependencies:
-    "@kubevious/helpers" "^1.0.57"
+    "@kubevious/helpers" "^1.0.62"
     the-lodash "^2.0.9"
     the-logger "^2.0.9"
     the-promise "^2.0.13"
 
-"@kubevious/helpers@^1.0.57":
-  version "1.0.57"
-  resolved "https://registry.yarnpkg.com/@kubevious/helpers/-/helpers-1.0.57.tgz#17f00d17f463320bd23af64c0ae64f837d29b92e"
-  integrity sha512-baNO0/zIh1mo96eJH80+NsDIW0c0tdvtShKP2R8JXMPvWBbpVksG9AQ76LYbp24VWXXQaSOju/K98fdDYrcONQ==
-  dependencies:
-    moment "^2.29.1"
-    the-lodash "^2.0.9"
-    the-logger "^2.0.9"
-    the-promise "^2.0.13"
-
-"@kubevious/helpers@^1.0.61":
-  version "1.0.61"
-  resolved "https://registry.yarnpkg.com/@kubevious/helpers/-/helpers-1.0.61.tgz#95079e05da4b1af44d42bcf526e42d4ba4bc21de"
-  integrity sha512-da+OOMMGmQYi6biYr6RI87CJGUhAS8bj9+W/nNZgzj1rXdLQEiARVMu9u7BtYN1skUB0RMYgeZPFMZP0j9bKqQ==
+"@kubevious/helpers@^1.0.62":
+  version "1.0.62"
+  resolved "https://registry.yarnpkg.com/@kubevious/helpers/-/helpers-1.0.62.tgz#68a9079411b7ec8a1cb6a15d6d3c458f54b51ff9"
+  integrity sha512-8UleQ3aDzjH008x5FVXv5dXa6gHVA3+D8KuChgcntBwWzme8JmIbvrlbIRnUgf6ZsQSHSo26bzHl7YFicMsPyQ==
   dependencies:
     moment "^2.29.1"
     the-lodash "^2.0.9"
