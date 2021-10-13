@@ -44,7 +44,10 @@ export class K8sApiSelector
         const key = makeKey(obj.apiVersion, obj.kind);
         const cb = this._sanitizers[key];
         if (cb) {
-            return cb(obj);
+            // TODO: Next line is a temporary workaround because there is an issue in k8s-client library.
+            // Without it there is an "Final Delta After Recover Should Be Empty!" error.
+            const clone = _.cloneDeep(obj);
+            return cb(clone);
         }
         return obj;
     }
