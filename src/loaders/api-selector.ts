@@ -102,7 +102,6 @@ export class K8sApiSelector
         {
             obj.data = _.makeDict(_.keys(obj.data), x => x, x => null);
         }
-        this._logger.error("SECRET", obj);
         return obj;
     }
 
