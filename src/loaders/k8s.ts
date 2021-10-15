@@ -8,7 +8,7 @@ import { KubernetesClient } from 'k8s-super-client';
 
 import { K8sApiLoader } from './k8s-api';
 import { ApiResourceStatus, ILoader, ReadyHandler } from './types';
-import { ApiGroupInfo } from 'k8s-super-client/dist/cluster-info-fetcher';
+import { ApiGroupInfo } from 'k8s-super-client';
 
 export class K8sLoader implements ILoader
 {
@@ -154,8 +154,8 @@ export class K8sLoader implements ILoader
             return [];
         }
         
-        let statuses : ApiResourceStatus[] = [];
-        for(let apiGroup of _.values(this._client.clusterInfo.apiGroups))
+        const statuses : ApiResourceStatus[] = [];
+        for(const apiGroup of _.values(this._client.clusterInfo.apiGroups))
         {
             const key = this._makeGroupKey(apiGroup);
             const loader = this._apiLoaders[key];
@@ -193,7 +193,7 @@ export class K8sLoader implements ILoader
 
     private _makeGroupKey(apiGroup: ApiGroupInfo)
     {
-        const key = `${apiGroup.apiName}::${apiGroup.apiVersion}::${apiGroup.kindName}`;
+        const key = `${apiGroup.api}::${apiGroup.kindName}`;
         return key;
     }
 }

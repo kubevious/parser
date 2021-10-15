@@ -6,7 +6,7 @@ import { EventDampener, Handler } from '@kubevious/helpers/dist/event-dampener';
 
 import { ConcreteItem } from './item';
 import { ItemId, K8sConfig } from '@kubevious/helper-logic-processor';
-import { ApiGroupInfo } from 'k8s-super-client/dist/cluster-info-fetcher';
+import { ApiGroupInfo } from 'k8s-super-client';
 import { makeDictId, makeGroupKey } from './utils';
 
 export class ConcreteRegistry
@@ -94,7 +94,7 @@ export class ConcreteRegistry
 
         const itemId : ItemId = {
             infra: 'k8s',
-            api: apiGroup.apiName ? `${apiGroup.apiName}/${apiGroup.apiVersion}` : apiGroup.apiVersion,
+            api: apiGroup.api,
             apiName: apiGroup.apiName,
             version: apiGroup.apiVersion,
             kind: apiGroup.kindName,

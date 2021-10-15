@@ -67,7 +67,7 @@ export class FacadeRegistry
 
         const statuses : ApiResourceStatus[] = _.flatten(this._context.loaders.map(x => x.extractApiStatuses()));
 
-        for(let status of statuses)
+        for(const status of statuses)
         {
             if (!this._context.apiSelector.isEnabled(status.apiName, status.apiVersion, status.kindName))
             {
@@ -85,8 +85,8 @@ export class FacadeRegistry
         const id : ItemId = {
             synthetic: true,
             infra: 'k8s',
-            api: 'kubevious.io',
-            apiName: 'kubevious.io/v1',
+            api: 'kubevious.io/v1',
+            apiName: 'kubevious.io',
             version: 'v1',
             kind: 'ApiResourceStatus',
             name: 'default'

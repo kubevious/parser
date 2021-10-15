@@ -9,7 +9,7 @@ import { Context } from '../context';
 
 import moment from 'moment';
 import { DeltaAction, ResourceAccessor, KubernetesObject } from 'k8s-super-client';
-import { ApiGroupInfo } from 'k8s-super-client/dist/cluster-info-fetcher';
+import { ApiGroupInfo } from 'k8s-super-client';
 import { K8sLoader } from './k8s';
 
 export class K8sApiLoader 
