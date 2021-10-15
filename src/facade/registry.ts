@@ -86,6 +86,7 @@ export class FacadeRegistry
             synthetic: true,
             infra: 'k8s',
             api: 'kubevious.io',
+            apiName: 'kubevious.io/v1',
             version: 'v1',
             kind: 'ApiResourceStatus',
             name: 'default'

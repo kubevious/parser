@@ -52,7 +52,7 @@ export class ConcreteRegistry
     {
         this.logger.verbose("[add] ", id);
 
-        let item = new ConcreteItem(this, id, obj);
+        const item = new ConcreteItem(this, id, obj);
 
         this._flatItemsDict[item.rawId] = item;
 
@@ -68,7 +68,7 @@ export class ConcreteRegistry
     {
         this.logger.verbose("[remove] %s", id);
 
-        let item = this._flatItemsDict[makeDictId(id)];
+        const item = this._flatItemsDict[makeDictId(id)];
         if (item) {
 
             const groupDict = this._itemsKindDict[item.groupKey];
@@ -92,9 +92,10 @@ export class ConcreteRegistry
     {
         this.logger.info("[removeApi] ", apiGroup);
 
-        let itemId : ItemId = {
+        const itemId : ItemId = {
             infra: 'k8s',
-            api: apiGroup.apiName,
+            api: apiGroup.apiName ? `${apiGroup.apiName}/${apiGroup.apiVersion}` : apiGroup.apiVersion,
+            apiName: apiGroup.apiName,
             version: apiGroup.apiVersion,
             kind: apiGroup.kindName,
             name: ''
@@ -104,7 +105,7 @@ export class ConcreteRegistry
 
         const groupDict = this._itemsKindDict[groupKey];
         if (groupDict) {
-            for(let item of _.values(groupDict))
+            for(const item of _.values(groupDict))
             {
                 delete this._flatItemsDict[item.rawId];
             }
@@ -113,7 +114,6 @@ export class ConcreteRegistry
 
             this.triggerChange();
         }
-
     }
 
     triggerChange()

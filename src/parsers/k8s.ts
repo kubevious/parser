@@ -28,7 +28,7 @@ export class K8sParser
     {
         obj = this._sanitize(obj);
 
-        let id = this._extractId(obj);
+        const id = this._extractId(obj);
 
         if (isPresent) {
             this._concreteRegistry.add(id, obj);
@@ -36,7 +36,7 @@ export class K8sParser
             this._concreteRegistry.remove(id);
         }
 
-        let groupKey = makeGroupKey(id);
+        const groupKey = makeGroupKey(id);
         let counter = this._changeSummary[groupKey];
         if (!counter) {
             counter = { name: groupKey, updated: 0, deleted: 0};
