@@ -22,7 +22,7 @@
   "homepage": "https://github.com/kubevious/parser",
   "dependencies": {
     "@kubevious/helper-backend": "^1.0.34",
-    "@kubevious/helper-logic-processor": "^1.0.33",
+    "@kubevious/helper-logic-processor": "^1.0.52",
     "@kubevious/helpers": "^1.0.62",
     "@kubevious/http-client": "^1.0.15",
     "@kubevious/worldvious-client": "^1.0.6",
@@ -30,7 +30,7 @@
     "k8s-super-client": "^2.0.21",
     "moment": "^2.29.1",
     "the-lodash": "^2.0.9",
-    "the-logger": "^2.0.9",
+    "the-logger": "^2.0.10",
     "the-promise": "^2.0.13"
   },
   "devDependencies": {
@@ -50,5 +50,16 @@
     "should": "^13.2.3",
     "ts-node": "^9.0.0",
     "typescript": "^4.0.2"
+  },
+  "resolutions": {
+    "the-lodash": "^2.0.9",
+    "the-logger": "^2.0.10",
+    "the-promise": "^2.0.13",
+    "k8s-super-client": "^2.0.21",
+    "@kubevious/helpers": "^1.0.62",
+    "@kubevious/worldvious-client": "^1.0.6",
+    "@kubevious/helper-backend": "^1.0.34",
+    "@kubevious/helper-logic-processor": "^1.0.52",
+    "@kubevious/http-client": "^1.0.15"
   }
 }

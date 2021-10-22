@@ -9,8 +9,10 @@ COPY ./package*.json ./
 COPY ./yarn.lock ./
 RUN yarn install --frozen-lockfile
 COPY ./src ./src
+COPY ./tools ./tools
 COPY ./tsconfig.json ./
 RUN npm run build
+RUN ./tools/kubevious-npm-validate-nested-dependencies.sh
 
 ###############################################################################
 # Step 2 : Runner image

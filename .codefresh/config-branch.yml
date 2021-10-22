@@ -28,7 +28,8 @@ steps:
     working_directory: ${{main_clone}}
     commands:
       - yarn install --frozen-lockfile
-    
+      - ./tools/kubevious-npm-validate-nested-dependencies.sh
+
   compile:
     title: Compile
     stage: build
@@ -36,4 +37,3 @@ steps:
     working_directory: ${{main_clone}}
     commands:
       - npm run build
-    
