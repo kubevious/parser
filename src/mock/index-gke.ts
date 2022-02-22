@@ -13,7 +13,7 @@ backend.initialize(() => {
 
     const credsPath = path.resolve(__dirname, '..', '..', process.env.GKE_CREDENTIALS_PATH!);
     const credentials = JSON.parse(fs.readFileSync(credsPath, 'utf8'));
-    let loader = new GKELoader(context,
+    const loader = new GKELoader(context,
         credentials,
         process.env.GKE_K8S_CLUSTER!,
         process.env.GKE_REGION!);

@@ -58,7 +58,7 @@ export class K8sParser
             .orderBy([(x) => (x.deleted + x.updated), 'name'], ['desc', 'asc'])
             .value();
 
-        for(let x of changes)
+        for(const x of changes)
         {
             this.logger.info("[changeSummary] %s. Updated: %s, Deleted: %s", x.name, x.updated, x.deleted);
         }

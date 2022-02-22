@@ -21,16 +21,16 @@
   },
   "homepage": "https://github.com/kubevious/parser",
   "dependencies": {
-    "@kubevious/helper-backend": "^1.0.34",
-    "@kubevious/helper-logic-processor": "^1.0.52",
+    "@kubevious/helper-backend": "^1.0.38",
+    "@kubevious/helper-logic-processor": "^1.0.65",
     "@kubevious/helpers": "^1.0.62",
-    "@kubevious/http-client": "^1.0.15",
+    "@kubevious/http-client": "^1.0.19",
     "@kubevious/worldvious-client": "^1.0.6",
     "js-yaml": "^3.13.1",
-    "k8s-super-client": "^2.0.21",
+    "k8s-super-client": "^2.0.25",
     "moment": "^2.29.1",
     "the-lodash": "^2.0.9",
-    "the-logger": "^2.0.10",
+    "the-logger": "^2.0.14",
     "the-promise": "^2.0.13"
   },
   "devDependencies": {
@@ -53,13 +53,13 @@
   },
   "resolutions": {
     "the-lodash": "^2.0.9",
-    "the-logger": "^2.0.10",
+    "the-logger": "^2.0.14",
     "the-promise": "^2.0.13",
-    "k8s-super-client": "^2.0.21",
+    "k8s-super-client": "^2.0.25",
     "@kubevious/helpers": "^1.0.62",
     "@kubevious/worldvious-client": "^1.0.6",
-    "@kubevious/helper-backend": "^1.0.34",
-    "@kubevious/helper-logic-processor": "^1.0.52",
-    "@kubevious/http-client": "^1.0.15"
+    "@kubevious/helper-backend": "^1.0.38",
+    "@kubevious/helper-logic-processor": "^1.0.65",
+    "@kubevious/http-client": "^1.0.19"
   }
 }

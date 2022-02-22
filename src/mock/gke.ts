@@ -6,7 +6,7 @@ import { Context } from '../context';
 
 import { K8sLoader } from '../loaders/k8s';
 
-import { KubernetesClient } from 'k8s-super-client';
+import { KubernetesClient, KubernetesClientConfig } from 'k8s-super-client';
 import { ClusterManagerClient } from '@google-cloud/container';
 import { HttpClient } from '@kubevious/http-client';
 import { ApiResourceStatus, ILoader, ReadyHandler } from '../loaders/types';
@@ -61,7 +61,7 @@ export class GKELoader implements ILoader
                 return this._connectToCluster(cluster);
             })
             .then(client => {
-                let info = {
+                const info = {
                     infra: "gke",
                     project: this._credentials.project_id,
                     cluster: this._name,
@@ -84,11 +84,11 @@ export class GKELoader implements ILoader
 
     private _queryCluster()
     {
-        let client = new ClusterManagerClient({
+        const client = new ClusterManagerClient({
             credentials: this._credentials
         });
 
-        let params = {
+        const params = {
             name: `projects/${this._credentials.project_id}/locations/${this._region}/clusters/${this._name}`
         }
         this.logger.info("[queryCluster] ", params);
@@ -113,8 +113,8 @@ export class GKELoader implements ILoader
             .then(result => {
                 this.logger.silly('[connectToRemoteKubernetes] LoginResult: ', result);
 
-                let config = {
-                    server: 'https://' + cluster.endpoint,
+                const config : KubernetesClientConfig = {
+                    server: `https://${cluster.endpoint}`,
                     token: result.access_token,
                     httpAgent: {
                         ca: Buffer.from(cluster.masterAuth.clusterCaCertificate, 'base64').toString('ascii'),
@@ -147,8 +147,8 @@ export class GKELoader implements ILoader
     private _buildK8sToken()
     {
         const TOKEN_DURATION_IN_SECONDS = 3600;
-        let issuedAt = Math.floor(Date.now() / 1000);
-        let token = jwt.sign(
+        const issuedAt = Math.floor(Date.now() / 1000);
+        const token = jwt.sign(
             {
                 'iss': this._credentials.client_email,
                 'sub': this._credentials.client_email,

@@ -123,8 +123,8 @@ export class ConcreteRegistry
     }
 
     filterItems(idFilter: any) : ConcreteItem[] {
-        let result : ConcreteItem[] = [];
-        for(let item of this.allItems) {
+        const result : ConcreteItem[] = [];
+        for(const item of this.allItems) {
             if (item.matchesFilter(idFilter)) {
                 result.push(item);
             }
@@ -140,7 +140,7 @@ export class ConcreteRegistry
     private _extractCapacity() : CapacityCounter[]
     {
         let cap : CapacityCounter[] = [];
-        for(let groupKey of _.keys(this._itemsKindDict))
+        for(const groupKey of _.keys(this._itemsKindDict))
         {
             cap.push({
                 name: groupKey,
@@ -157,7 +157,7 @@ export class ConcreteRegistry
         this.logger.info("[concreteRegistry] Total Count: %s", _.keys(this._flatItemsDict).length);
 
         const counters = this._extractCapacity();
-        for(let x of counters)
+        for(const x of counters)
         {
             this.logger.info("[concreteRegistry] %s :: %s", x.name, x.count);
         }
@@ -170,18 +170,18 @@ export class ConcreteRegistry
 
     debugOutputToFile()
     {
-        let writer = this.logger.outputStream("dump-concrete-registry");
+        const writer = this.logger.outputStream("dump-concrete-registry");
         if (!writer) {
             return Promise.resolve();
         }
 
         this.logger.info("[debugOutputToFile] BEGIN");
 
-        let ids = _.keys(this._flatItemsDict);
+        const ids = _.keys(this._flatItemsDict);
         ids.sort();
-        for(let id of ids) {
+        for(const id of ids) {
             writer.write('-) ' + id);
-            let item = this._flatItemsDict[id];
+            const item = this._flatItemsDict[id];
             item.debugOutputToFile(writer);
             writer.newLine();
         }
@@ -201,11 +201,11 @@ export class ConcreteRegistry
     }
 
     dump() {
-        let result : Record<any, any> = {};
-        let ids = _.keys(this._flatItemsDict);
+        const result : Record<any, any> = {};
+        const ids = _.keys(this._flatItemsDict);
         ids.sort();
-        for(let id of ids) {
-            let item = this._flatItemsDict[id];
+        for(const id of ids) {
+            const item = this._flatItemsDict[id];
             result[id] = item.dump();
         }
         return result;

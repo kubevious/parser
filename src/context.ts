@@ -111,7 +111,7 @@ export class Context
 
     addLoader(loader : ILoader)
     {
-        let loaderInfo : LoaderInfo = {
+        const loaderInfo : LoaderInfo = {
             loader: loader,
             isReady: false,
             readyHandler: (value : any) => {
@@ -159,7 +159,7 @@ export class Context
 
     private _checkLoadersReady()
     {
-        let areLoadersReady = this._calculateLoadersReady();
+        const areLoadersReady = this._calculateLoadersReady();
         if (areLoadersReady != this._areLoadersReady) {
             this._areLoadersReady = areLoadersReady;
             this.logger.info("[_checkLoadersReady] areLoadersReady: %s", areLoadersReady);
@@ -173,7 +173,7 @@ export class Context
 
     private _calculateLoadersReady()
     {
-        for(let loader of this._loaders)
+        for(const loader of this._loaders)
         {
             if (!loader.isReady) {
                 return false;
