@@ -86,10 +86,17 @@
   resolved "https://registry.yarnpkg.com/@humanwhocodes/object-schema/-/object-schema-1.2.0.tgz#87de7af9c231826fdd68ac7258f77c429e0e5fcf"
   integrity sha512-wdppn25U8z/2yiaT6YGquE6X8sSv7hNMWSXYSSU1jGv/yd6XqjXgTDJ8KP4NgjTXfJ3GbRjeeb8RTV7a/VpM+w==
 
-"@kubevious/entity-meta@^1.0.45", "@kubevious/entity-meta@^1.0.47":
+"@kubevious/entity-meta@^1.0.45":
   version "1.0.47"
   resolved "https://registry.yarnpkg.com/@kubevious/entity-meta/-/entity-meta-1.0.47.tgz#f0dbcbb08cf574c3d13062da11476c7bec79edb1"
   integrity sha512-TZLLNm24iPpniSVAMJpOl15cae9WjHBKrE0Jo2a+Cy3RjNDJP2w8cXqWO99mTFYOWfUefvqQnZiSB5a76LmIXw==
+  dependencies:
+    the-lodash "^2.0.9"
+
+"@kubevious/entity-meta@^1.0.54":
+  version "1.0.56"
+  resolved "https://registry.yarnpkg.com/@kubevious/entity-meta/-/entity-meta-1.0.56.tgz#e2460fee0d7ae931b1da911725e9f0aa556a9e48"
+  integrity sha512-KW9dhxn6bEGK9z4/426i8Un+/uPc1HLUoZA61okj26s+BKnB9uOte2PPGdl0tu/I0WIx2zZ9zMj21NywdfH09g==
   dependencies:
     the-lodash "^2.0.9"
 
@@ -108,12 +115,12 @@
     the-promise "^2.0.13"
     uuid "^8.3.0"
 
-"@kubevious/helper-logic-processor@^1.0.65":
-  version "1.0.65"
-  resolved "https://registry.yarnpkg.com/@kubevious/helper-logic-processor/-/helper-logic-processor-1.0.65.tgz#6106992228d736adca1633f6d0d33fa05eacc5e9"
-  integrity sha512-4QNOJanaeQFeE7nh/72MIaDBJxlqd/zg/cX2XicWi5RzpNadLz8dV2sy11ciXvECabx7aT0aNvaLrpvUGmDjLg==
+"@kubevious/helper-logic-processor@^1.0.70":
+  version "1.0.70"
+  resolved "https://registry.yarnpkg.com/@kubevious/helper-logic-processor/-/helper-logic-processor-1.0.70.tgz#e6b1a3f863f44e3c26ae927e0aba288742d01a63"
+  integrity sha512-ljfW1NP0bTfFMkpsQYbBZYc5R/hhZ6yehf+LEF+qvtwrX/Mc7K0GceUTIChCq6/52jm/9Fk1/29OXyS/5DQLQA==
   dependencies:
-    "@kubevious/entity-meta" "^1.0.47"
+    "@kubevious/entity-meta" "^1.0.54"
     "@kubevious/helpers" "^1.0.62"
     "@kubevious/state-registry" "^1.0.13"
     glob "^7.1.7"

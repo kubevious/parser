@@ -10,7 +10,7 @@ export NODE_ENV=development
 export GKE_CREDENTIALS_PATH=mock-data/credentials.json
 export GKE_REGION=us-central1-a
 export GKE_K8S_CLUSTER=kubevious-samples
-export KUBEVIOUS_COLLECTOR=http://localhost:4001/api/v1/collect
+export KUBEVIOUS_COLLECTOR=http://localhost:4003/api/v1/collect
 
 # export WORLDVIOUS_URL=http://localhost:4501/api/v1/oss
 # export WORLDVIOUS_ID=123e4567-e89b-12d3-a456-426614174000

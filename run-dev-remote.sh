@@ -7,7 +7,7 @@ source configuration.sh
 
 export LOG_TO_FILE=true
 export NODE_ENV=development
-export KUBEVIOUS_COLLECTOR=http://localhost:4001/api/v1/collect
+export KUBEVIOUS_COLLECTOR=http://localhost:4003/api/v1/collect
 
 ./build.sh
 RESULT=$?
