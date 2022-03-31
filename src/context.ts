@@ -1,9 +1,7 @@
 import { ILogger } from 'the-logger';
 import { Promise } from 'the-promise';
 
-import { Backend, TimerFunction } from '@kubevious/helper-backend'
-
-import { ProcessingTracker } from '@kubevious/helpers/dist/processing-tracker';
+import { Backend } from '@kubevious/helper-backend'
 
 import { ConcreteRegistry } from './concrete/registry';
 
@@ -23,7 +21,6 @@ export class Context
 {
     private _backend : Backend;
     private _logger : ILogger;
-    private _tracker: ProcessingTracker;
     private _loaders: LoaderInfo[] = [];
     private _concreteRegistry: ConcreteRegistry;
     private _k8sParser: K8sParser;
@@ -39,8 +36,6 @@ export class Context
     {
         this._backend = backend;
         this._logger = backend.logger.sublogger('Context');
-
-        this._tracker = new ProcessingTracker(this.logger.sublogger("Tracker"));
 
         this._apiSelector = new K8sApiSelector(this._logger);
 
@@ -70,7 +65,7 @@ export class Context
     }
 
     get tracker() {
-        return this._tracker;
+        return this._backend.tracker;
     }
 
     get concreteRegistry() : ConcreteRegistry {

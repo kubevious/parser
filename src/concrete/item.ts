@@ -2,7 +2,7 @@ import _ from 'the-lodash';
 import { ILogger, DumpWriter } from 'the-logger';
 import { ConcreteRegistry } from './registry';
 
-import * as HashUtils from '@kubevious/helpers/dist/hash-utils';
+import { HashUtils } from '@kubevious/data-models';
 
 import { ItemId, IConcreteItem, K8sConfig } from '@kubevious/helper-logic-processor';
 import { makeDictId, makeGroupKey } from './utils';
