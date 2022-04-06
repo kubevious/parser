@@ -11,12 +11,14 @@ import { Snapshot } from './snapshot';
 import { SnapshotReporter } from './snapshot-reporter';
 
 import { HandledError } from '@kubevious/helpers/dist/handled-error';
-import { CollectorConfig, ReporterAuthResponse } from './types';
+import { CollectorConfig, Counter, ReporterAuthResponse } from './types';
 
 export class ReporterTarget
 {
     private _logger : ILogger;
     private _snapshotLogger : ILogger;
+
+    private _counter: Counter;
 
     private _config : CollectorConfig;
     private _baseUrl : string;
@@ -29,7 +31,8 @@ export class ReporterTarget
     private _latestSnapshot : Snapshot | null = null;
     private _latestSnapshotId : string | null = null;
 
-    constructor(logger : ILogger, config : CollectorConfig)
+    
+    constructor(logger : ILogger, config : CollectorConfig, counter: Counter)
     {
         this._logger = logger.sublogger("ReporterTarget");
         this._snapshotLogger = logger.sublogger("SnapshotReporter");
@@ -37,7 +40,9 @@ export class ReporterTarget
         this._config = config;
         this._baseUrl = config.url;
 
-        let options : Partial<HttpClientOptions> = {
+        this._counter = counter;
+
+        const options : Partial<HttpClientOptions> = {
             timeout: 10 * 1000,
             retry: {
                 initRetryDelay: 2 * 1000,
@@ -51,7 +56,7 @@ export class ReporterTarget
 
                     if (status) {
                         if (status == 413) {
-                            let size = _.get(reason, 'request._redirectable._requestBodyLength');
+                            const size = _.get(reason, 'request._redirectable._requestBodyLength');
                             this.logger.warn('[canContinueCb] Request too big. Ignoring. URL: %s, Size: %s bytes', requestInfo.url, size)
                             return false;
                         }
@@ -104,7 +109,7 @@ export class ReporterTarget
 
                 if (status) {
                     if (status == 413) {
-                        let size = _.get(reason, 'request._redirectable._requestBodyLength');
+                        const size = _.get(reason, 'request._redirectable._requestBodyLength');
                         this.logger.warn('[request] Request too big. Ignoring. URL: %s, Size: %s bytes', url, size)
                         return null;
                     }
@@ -116,19 +121,28 @@ export class ReporterTarget
 
     private _reportSnapshot(snapshot : Snapshot) : Promise<any>
     {
+        this._counter.lastReportStartDate = new Date();
+        this._counter.reportStartCount++;
+
         this._logger.info("[_reportSnapshot] Date: %s, Item count: %s", snapshot.date.toISOString(), snapshot.count);
 
-        let snapshotReporter = new SnapshotReporter(this, this._snapshotLogger, snapshot, this._latestSnapshot, this._latestSnapshotId);
+        const snapshotReporter = new SnapshotReporter(this, this._snapshotLogger, snapshot, this._latestSnapshot, this._latestSnapshotId);
         return snapshotReporter.run()
             .then(() => {
                 this._logger.info("[_reportSnapshot] Finished");
 
                 if (snapshotReporter.isReported) {
+                    this._counter.lastReportSuccessDate = new Date();
+                    this._counter.reportSuccessCount++;
+
                     this._latestSnapshot = snapshot;
                     this._latestSnapshotId = snapshotReporter.snapshotId;
 
                     this._logger.info("[_reportSnapshot] Completed. Latest Snapshot Id:", this._latestSnapshotId);
                 } else {
+                    this._counter.lastReportFailDate = new Date();
+                    this._counter.reportFailCount++;
+
                     this._latestSnapshot = null;
                     this._latestSnapshotId = null;
 

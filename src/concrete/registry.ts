@@ -41,6 +41,17 @@ export class ConcreteRegistry
         return _.values(this._flatItemsDict);
     }
 
+    get itemCount() {
+        return this.allItems.length;
+    }
+
+    get groupCounts() {
+        return _.keys(this._itemsKindDict).map(x => ({
+            group: x,
+            count: _.keys(this._itemsKindDict[x]).length
+        }));
+    }
+
     reset()
     {
         this._flatItemsDict = {};

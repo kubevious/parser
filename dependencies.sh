@@ -11,6 +11,7 @@ REPO_DEPENDENCIES=(
     "@kubevious/helper-logic-processor"
     "@kubevious/http-client"
     "@kubevious/data-models"
+    "@kubevious/ui-middleware"
 )
 
 
@@ -25,4 +26,5 @@ FORCE_RESOLVE_DEPENDENCIES=(
     "@kubevious/helper-logic-processor"
     "@kubevious/http-client"
     "@kubevious/data-models"
+    "@kubevious/ui-middleware"
 )

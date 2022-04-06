@@ -13,9 +13,11 @@ import { Reporter } from './reporting/reporter';
 import { DebugObjectLogger } from './utils/debug-object-logger';
 import { WebServer } from './server';
 
-import VERSION from './version'
 import { ILoader } from './loaders/types';
 import { K8sApiSelector } from './loaders/api-selector';
+import { BackendMetrics } from './apps/backend-metrics';
+
+import VERSION from './version'
 
 export class Context
 {
@@ -31,6 +33,7 @@ export class Context
     private _server: WebServer;
     private _areLoadersReady = false;
     private _apiSelector: K8sApiSelector;
+    private _backendMetrics : BackendMetrics;
 
     constructor(backend : Backend)
     {
@@ -48,6 +51,8 @@ export class Context
         this._debugObjectLogger = new DebugObjectLogger(this);
         
         this._worldvious = new WorldviousClient(this._logger, 'parser', VERSION);
+
+        this._backendMetrics = new BackendMetrics(this);
 
         this._server = new WebServer(this);
 
@@ -104,6 +109,10 @@ export class Context
         return this._loaders.map(x => x.loader);
     }
 
+    get backendMetrics() {
+        return this._backendMetrics;
+    }
+
     addLoader(loader : ILoader)
     {
         const loaderInfo : LoaderInfo = {
@@ -147,6 +156,8 @@ export class Context
 
     private _processLoaders()
     {
+        this._checkLoadersReady();
+
         return Promise.serial(this._loaders, x => {
             return x.loader.run();
         });

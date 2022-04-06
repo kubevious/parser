@@ -1,6 +1,7 @@
 import { Context } from '../context';
 import { Router } from '@kubevious/helper-backend'
-import Version from '../version';
+import VERSION from '../version';
+import { BackendVersionResponse, BackendMetricsResponse } from '@kubevious/ui-middleware'
 
 export default function (router: Router, context: Context) {
     router.url('/');
@@ -10,6 +11,19 @@ export default function (router: Router, context: Context) {
     });
 
     router.get('/api/v1/version', (req, res) => {
-        return Version;
+        const result : BackendVersionResponse = {
+            version: VERSION
+        };
+        return result;
+    });
+
+    router.get('/api/v1/metrics', (req, res) => {
+        const metrics = context.backendMetrics.extractMetrics();
+
+        const result : BackendMetricsResponse = {
+            metrics: metrics
+        };
+
+        return result;
     });
 }
