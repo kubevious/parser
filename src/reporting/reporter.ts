@@ -6,7 +6,7 @@ import { Context } from '../context';
 
 import { Snapshot } from './snapshot'
 import { ReporterTarget } from './reporter-target';
-import { CollectorConfig } from './types';
+import { CollectorConfig, Counter } from './types';
 import { ConcreteRegistry } from '../concrete/registry';
 
 export class Reporter
@@ -17,10 +17,22 @@ export class Reporter
     private _collectors : CollectorConfig[] = [];
     private _reporterTargets : ReporterTarget[] = [];
 
+    private _counters: Counter;
+
     constructor(context : Context)
     {
         this._context = context;
         this._logger = context.logger.sublogger("Reporter");
+
+        this._counters = {
+            reportStartCount: 0,
+            reportSuccessCount: 0,
+            reportFailCount: 0,
+            
+            lastReportStartDate: null,
+            lastReportSuccessDate: null,
+            lastReportFailDate: null,
+        }
 
         this._determineCollectors();
 
@@ -31,17 +43,21 @@ export class Reporter
         return this._logger;
     }
 
+    get counters() {
+        return this._counters;
+    }
+
     process(concreteRegistry: ConcreteRegistry, date: Date)
     {
         this.logger.info("[process] count: %s", concreteRegistry.allItems.length)
 
         const snapshot = new Snapshot(date);
-        for(let item of concreteRegistry.allItems)
+        for(const item of concreteRegistry.allItems)
         {
             snapshot.addItem(item);
         }
 
-        for(let reporter of this._reporterTargets)
+        for(const reporter of this._reporterTargets)
         {
             reporter.reportSnapshot(snapshot);
         }
@@ -50,11 +66,11 @@ export class Reporter
     private _determineCollectors()
     {
         this._collectors = [];
-        for(let x of _.keys(process.env))
+        for(const x of _.keys(process.env))
         {
             if (_.startsWith(x, 'KUBEVIOUS_COLLECTOR'))
             {
-                let namePart = x.replace('KUBEVIOUS_COLLECTOR', '');
+                const namePart = x.replace('KUBEVIOUS_COLLECTOR', '');
                 if (!namePart.includes('_'))
                 {
                     this._loadCollector(x);
@@ -66,11 +82,11 @@ export class Reporter
 
     private _loadCollector(urlEnvName: string)
     {
-        let collectorConfig : CollectorConfig = {
+        const collectorConfig : CollectorConfig = {
             url: process.env[urlEnvName]!
         }
-        let authEnvName = urlEnvName + '_AUTH';
-        let keyPathEnvName = urlEnvName + '_KEY_PATH';
+        const authEnvName = urlEnvName + '_AUTH';
+        const keyPathEnvName = urlEnvName + '_KEY_PATH';
         if (process.env[authEnvName] && process.env[keyPathEnvName]) {
             collectorConfig.authUrl = process.env[authEnvName];
             collectorConfig.keyPath = process.env[keyPathEnvName];
@@ -80,9 +96,9 @@ export class Reporter
 
     private _setupTargetReporters()
     {
-        for(let collector of this._collectors)
+        for(const collector of this._collectors)
         {
-            let target = new ReporterTarget(this._logger, collector);
+            const target = new ReporterTarget(this._logger, collector, this._counters);
             this._reporterTargets.push(target);
         }
     }

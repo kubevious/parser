@@ -66,7 +66,7 @@ export class SnapshotReporter
     {
         this.logger.info("[_createSnapshot]");
 
-        let body : RequestReportSnapshot = {
+        const body : RequestReportSnapshot = {
             version: VERSION,
             date: this._snapshot.date.toISOString()
         }
@@ -204,7 +204,7 @@ export class SnapshotReporter
         // this.logger.info("[_publishNeededConfigs] count: %s", configHashes.length);
         
         const items : SnapshotItem[] = []
-        for(let hash of configHashes)
+        for(const hash of configHashes)
         {
             const item = this._snapshot.getByConfigHash(hash)!;
             items.push(item);
@@ -215,7 +215,7 @@ export class SnapshotReporter
             let currentCount : number = 0;
             let currentSize : number = 0;
 
-            let chunks : ReportableDataChunk[] = [];
+            const chunks : ReportableDataChunk[] = [];
             let currentChunk : ReportableDataChunk | null = null;
 
             return Promise.serial(items, item => {

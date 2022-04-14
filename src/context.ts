@@ -1,9 +1,7 @@
 import { ILogger } from 'the-logger';
 import { Promise } from 'the-promise';
 
-import { Backend, TimerFunction } from '@kubevious/helper-backend'
-
-import { ProcessingTracker } from '@kubevious/helpers/dist/processing-tracker';
+import { Backend } from '@kubevious/helper-backend'
 
 import { ConcreteRegistry } from './concrete/registry';
 
@@ -15,15 +13,16 @@ import { Reporter } from './reporting/reporter';
 import { DebugObjectLogger } from './utils/debug-object-logger';
 import { WebServer } from './server';
 
-import VERSION from './version'
 import { ILoader } from './loaders/types';
 import { K8sApiSelector } from './loaders/api-selector';
+import { BackendMetrics } from './apps/backend-metrics';
+
+import VERSION from './version'
 
 export class Context
 {
     private _backend : Backend;
     private _logger : ILogger;
-    private _tracker: ProcessingTracker;
     private _loaders: LoaderInfo[] = [];
     private _concreteRegistry: ConcreteRegistry;
     private _k8sParser: K8sParser;
@@ -34,13 +33,12 @@ export class Context
     private _server: WebServer;
     private _areLoadersReady = false;
     private _apiSelector: K8sApiSelector;
+    private _backendMetrics : BackendMetrics;
 
     constructor(backend : Backend)
     {
         this._backend = backend;
         this._logger = backend.logger.sublogger('Context');
-
-        this._tracker = new ProcessingTracker(this.logger.sublogger("Tracker"));
 
         this._apiSelector = new K8sApiSelector(this._logger);
 
@@ -53,6 +51,8 @@ export class Context
         this._debugObjectLogger = new DebugObjectLogger(this);
         
         this._worldvious = new WorldviousClient(this._logger, 'parser', VERSION);
+
+        this._backendMetrics = new BackendMetrics(this);
 
         this._server = new WebServer(this);
 
@@ -70,7 +70,7 @@ export class Context
     }
 
     get tracker() {
-        return this._tracker;
+        return this._backend.tracker;
     }
 
     get concreteRegistry() : ConcreteRegistry {
@@ -107,6 +107,10 @@ export class Context
 
     get loaders() {
         return this._loaders.map(x => x.loader);
+    }
+
+    get backendMetrics() {
+        return this._backendMetrics;
     }
 
     addLoader(loader : ILoader)
@@ -152,6 +156,8 @@ export class Context
 
     private _processLoaders()
     {
+        this._checkLoadersReady();
+
         return Promise.serial(this._loaders, x => {
             return x.loader.run();
         });
