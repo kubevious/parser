@@ -27,7 +27,7 @@
     "@kubevious/helpers": "^1.0.63",
     "@kubevious/http-client": "^1.0.19",
     "@kubevious/ui-middleware": "^1.0.49",
-    "@kubevious/worldvious-client": "^1.0.6",
+    "@kubevious/worldvious-client": "^1.0.7",
     "js-yaml": "^3.13.1",
     "k8s-super-client": "^2.0.25",
     "moment": "^2.29.1",
@@ -59,10 +59,11 @@
     "the-promise": "^2.0.13",
     "k8s-super-client": "^2.0.25",
     "@kubevious/helpers": "^1.0.63",
-    "@kubevious/worldvious-client": "^1.0.6",
+    "@kubevious/worldvious-client": "^1.0.7",
     "@kubevious/helper-backend": "^1.0.38",
     "@kubevious/helper-logic-processor": "^1.0.71",
     "@kubevious/http-client": "^1.0.19",
-    "@kubevious/data-models": "^1.0.19"
+    "@kubevious/data-models": "^1.0.19",
+    "@kubevious/ui-middleware": "^1.0.49"
   }
 }
