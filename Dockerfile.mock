@@ -3,12 +3,16 @@
 FROM kubevious/node-builder:14
 RUN node --version
 RUN npm --version
+RUN yarn --version
 WORKDIR /app
 COPY ./package*.json ./
-RUN npm ci
+COPY ./yarn.lock ./
+RUN yarn install --frozen-lockfile
 COPY ./src ./src
+COPY ./tools ./tools
 COPY ./tsconfig.json ./
 RUN npm run build
+RUN ./tools/kubevious-npm-validate-nested-dependencies.sh
 
 ###############################################################################
 # Step 2 : Runner image

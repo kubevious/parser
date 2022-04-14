@@ -7,7 +7,7 @@ source configuration.sh
 
 docker build \
     -f Dockerfile.mock \
-    -t ${IMAGE_NAME}-mock \
+    -t ${MOCK_IMAGE_NAME} \
     .
 
 echo "*** RUN WITH:"
