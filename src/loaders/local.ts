@@ -45,7 +45,7 @@ export class LocalLoader implements ILoader
     {
         return connectFromPod(this._logger)
             .then(client => {
-                let info = {
+                const info = {
                     infra: "local"
                 }
                 this._loader = new K8sLoader(this._context, client, info);

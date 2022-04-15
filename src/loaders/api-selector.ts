@@ -2,18 +2,15 @@ import _ from 'the-lodash';
 import { KubernetesObject } from "k8s-super-client";
 import { ILogger } from "the-logger";
 
-import { DEFAULT_API_GROUPS } from './default-api-groups'
-
 type SanitizerCb = (obj: KubernetesObject) => KubernetesObject;
 export class K8sApiSelector
 {
     private _logger : ILogger;
 
-    private _useIncludeFilter : boolean = false;
-    private _inclusion : Record<string, boolean> = {};
-    private _exclusion : Record<string, boolean> = {};
-
-    private _sanitizers : Record<string, SanitizerCb> = {};
+    private _useIncludeFilter = false;
+    private _inclusion : ApiGroupMatcher<boolean> = new ApiGroupMatcher<boolean>(false);
+    private _exclusion : ApiGroupMatcher<boolean> = new ApiGroupMatcher<boolean>(false);
+    private _sanitizers : ApiGroupMatcher<SanitizerCb | null> = new ApiGroupMatcher<SanitizerCb | null>(null);
 
     constructor(logger: ILogger)
     {
@@ -22,17 +19,15 @@ export class K8sApiSelector
         this._setup();
     }
 
-    isEnabled(apiName: string | null, apiVersion: string, kindName: string)
+    isEnabled(apiName: string | null, versionOnly: string, kindName: string)
     {
-        const key = makeKey(apiName, kindName);
-
         if (this._useIncludeFilter) {
-            if (!this._inclusion[key]) {
+            if (!this._inclusion.matches(apiName, versionOnly, kindName)) {
                 return false;
             }
         }
 
-        if (this._exclusion[key]) {
+        if (this._exclusion.matches(apiName, versionOnly, kindName)) {
             return false;
         }
         
@@ -41,8 +36,9 @@ export class K8sApiSelector
 
     sanitize(obj: KubernetesObject) : KubernetesObject
     {
-        const key = makeKey(obj.apiVersion, obj.kind);
-        const cb = this._sanitizers[key];
+        const apiInfo = parseAPIVersion(obj);
+
+        const cb = this._sanitizers.matches(apiInfo.api, apiInfo.version, apiInfo.kind);
         if (cb) {
             // TODO: Next line is a temporary workaround because there is an issue in k8s-client library.
             // Without it there is an "Final Delta After Recover Should Be Empty!" error.
@@ -56,10 +52,7 @@ export class K8sApiSelector
     {
         this._setupSanitizers();
 
-        if (process.env.KUBEVIOUS_API_MINIMAL == 'true')
-        {
-            this._setupDefault();
-        }
+        this._setupDeprecated();
 
         if (process.env.KUBEVIOUS_API_SKIP_SECRET == 'true')
         {
@@ -67,33 +60,20 @@ export class K8sApiSelector
         }
     }
 
-    private _setupDefault()
+    private _setupDeprecated()
     {
-        this._useIncludeFilter = true;
-        for(let group of DEFAULT_API_GROUPS)
-        {
-            for(let kind of group.kinds)
-            {
-                const key = makeKey(group.api, kind);
-                this._inclusion[key] = true;
-            }
-        }
+        this._exclusion.add(null, 'v1', 'Binding', true);
+        this._exclusion.add(null, 'v1', 'ComponentStatus', true);
     }
 
     private _setupSecretExclusion()
     {
-        this._exclusion[makeKey(null, 'Secret')] = true;
+        this._exclusion.add(null, null, 'Secret', true);
     }
 
     private _setupSanitizers()
     {
-        this._setupSanitizer('v1', 'Secret', this._sanitizeSecret.bind(this));
-    }
-
-    private _setupSanitizer(apiNameAndVersion: string, kindName: string, cb: SanitizerCb)
-    {
-        const key = makeKey(apiNameAndVersion, kindName);
-        this._sanitizers[key] = cb;
+        this._sanitizers.add(null, 'v1', 'Secret', this._sanitizeSecret.bind(this));
     }
 
     private _sanitizeSecret(obj: KubernetesObject) : KubernetesObject
@@ -107,10 +87,65 @@ export class K8sApiSelector
 
 }
 
-function makeKey(apiName: string | null, kindName: string)
+export class ApiGroupMatcher<T>
 {
-    if (apiName) {
-        return `${apiName}:${kindName}`;
+    private _defaultValue: T;
+    private _dict: Record<string, Record<string, Record<string, T>>> = {};
+
+    constructor(defaultValue: T)
+    {
+        this._defaultValue = defaultValue;
     }
-    return kindName;;
+
+    add(apiName: string | null, version: string | null, kind: string, value: T)
+    {
+        apiName = apiName ?? '';
+        version = version ?? '';
+        if (!this._dict[apiName]) {
+            this._dict[apiName] = {};
+        }
+        if (!this._dict[apiName][version]) {
+            this._dict[apiName][version] = {};
+        }
+        this._dict[apiName][version][kind] = value;
+    }
+
+    matches(apiName: string | null, version: string, kind: string)
+    {
+        apiName = apiName ?? '';
+        const apiNameDict = this._dict[apiName];
+        if (!apiNameDict) {
+            return this._defaultValue;
+        }
+
+        if (apiNameDict[version]) {
+            return apiNameDict[version][kind] ?? this._defaultValue;
+        } else {
+            if (apiNameDict['']) {
+                return apiNameDict[''][kind] ?? this._defaultValue;
+            }
+        }
+
+        return this._defaultValue;
+    }
+}
+
+function parseAPIVersion(obj : KubernetesObject)
+{
+    const apiParts = obj.apiVersion.split('/');
+    let api : string | null = null;
+    let version : string;
+    if (apiParts.length == 2) {
+        api = apiParts[0];
+        version = apiParts[1];
+    } else {
+        api = null;
+        version = apiParts[0];
+    }
+
+    return {
+        api: api,
+        version: version,
+        kind: obj.kind
+    }
 }
