@@ -9,7 +9,8 @@ import { K8sLoader } from '../loaders/k8s';
 import { KubernetesClient, KubernetesClientConfig } from 'k8s-super-client';
 import { ClusterManagerClient } from '@google-cloud/container';
 import { HttpClient } from '@kubevious/http-client';
-import { ApiResourceStatus, ILoader, ReadyHandler } from '../loaders/types';
+import { ILoader, ReadyHandler } from '../loaders/types';
+import { ApiResourceStatus } from '@kubevious/data-models';
 
 
 const jwt = require('jsonwebtoken');

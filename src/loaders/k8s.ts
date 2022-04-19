@@ -7,8 +7,9 @@ import { Context } from '../context';
 import { KubernetesClient } from 'k8s-super-client';
 
 import { K8sApiLoader } from './k8s-api';
-import { ApiResourceStatus, ILoader, ReadyHandler } from './types';
+import { ILoader, ReadyHandler } from './types';
 import { ApiGroupInfo } from 'k8s-super-client';
+import { ApiResourceStatus } from '@kubevious/data-models';
 
 export class K8sLoader implements ILoader
 {

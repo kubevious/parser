@@ -21,9 +21,9 @@
   },
   "homepage": "https://github.com/kubevious/parser",
   "dependencies": {
-    "@kubevious/data-models": "^1.0.20",
+    "@kubevious/data-models": "^1.0.21",
     "@kubevious/helper-backend": "^1.0.38",
-    "@kubevious/helper-logic-processor": "^1.0.72",
+    "@kubevious/helper-logic-processor": "^1.0.73",
     "@kubevious/helpers": "^1.0.64",
     "@kubevious/http-client": "^1.0.19",
     "@kubevious/ui-middleware": "^1.0.62",
@@ -61,9 +61,9 @@
     "@kubevious/helpers": "^1.0.64",
     "@kubevious/worldvious-client": "^1.0.9",
     "@kubevious/helper-backend": "^1.0.38",
-    "@kubevious/helper-logic-processor": "^1.0.72",
+    "@kubevious/helper-logic-processor": "^1.0.73",
     "@kubevious/http-client": "^1.0.19",
-    "@kubevious/data-models": "^1.0.20",
+    "@kubevious/data-models": "^1.0.21",
     "@kubevious/ui-middleware": "^1.0.62"
   }
 }

@@ -6,7 +6,7 @@ import { Context } from '../context';
 
 import { JobDampener } from '@kubevious/helpers';
 import { ConcreteRegistry } from '../concrete/registry';
-import { ApiResourceStatus } from '../loaders/types';
+import { ApiResourceStatus } from '@kubevious/data-models';
 import { ItemId, K8sConfig } from '@kubevious/helper-logic-processor';
 
 export class FacadeRegistry

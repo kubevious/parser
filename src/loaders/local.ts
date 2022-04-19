@@ -6,7 +6,8 @@ import { Context } from '../context';
 import { K8sLoader } from './k8s';
 
 import { connectFromPod  } from 'k8s-super-client';
-import { ApiResourceStatus, ILoader, ReadyHandler } from './types';
+import { ILoader, ReadyHandler } from './types';
+import { ApiResourceStatus } from '@kubevious/data-models';
 
 export class LocalLoader implements ILoader
 {

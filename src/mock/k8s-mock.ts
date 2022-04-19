@@ -6,9 +6,10 @@ import { readdirSync, statSync, readFileSync } from 'fs';
  
 import * as Path from 'path';
 import * as yaml from 'js-yaml';
-import { ApiResourceStatus, ILoader, ReadyHandler } from '../loaders/types';
+import { ILoader, ReadyHandler } from '../loaders/types';
 import { KubernetesObject } from 'k8s-super-client';
 import { extractK8sConfigId } from '@kubevious/helper-logic-processor'
+import { ApiResourceStatus } from '@kubevious/data-models';
 
 export class K8sMockLoader implements ILoader
 {
