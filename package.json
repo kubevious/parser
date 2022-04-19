@@ -21,13 +21,13 @@
   },
   "homepage": "https://github.com/kubevious/parser",
   "dependencies": {
-    "@kubevious/data-models": "^1.0.19",
+    "@kubevious/data-models": "^1.0.20",
     "@kubevious/helper-backend": "^1.0.38",
-    "@kubevious/helper-logic-processor": "^1.0.71",
-    "@kubevious/helpers": "^1.0.63",
+    "@kubevious/helper-logic-processor": "^1.0.72",
+    "@kubevious/helpers": "^1.0.64",
     "@kubevious/http-client": "^1.0.19",
-    "@kubevious/ui-middleware": "^1.0.49",
-    "@kubevious/worldvious-client": "^1.0.7",
+    "@kubevious/ui-middleware": "^1.0.62",
+    "@kubevious/worldvious-client": "^1.0.9",
     "js-yaml": "^3.13.1",
     "k8s-super-client": "^2.0.25",
     "moment": "^2.29.1",
@@ -58,12 +58,12 @@
     "the-logger": "^2.0.14",
     "the-promise": "^2.0.13",
     "k8s-super-client": "^2.0.25",
-    "@kubevious/helpers": "^1.0.63",
-    "@kubevious/worldvious-client": "^1.0.7",
+    "@kubevious/helpers": "^1.0.64",
+    "@kubevious/worldvious-client": "^1.0.9",
     "@kubevious/helper-backend": "^1.0.38",
-    "@kubevious/helper-logic-processor": "^1.0.71",
+    "@kubevious/helper-logic-processor": "^1.0.72",
     "@kubevious/http-client": "^1.0.19",
-    "@kubevious/data-models": "^1.0.19",
-    "@kubevious/ui-middleware": "^1.0.49"
+    "@kubevious/data-models": "^1.0.20",
+    "@kubevious/ui-middleware": "^1.0.62"
   }
 }

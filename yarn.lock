@@ -86,10 +86,10 @@
   resolved "https://registry.yarnpkg.com/@humanwhocodes/object-schema/-/object-schema-1.2.0.tgz#87de7af9c231826fdd68ac7258f77c429e0e5fcf"
   integrity sha512-wdppn25U8z/2yiaT6YGquE6X8sSv7hNMWSXYSSU1jGv/yd6XqjXgTDJ8KP4NgjTXfJ3GbRjeeb8RTV7a/VpM+w==
 
-"@kubevious/data-models@^1.0.19":
-  version "1.0.19"
-  resolved "https://registry.yarnpkg.com/@kubevious/data-models/-/data-models-1.0.19.tgz#e8e672151d9f6ac3e176fd4723f8012df85f2f52"
-  integrity sha512-1vDSFKPrUmbsxWTDDoQqWCQudTy8A2kUdOIvaBqJpMpnJfxWbRbOH1EwRNJj60IhtgFYGsh7UwgPECM5FXzXcA==
+"@kubevious/data-models@^1.0.20":
+  version "1.0.20"
+  resolved "https://registry.yarnpkg.com/@kubevious/data-models/-/data-models-1.0.20.tgz#22b0d622b5ec47687ca92b90e38c50bba72f5771"
+  integrity sha512-sxDNdiIUt0Sh9+wGL8Ml6EywO8CsgVIPzFuD1ciOXb3P+WfOARmvnzjEU+tJhn42fS/PRT3s2oRG4Q7wPBCOHA==
   dependencies:
     "@kubevious/easy-data-store" "^1.0.11"
     "@kubevious/helper-backend" "^1.0.38"
@@ -151,10 +151,10 @@
     the-logger "^2.0.9"
     the-promise "^2.0.13"
 
-"@kubevious/helper-logic-processor@^1.0.71":
-  version "1.0.71"
-  resolved "https://registry.yarnpkg.com/@kubevious/helper-logic-processor/-/helper-logic-processor-1.0.71.tgz#49bf3ea73ec1b1b5144d9945f57bb0b348de294a"
-  integrity sha512-4YeqTI1PPnW4O+Bat9r5+ANLDyTEwMZqUmFR8H3xXeOx1LNwIkgMajz4mzz/hSf5eUrFSl6ZzdSUbeCtCdAXzQ==
+"@kubevious/helper-logic-processor@^1.0.72":
+  version "1.0.72"
+  resolved "https://registry.yarnpkg.com/@kubevious/helper-logic-processor/-/helper-logic-processor-1.0.72.tgz#7edb135eadf9f73b2a6e44730d3d5ac387c610d0"
+  integrity sha512-oeNfK5+PWMQ0d3swbcFlsuC87ajpLwzw21gjWPKlgP3Er02vMDoMKCT1uSwaNmzAUSnOKW01B+AeszxrOBl0pA==
   dependencies:
     "@kubevious/entity-meta" "^1.0.56"
     "@kubevious/helper-backend" "^1.0.38"
@@ -177,10 +177,10 @@
     the-logger "^2.0.9"
     the-promise "^2.0.13"
 
-"@kubevious/helpers@^1.0.63":
-  version "1.0.63"
-  resolved "https://registry.yarnpkg.com/@kubevious/helpers/-/helpers-1.0.63.tgz#69070e0651e9770d331d15016ca8d13555b3ea9b"
-  integrity sha512-/aJl7iYCfMu1wpTI3flYvR/xF+Yvz9ulUiXZ2MN+1VgYV9OczMtQCkrmnekDAnQ4SOhOY08/kCovgn1QBct5TA==
+"@kubevious/helpers@^1.0.64":
+  version "1.0.64"
+  resolved "https://registry.yarnpkg.com/@kubevious/helpers/-/helpers-1.0.64.tgz#4d1d8f7aa61fee3ccfcb8d91460599b16439da6e"
+  integrity sha512-YOVh8b4A7wbeck6VJAU0uhkNA+fJvg0HmUOFdy9cqZYU9IgabiKN6DcXOkWnaKHiA/mr1XTTZXQoy/9hyr84Sg==
   dependencies:
     moment "^2.29.1"
     the-lodash "^2.0.9"
@@ -207,20 +207,22 @@
     the-logger "^2.0.14"
     the-promise "^2.0.13"
 
-"@kubevious/ui-middleware@^1.0.43", "@kubevious/ui-middleware@^1.0.49":
-  version "1.0.49"
-  resolved "https://registry.yarnpkg.com/@kubevious/ui-middleware/-/ui-middleware-1.0.49.tgz#c32c7637f0576aade904def8f69ef916de240807"
-  integrity sha512-20t/0QBfOWvpCVFSooXgIduYM1UlsOv/KsktZjDoX+DV4IGa/RzmSIGZtMhVQOUgC/UPcvSNmILZ9pmDPVo/hQ==
+"@kubevious/ui-middleware@^1.0.43", "@kubevious/ui-middleware@^1.0.52", "@kubevious/ui-middleware@^1.0.62":
+  version "1.0.62"
+  resolved "https://registry.yarnpkg.com/@kubevious/ui-middleware/-/ui-middleware-1.0.62.tgz#2fccbbc01f53451e0665d74040264d205c97d5ea"
+  integrity sha512-e7kfROVKpHFlemouN86dLIwXP2lSbIFhx4l5OyoJE4q909cqpSYOp+MjA3eCrEf9ke14WmQ9DwaGHUoJ8/NQ1w==
   dependencies:
     "@kubevious/entity-meta" "^1.0.56"
+    "@kubevious/http-client" "^1.0.19"
     the-promise "^2.0.13"
 
-"@kubevious/worldvious-client@^1.0.7":
-  version "1.0.7"
-  resolved "https://registry.yarnpkg.com/@kubevious/worldvious-client/-/worldvious-client-1.0.7.tgz#24248f344ca08a779adf678e635a1da1d9069cd0"
-  integrity sha512-9Mr5YaJPl3j+INw2DaQaAqnJttb4qDMIKkayOvm5TIpHyVpLd3nIAol2vuYkznt34AMt0k2orkQt2gGkQ+eMGg==
+"@kubevious/worldvious-client@^1.0.9":
+  version "1.0.9"
+  resolved "https://registry.yarnpkg.com/@kubevious/worldvious-client/-/worldvious-client-1.0.9.tgz#3af530e7bdb9eb02820d15415d177f8d6570164e"
+  integrity sha512-KNKpCHrx5PKIb0fgdA6MfOyY9FvxO03+FoRWKdalrISQURzt/xW0Yw9BraprrSYpd1hIuNltWmIHXoywS3zWFQ==
   dependencies:
     "@kubevious/http-client" "^1.0.19"
+    "@kubevious/ui-middleware" "^1.0.52"
     dotenv "^8.2.0"
     the-lodash "^2.0.9"
     the-logger "^2.0.14"
