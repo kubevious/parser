@@ -1,5 +1,5 @@
 import _ from 'the-lodash';
-import { ItemId } from "@kubevious/helper-logic-processor";
+import { ItemId } from "@kubevious/agent-middleware";
 
 export function makeGroupKey(id: ItemId)
 {

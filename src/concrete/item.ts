@@ -4,7 +4,7 @@ import { ConcreteRegistry } from './registry';
 
 import { HashUtils } from '@kubevious/data-models';
 
-import { ItemId, IConcreteItem, K8sConfig } from '@kubevious/helper-logic-processor';
+import { ItemId, IConcreteItem, K8sConfig } from '@kubevious/agent-middleware';
 import { makeDictId, makeGroupKey } from './utils';
 
 export class ConcreteItem implements IConcreteItem

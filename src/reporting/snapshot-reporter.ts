@@ -1,7 +1,11 @@
 import _ from 'the-lodash';
 import { Promise } from 'the-promise';
 import { ILogger } from 'the-logger';
-import { ReportableSnapshotItem, RequestReportSnapshot, ResponseReportSnapshot, RequestReportSnapshotItems, ResponseReportSnapshotItems, RequestActivateSnapshot, ResponseActivateSnapshot, ReportableDataItem } from '@kubevious/helpers/dist/reportable/types'
+
+import { RequestReportSnapshot, ResponseReportSnapshot, ReportableSnapshotItem } from '@kubevious/agent-middleware';
+import { RequestReportSnapshotItems, ResponseReportSnapshotItems } from '@kubevious/agent-middleware';
+import { ReportableDataItem } from '@kubevious/agent-middleware';
+import { RequestActivateSnapshot, ResponseActivateSnapshot } from '@kubevious/agent-middleware';
 
 import { Snapshot } from './snapshot'
 

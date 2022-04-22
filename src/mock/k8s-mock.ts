@@ -8,7 +8,7 @@ import * as Path from 'path';
 import * as yaml from 'js-yaml';
 import { ILoader, ReadyHandler } from '../loaders/types';
 import { KubernetesObject } from 'k8s-super-client';
-import { extractK8sConfigId } from '@kubevious/helper-logic-processor'
+import { extractK8sConfigId } from '@kubevious/agent-middleware';
 import { ApiResourceStatus } from '@kubevious/data-models';
 
 export class K8sMockLoader implements ILoader

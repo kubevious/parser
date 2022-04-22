@@ -3,7 +3,7 @@ import { ILogger } from 'the-logger';
 
 import { Context } from '../context';
 
-import { ItemId, extractK8sConfigId } from '@kubevious/helper-logic-processor'
+import { ItemId, extractK8sConfigId } from '@kubevious/agent-middleware'
 import { KubernetesObject } from 'k8s-super-client';
 import { ConcreteRegistry } from '../concrete/registry';
 import { makeGroupKey } from '../concrete/utils';

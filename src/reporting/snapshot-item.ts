@@ -1,7 +1,7 @@
 import _ from 'the-lodash';
 
 import { ConcreteItem } from '../concrete/item';
-import { ItemId } from '@kubevious/helper-logic-processor'
+import { ItemId } from '@kubevious/agent-middleware'
 
 export class SnapshotItem
 {

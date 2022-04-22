@@ -8,10 +8,10 @@ REPO_DEPENDENCIES=(
     "@kubevious/helpers"
     "@kubevious/worldvious-client"
     "@kubevious/helper-backend"
-    "@kubevious/helper-logic-processor"
     "@kubevious/http-client"
     "@kubevious/data-models"
     "@kubevious/ui-middleware"
+    "@kubevious/agent-middleware"
 )
 
 
@@ -23,8 +23,8 @@ FORCE_RESOLVE_DEPENDENCIES=(
     "@kubevious/helpers"
     "@kubevious/worldvious-client"
     "@kubevious/helper-backend"
-    "@kubevious/helper-logic-processor"
     "@kubevious/http-client"
     "@kubevious/data-models"
     "@kubevious/ui-middleware"
+    "@kubevious/agent-middleware"
 )

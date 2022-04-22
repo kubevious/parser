@@ -5,7 +5,7 @@ import { ILogger } from 'the-logger';
 import { EventDampener, Handler } from '@kubevious/helpers/dist/event-dampener';
 
 import { ConcreteItem } from './item';
-import { ItemId, K8sConfig } from '@kubevious/helper-logic-processor';
+import { ItemId, K8sConfig } from '@kubevious/agent-middleware';
 import { ApiGroupInfo } from 'k8s-super-client';
 import { makeDictId, makeGroupKey } from './utils';
 

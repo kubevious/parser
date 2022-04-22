@@ -1,5 +1,5 @@
 import _ from 'the-lodash';
-import { ReportableSnapshotItem } from '@kubevious/helpers/dist/reportable/types'
+import { ReportableSnapshotItem } from '@kubevious/agent-middleware'
 import { ConcreteItem } from '../concrete/item';
 
 import { SnapshotItem } from './snapshot-item';

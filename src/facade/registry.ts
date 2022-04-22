@@ -1,5 +1,4 @@
 import _ from 'the-lodash';
-import { Promise } from 'the-promise';
 import { ILogger } from 'the-logger';
 
 import { Context } from '../context';
@@ -7,7 +6,7 @@ import { Context } from '../context';
 import { JobDampener } from '@kubevious/helpers';
 import { ConcreteRegistry } from '../concrete/registry';
 import { ApiResourceStatus } from '@kubevious/data-models';
-import { ItemId, K8sConfig } from '@kubevious/helper-logic-processor';
+import { ItemId, K8sConfig } from '@kubevious/agent-middleware';
 
 export class FacadeRegistry
 {
