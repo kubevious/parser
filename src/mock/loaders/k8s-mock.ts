@@ -1,12 +1,12 @@
 import _ from 'the-lodash';
 import { ILogger } from 'the-logger';
-import { Context } from '../context';
+import { Context } from '../../context';
 
 import { readdirSync, statSync, readFileSync } from 'fs';
  
 import * as Path from 'path';
 import * as yaml from 'js-yaml';
-import { ILoader, ReadyHandler } from '../loaders/types';
+import { ILoader, ReadyHandler } from '../../loaders/types';
 import { KubernetesObject } from 'k8s-super-client';
 import { extractK8sConfigId } from '@kubevious/agent-middleware';
 import { ApiResourceStatus } from '@kubevious/data-models';
@@ -51,13 +51,13 @@ export class K8sMockLoader implements ILoader
 
     run()
     {
-        let dirName = Path.resolve(__dirname, '..', '..', this._name);
+        const dirName = Path.resolve(__dirname, '..', '..', '..', this._name);
         this.logger.info('[run] DataDir: %s', dirName);
 
-        let files = this._getAllFiles(dirName);
-        for(let fullPath of files)
+        const files = this._getAllFiles(dirName);
+        for(const fullPath of files)
         {
-            let contents = readFileSync(fullPath, { encoding: 'utf8' });
+            const contents = readFileSync(fullPath, { encoding: 'utf8' });
             let obj : any = null;
             if (fullPath.endsWith('.json')) {
                 obj = JSON.parse(contents);
@@ -66,7 +66,7 @@ export class K8sMockLoader implements ILoader
             }
             if (obj) {
                 if (_.isArray(obj)) {
-                    for(let x of obj) {
+                    for(const x of obj) {
                         this._handle(true, x);
                     }
                 } else {
@@ -90,7 +90,7 @@ export class K8sMockLoader implements ILoader
     }
 
     private _getAllFiles(dirPath: string, arrayOfFiles? : string[]) : string[] {
-        let files = readdirSync(dirPath)
+        const files = readdirSync(dirPath)
       
         arrayOfFiles = arrayOfFiles || []
       
@@ -110,7 +110,7 @@ export class K8sMockLoader implements ILoader
     {
         if (obj.kind == 'List')
         {
-            for(let item of <KubernetesObject[]>(obj.items))
+            for(const item of <KubernetesObject[]>(obj.items))
             {
                 this._handle(isPresent, item);
             }
@@ -143,7 +143,7 @@ export class K8sMockLoader implements ILoader
 
     private _parseAPIVersion(obj : KubernetesObject)
     {
-        let apiParts = obj.apiVersion.split('/');
+        const apiParts = obj.apiVersion.split('/');
         let api : string | null = null;
         let version : string;
         if (apiParts.length == 2) {

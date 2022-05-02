@@ -50,7 +50,7 @@ export class K8sLoader implements ILoader
             this._readyTimer = null;
         }
 
-        for(let apiLoader of _.values(this._apiLoaders))
+        for(const apiLoader of _.values(this._apiLoaders))
         {
             apiLoader.close();
         }
@@ -129,7 +129,7 @@ export class K8sLoader implements ILoader
         }
 
         let isFinalReady = true;
-        for(let apiLoader of _.values(this._apiLoaders))
+        for(const apiLoader of _.values(this._apiLoaders))
         {
             const isReady = apiLoader.isTargetReady();
             if (isReady) {
