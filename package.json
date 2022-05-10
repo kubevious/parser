@@ -26,7 +26,7 @@
     "@kubevious/helper-backend": "^1.0.38",
     "@kubevious/helpers": "^1.0.65",
     "@kubevious/http-client": "^1.0.19",
-    "@kubevious/ui-middleware": "^1.0.62",
+    "@kubevious/ui-middleware": "^1.0.63",
     "@kubevious/worldvious-client": "^1.0.9",
     "js-yaml": "^3.13.1",
     "k8s-super-client": "^2.0.25",
@@ -62,7 +62,7 @@
     "@kubevious/helper-backend": "^1.0.38",
     "@kubevious/http-client": "^1.0.19",
     "@kubevious/data-models": "^1.0.23",
-    "@kubevious/ui-middleware": "^1.0.62",
+    "@kubevious/ui-middleware": "^1.0.63",
     "@kubevious/agent-middleware": "^1.0.82"
   }
 }
