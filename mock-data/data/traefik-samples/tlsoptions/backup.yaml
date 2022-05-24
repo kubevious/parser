@@ -1,0 +1,32 @@
+apiVersion: traefik.containo.us/v1alpha1
+kind: TLSOption
+metadata:
+  annotations:
+    meta.helm.sh/release-name: traefik-samples
+    meta.helm.sh/release-namespace: traefik-samples
+  creationTimestamp: "2022-05-19T23:55:42Z"
+  generation: 1
+  labels:
+    app.kubernetes.io/managed-by: Helm
+  name: backup
+  namespace: traefik-samples
+  resourceVersion: "18164631"
+  uid: 0fff5e61-bfdf-4849-851c-83a354ac0fcf
+spec:
+  cipherSuites:
+  - TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256
+  - TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256
+  - TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+  - TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305
+  - TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384
+  - TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305
+  - TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305
+  - TLS_AES_256_GCM_SHA384
+  - TLS_AES_128_GCM_SHA256
+  - TLS_CHACHA20_POLY1305_SHA256
+  - TLS_FALLBACK_SCSV
+  curvePreferences:
+  - CurveP521
+  - CurveP384
+  minVersion: VersionTLS12
+  sniStrict: true

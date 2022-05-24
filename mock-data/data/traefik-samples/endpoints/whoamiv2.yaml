@@ -1,0 +1,26 @@
+apiVersion: v1
+kind: Endpoints
+metadata:
+  annotations:
+    endpoints.kubernetes.io/last-change-trigger-time: "2022-05-19T23:55:46Z"
+  creationTimestamp: "2022-05-19T23:55:41Z"
+  labels:
+    app.kubernetes.io/managed-by: Helm
+  name: whoamiv2
+  namespace: traefik-samples
+  resourceVersion: "18164672"
+  uid: 35e0babb-92d2-4138-a4da-cb51fb0a5b9b
+subsets:
+- addresses:
+  - ip: 172.31.1.75
+    nodeName: ip-172-31-11-72.us-east-2.compute.internal
+    targetRef:
+      kind: Pod
+      name: whoamiv2-7c9b5995df-kkzwq
+      namespace: traefik-samples
+      resourceVersion: "18164670"
+      uid: bbe03bb9-a899-4ea9-ac63-8bd0bf3c3bd7
+  ports:
+  - name: http
+    port: 80
+    protocol: TCP

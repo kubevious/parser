@@ -1,0 +1,35 @@
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  annotations:
+    meta.helm.sh/release-name: traefik-samples
+    meta.helm.sh/release-namespace: traefik-samples
+  creationTimestamp: "2022-05-19T23:55:42Z"
+  generation: 1
+  labels:
+    app.kubernetes.io/managed-by: Helm
+  name: whoami-multiversion
+  namespace: traefik-samples
+  resourceVersion: "18164604"
+  uid: 0417a8a1-e28c-4d94-8a6f-f8ebdfa50312
+spec:
+  entryPoints:
+  - websecure
+  routes:
+  - kind: Rule
+    match: Host(`demo-traefik.kubevious.io`) && PathPrefix(`/multiversion`)
+    middlewares:
+    - name: traefik-samples-multiversion-prefix@kubernetescrd
+      namespace: traefik-samples
+    services:
+    - kind: TraefikService
+      name: weighted-whoami
+      port: 80
+  tls:
+    certResolver: le
+    domains:
+    - main: demo-traefik.kubevious.io
+      sans:
+      - demo-traefik.kubevious.io
+    options:
+      name: tlsoptions

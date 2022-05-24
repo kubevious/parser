@@ -1,0 +1,43 @@
+addressType: IPv4
+apiVersion: discovery.k8s.io/v1
+endpoints:
+- addresses:
+  - 172.31.3.57
+  conditions:
+    ready: true
+    serving: true
+    terminating: false
+  nodeName: ip-172-31-11-72.us-east-2.compute.internal
+  targetRef:
+    kind: Pod
+    name: whoamiv1-6f97bc97c4-zht69
+    namespace: traefik-samples
+    resourceVersion: "18164675"
+    uid: c4714568-b5a2-4234-b471-8e1782d4dd01
+  zone: us-east-2a
+kind: EndpointSlice
+metadata:
+  annotations:
+    endpoints.kubernetes.io/last-change-trigger-time: "2022-05-19T23:55:46Z"
+  creationTimestamp: "2022-05-19T23:55:41Z"
+  generateName: whoamiv1-
+  generation: 3
+  labels:
+    app.kubernetes.io/managed-by: Helm
+    endpointslice.kubernetes.io/managed-by: endpointslice-controller.k8s.io
+    kubernetes.io/service-name: whoamiv1
+  name: whoamiv1-4pl2g
+  namespace: traefik-samples
+  ownerReferences:
+  - apiVersion: v1
+    blockOwnerDeletion: true
+    controller: true
+    kind: Service
+    name: whoamiv1
+    uid: 868a6f00-d7a7-4aa6-963c-9ea0e0990edd
+  resourceVersion: "18164677"
+  uid: 19cbbf1b-c380-4399-a919-20db86040a17
+ports:
+- name: http
+  port: 80
+  protocol: TCP

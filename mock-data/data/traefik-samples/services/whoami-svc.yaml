@@ -1,0 +1,31 @@
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    meta.helm.sh/release-name: traefik-samples
+    meta.helm.sh/release-namespace: traefik-samples
+  creationTimestamp: "2022-05-19T23:55:41Z"
+  labels:
+    app.kubernetes.io/managed-by: Helm
+  name: whoami-svc
+  namespace: traefik-samples
+  resourceVersion: "18164574"
+  uid: a4d6aa9b-0c50-4c79-8a7a-d9d68783b7a2
+spec:
+  clusterIP: 10.100.200.120
+  clusterIPs:
+  - 10.100.200.120
+  internalTrafficPolicy: Cluster
+  ipFamilies:
+  - IPv4
+  ipFamilyPolicy: SingleStack
+  ports:
+  - port: 80
+    protocol: TCP
+    targetPort: 80
+  selector:
+    app: whoami
+  sessionAffinity: None
+  type: ClusterIP
+status:
+  loadBalancer: {}

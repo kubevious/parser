@@ -1,0 +1,20 @@
+apiVersion: traefik.containo.us/v1alpha1
+kind: Middleware
+metadata:
+  annotations:
+    meta.helm.sh/release-name: traefik-samples
+    meta.helm.sh/release-namespace: traefik-samples
+  creationTimestamp: "2022-05-19T23:55:42Z"
+  generation: 1
+  labels:
+    app.kubernetes.io/managed-by: Helm
+  name: multiversion-prefix
+  namespace: traefik-samples
+  resourceVersion: "18164628"
+  uid: 8a42e701-8477-4455-a1af-a577200ce04e
+spec:
+  stripPrefix:
+    prefixes:
+    - /multiversion/v1
+    - /multiversion/v2
+    - /multiversion

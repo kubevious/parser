@@ -1,0 +1,27 @@
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  annotations:
+    meta.helm.sh/release-name: traefik-samples
+    meta.helm.sh/release-namespace: traefik-samples
+  creationTimestamp: "2022-05-19T23:55:42Z"
+  generation: 1
+  labels:
+    app.kubernetes.io/managed-by: Helm
+  name: whoami-crd
+  namespace: traefik-samples
+  resourceVersion: "18164607"
+  uid: 8680d8f0-7bf4-488e-82b8-d756e106d45f
+spec:
+  entryPoints:
+  - web
+  routes:
+  - kind: Rule
+    match: Host(`demo-traefik.kubevious.io`)
+    middlewares:
+    - name: traefik-samples-redirectscheme@kubernetescrd
+      namespace: traefik-samples
+    services:
+    - kind: Service
+      name: whoami-svc
+      port: 80

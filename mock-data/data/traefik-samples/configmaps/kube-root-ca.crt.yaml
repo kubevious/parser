@@ -1,0 +1,33 @@
+apiVersion: v1
+data:
+  ca.crt: |
+    -----BEGIN CERTIFICATE-----
+    MIIC5zCCAc+gAwIBAgIBADANBgkqhkiG9w0BAQsFADAVMRMwEQYDVQQDEwprdWJl
+    cm5ldGVzMB4XDTIyMDIyMjIyMjE0MloXDTMyMDIyMDIyMjE0MlowFTETMBEGA1UE
+    AxMKa3ViZXJuZXRlczCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAMUj
+    akCA9R041YnzTkXpgskAQ5jT6lIFt8gz+0NkhRkZnWePjdyjQuzP7jEBCobF6q8/
+    DDXdfxNp3KftWYezProxqaBQtZYNI1FgyW+3bXCNHOG+nvBkdveC1leomywp40rh
+    DTEc6C6fMj6P1IIBNrvOWmHt3dmXiyTYdTi9ECMA0lN+XlLhisAtGufn6+8/itJq
+    yQOYy09ZQCdJwVQfPF+Rv1J40YSuEzdk8sGxpWkpbzEr4BxN30vBInyFEaJ7QzqP
+    1di6A6XoViIJDvIo+5hOb9hbF03KukqKo0t+pd56/ZIXdO1Q/JiBVEqd7iLLCiG2
+    PqtHRb2Sc3E1LC0gU0cCAwEAAaNCMEAwDgYDVR0PAQH/BAQDAgKkMA8GA1UdEwEB
+    /wQFMAMBAf8wHQYDVR0OBBYEFD54UfIMyFQYZhQvIeTjUHccNIvJMA0GCSqGSIb3
+    DQEBCwUAA4IBAQBSfB9dq/hTv+sMKxHmK8wc6vWLIGgfPVxE04iTJLE5rOswceBk
+    PEahsuxmOVJWM2A3SWf9gR8EI8et1YDC8ZC73ocOeixtQd9sXsp5TFYOtYcU8+vm
+    ZuoRbnSQw5HJxAurRF9kevt+Ttm8hvhzA9InfG4CajmeFteKg9yYfKuIWi2iQ2I2
+    a6IHTTYQbcdS8BLDObz2soIfbSJq4DWh9oMixWxeOkMygNjeYzJu3MW6fq78B/WU
+    4ws9GVMELQ76IO9BWsyMiGNihoN3R+xFc2EG1cADQN4/T5dKWd5/e5gsVrLoQsY/
+    nyGP9JAIGlVab21LV8FhHiTCgRuz1ews35xP
+    -----END CERTIFICATE-----
+kind: ConfigMap
+metadata:
+  annotations:
+    kubernetes.io/description: Contains a CA bundle that can be used to verify the
+      kube-apiserver when using internal endpoints such as the internal service IP
+      or kubernetes.default.svc. No other usage is guaranteed across distributions
+      of Kubernetes clusters.
+  creationTimestamp: "2022-05-19T23:55:41Z"
+  name: kube-root-ca.crt
+  namespace: traefik-samples
+  resourceVersion: "18164563"
+  uid: 586e1dcd-7f4f-4333-8130-4689cae6d094

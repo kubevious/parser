@@ -1,0 +1,59 @@
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+  annotations:
+    deployment.kubernetes.io/desired-replicas: "1"
+    deployment.kubernetes.io/max-replicas: "2"
+    deployment.kubernetes.io/revision: "1"
+    meta.helm.sh/release-name: traefik-samples
+    meta.helm.sh/release-namespace: traefik-samples
+  creationTimestamp: "2022-05-19T23:55:42Z"
+  generation: 1
+  labels:
+    app: whoami
+    pod-template-hash: 6d79cc864b
+  name: whoami-6d79cc864b
+  namespace: traefik-samples
+  ownerReferences:
+  - apiVersion: apps/v1
+    blockOwnerDeletion: true
+    controller: true
+    kind: Deployment
+    name: whoami
+    uid: 51517b68-2e43-4e68-b7c4-c497fb37dc22
+  resourceVersion: "18164662"
+  uid: ae2b8586-ac5c-400f-9bbe-8edfe990b330
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: whoami
+      pod-template-hash: 6d79cc864b
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: whoami
+        pod-template-hash: 6d79cc864b
+    spec:
+      containers:
+      - image: traefik/whoami:latest
+        imagePullPolicy: Always
+        name: whoami
+        ports:
+        - containerPort: 80
+          protocol: TCP
+        resources: {}
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      terminationGracePeriodSeconds: 30
+status:
+  availableReplicas: 1
+  fullyLabeledReplicas: 1
+  observedGeneration: 1
+  readyReplicas: 1
+  replicas: 1

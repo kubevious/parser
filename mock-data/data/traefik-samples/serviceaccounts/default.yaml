@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  creationTimestamp: "2022-05-19T23:55:41Z"
+  name: default
+  namespace: traefik-samples
+  resourceVersion: "18164566"
+  uid: ec2a51ed-5b89-44b9-a362-b7f63c41bb6b
+secrets:
+- name: default-token-ltb9k

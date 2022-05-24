@@ -1,0 +1,78 @@
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+  annotations:
+    deployment.kubernetes.io/desired-replicas: "1"
+    deployment.kubernetes.io/max-replicas: "2"
+    deployment.kubernetes.io/revision: "1"
+    meta.helm.sh/release-name: traefik-samples
+    meta.helm.sh/release-namespace: traefik-samples
+  creationTimestamp: "2022-05-19T23:55:42Z"
+  generation: 1
+  labels:
+    pod-template-hash: 6f97bc97c4
+    task: whoamiv1
+  name: whoamiv1-6f97bc97c4
+  namespace: traefik-samples
+  ownerReferences:
+  - apiVersion: apps/v1
+    blockOwnerDeletion: true
+    controller: true
+    kind: Deployment
+    name: whoamiv1
+    uid: 22ccb43f-152c-428f-a4a8-cbac19d72c11
+  resourceVersion: "18164678"
+  uid: 64899659-ac34-4591-94b5-82aac89ca29a
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      pod-template-hash: 6f97bc97c4
+      task: whoamiv1
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        pod-template-hash: 6f97bc97c4
+        task: whoamiv1
+    spec:
+      containers:
+      - args:
+        - -ascii
+        - -name=FOO
+        image: traefik/traefikee-webapp-demo:v2
+        imagePullPolicy: IfNotPresent
+        name: whoamiv1
+        ports:
+        - containerPort: 80
+          protocol: TCP
+        readinessProbe:
+          failureThreshold: 1
+          httpGet:
+            path: /ping
+            port: 80
+            scheme: HTTP
+          initialDelaySeconds: 2
+          periodSeconds: 3
+          successThreshold: 1
+          timeoutSeconds: 2
+        resources:
+          limits:
+            cpu: 200m
+            memory: 256Mi
+          requests:
+            cpu: 100m
+            memory: 128Mi
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      terminationGracePeriodSeconds: 30
+status:
+  availableReplicas: 1
+  fullyLabeledReplicas: 1
+  observedGeneration: 1
+  readyReplicas: 1
+  replicas: 1

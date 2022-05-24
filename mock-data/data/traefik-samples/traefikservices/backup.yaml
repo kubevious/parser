@@ -1,0 +1,23 @@
+apiVersion: traefik.containo.us/v1alpha1
+kind: TraefikService
+metadata:
+  annotations:
+    meta.helm.sh/release-name: traefik-samples
+    meta.helm.sh/release-namespace: traefik-samples
+  creationTimestamp: "2022-05-19T23:55:42Z"
+  generation: 1
+  labels:
+    app.kubernetes.io/managed-by: Helm
+  name: backup
+  namespace: traefik-samples
+  resourceVersion: "18164632"
+  uid: 5c015258-0790-4ed2-a967-6fef60d3a664
+spec:
+  weighted:
+    services:
+    - name: whoamiv1
+      port: 80
+      weight: 3
+    - name: whoamiv2
+      port: 80
+      weight: 1
