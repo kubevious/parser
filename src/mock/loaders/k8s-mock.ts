@@ -1,6 +1,5 @@
 import _ from 'the-lodash';
 import { ILogger } from 'the-logger';
-import { Context } from '../../context';
 
 import { readdirSync, statSync, readFileSync } from 'fs';
  
@@ -10,10 +9,10 @@ import { ILoader, ReadyHandler } from '../../loaders/types';
 import { KubernetesObject } from 'k8s-super-client';
 import { extractK8sConfigId } from '@kubevious/agent-middleware';
 import { ApiResourceStatus } from '@kubevious/data-models';
+import { Context } from '../../context';
 
 export class K8sMockLoader implements ILoader
 {
-    private _context : Context;
     private _logger : ILogger;
 
     private _name : string;
@@ -23,10 +22,11 @@ export class K8sMockLoader implements ILoader
 
     private _statuses : Record<string, ApiResourceStatus> = {}
 
-    constructor(context : Context, name: string)
+    private _context?: Context;
+
+    constructor(logger : ILogger, name: string)
     {
-        this._context = context;
-        this._logger = context.logger.sublogger("K8sMockLoader");
+        this._logger = logger.sublogger("K8sMockLoader");
         this._name = name;
 
         this.logger.info("Constructed");
@@ -49,8 +49,10 @@ export class K8sMockLoader implements ILoader
         
     }
 
-    run()
+    run(context: Context)
     {
+        this._context = context;
+
         const dirName = Path.resolve(__dirname, '..', '..', '..', this._name);
         this.logger.info('[run] DataDir: %s', dirName);
 
@@ -118,13 +120,13 @@ export class K8sMockLoader implements ILoader
         else
         {
             const id = extractK8sConfigId(obj);
-            if (!this._context.apiSelector.isEnabled(id.api, id.version, obj.kind)) {
+            if (!this._context!.apiSelector.isEnabled(id.api, id.version, obj.kind)) {
                 this._logger.warn("Object %s :: %s is not tracked.", obj.apiVersion, obj.kind);
                 return;
             }
 
             this._logger.debug("Handle: %s, present: %s", obj.kind, isPresent);
-            this._context.k8sParser.parse(isPresent, obj);
+            this._context!.k8sParser.parse(isPresent, obj);
 
             {
                 const key = `${obj.apiVersion}:${obj.kind}`;

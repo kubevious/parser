@@ -2,18 +2,16 @@ import _ from 'the-lodash';
 import { Promise } from 'the-promise';
 import { ILogger } from 'the-logger';
 
-import { Context } from '../context';
-
 import { KubernetesClient } from 'k8s-super-client';
 
 import { K8sApiLoader } from './k8s-api';
 import { ILoader, ReadyHandler } from './types';
 import { ApiGroupInfo } from 'k8s-super-client';
 import { ApiResourceStatus } from '@kubevious/data-models';
+import { Context } from '../context';
 
 export class K8sLoader implements ILoader
 {
-    private _context : Context;
     private _logger : ILogger;
 
     private _client : KubernetesClient;
@@ -26,17 +24,14 @@ export class K8sLoader implements ILoader
 
     private _isReady : boolean = false;
 
-    constructor(context : Context, client : KubernetesClient, info : any)
+    constructor(logger : ILogger, client : KubernetesClient, info : any)
     {
-        this._logger = context.logger.sublogger("K8sLoader");
-        this._context = context;
+        this._logger = logger.sublogger("K8sLoader");
 
         this._client = client;
         this._info = info;
 
         this.logger.info("Constructed");
-
-        this._monitorApis();
     }
 
     get logger() {
@@ -61,7 +56,7 @@ export class K8sLoader implements ILoader
         this._reportReadiness();
     }
 
-    private _monitorApis()
+    private _monitorApis(context: Context)
     {
         this._client.watchClusterApi((isPresent, apiGroup, client) => {
 
@@ -77,12 +72,12 @@ export class K8sLoader implements ILoader
             
             if (isPresent && apiGroup.isEnabled)
             {
-                if (this._context.apiSelector.isEnabled(apiGroup.apiName, apiGroup.apiVersion, apiGroup.kindName)) {
-                    this._apiLoaders[key] = new K8sApiLoader(key, this, this._context, apiGroup, client!);
+                if (context.apiSelector.isEnabled(apiGroup.apiName, apiGroup.apiVersion, apiGroup.kindName)) {
+                    this._apiLoaders[key] = new K8sApiLoader(key, this, context, apiGroup, client!);
                 }
             }
 
-            this._context.concreteRegistry.triggerChange();
+            context.concreteRegistry.triggerChange();
         })
     }
 
@@ -92,8 +87,10 @@ export class K8sLoader implements ILoader
         this._reportReadiness();
     }
 
-    run()
+    run(context: Context)
     {
+        this._monitorApis(context);
+
         this._readyTimer = setInterval(() => {
             this.determineReady()
         }, 5 * 1000);

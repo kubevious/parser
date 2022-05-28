@@ -19,6 +19,9 @@ import { BackendMetrics } from './apps/backend-metrics';
 
 import VERSION from './version'
 
+
+export type LoaderFetcherCb = () => Promise<ILoader>;
+
 export class Context
 {
     private _backend : Backend;
@@ -35,10 +38,13 @@ export class Context
     private _apiSelector: K8sApiSelector;
     private _backendMetrics : BackendMetrics;
 
-    constructor(backend : Backend)
+    private _loaderFetcherCb : LoaderFetcherCb;
+
+    constructor(backend : Backend, loaderFetcherCb : LoaderFetcherCb)
     {
         this._backend = backend;
         this._logger = backend.logger.sublogger('Context');
+        this._loaderFetcherCb = loaderFetcherCb;
 
         this._apiSelector = new K8sApiSelector(this._logger);
 
@@ -59,6 +65,22 @@ export class Context
         this.backend.registerErrorHandler((reason) => {
             return this.worldvious.acceptError(reason);
         });
+
+        this.backend.stage("tracker", () => this._setupTracker());
+
+        this.backend.stage("fetch-loader", () => {
+            return Promise.resolve()
+                .then(() => this._loaderFetcherCb())
+                .then(loader => {
+                    this._acceptLoader(loader);
+                })
+        });
+
+        this.backend.stage("worldvious", () => this._worldvious.init());
+
+        this.backend.stage("loaders", () => this._processLoaders());
+
+        this.backend.stage("server", () => this._server.run());
     }
 
     get backend() {
@@ -113,7 +135,7 @@ export class Context
         return this._backendMetrics;
     }
 
-    addLoader(loader : ILoader)
+    private _acceptLoader(loader : ILoader)
     {
         const loaderInfo : LoaderInfo = {
             loader: loader,
@@ -126,16 +148,6 @@ export class Context
         }
         loader.setupReadyHandler(loaderInfo.readyHandler);
         this._loaders.push(loaderInfo);
-    }
-
-    run()
-    {
-        this._setupTracker();
-        
-        return Promise.resolve()
-            .then(() => this._worldvious.init())
-            .then(() => this._processLoaders())
-            .then(() => this._server.run());
     }
 
     private _setupTracker()
@@ -159,7 +171,7 @@ export class Context
         this._checkLoadersReady();
 
         return Promise.serial(this._loaders, x => {
-            return x.loader.run();
+            return x.loader.run(this);
         });
     }
 

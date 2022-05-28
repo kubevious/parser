@@ -1,7 +1,8 @@
 import { ApiResourceStatus } from '@kubevious/data-models';
+import { Context } from '../context';
 export interface ILoader
 {
-    run() : any; 
+    run(context: Context) : any; 
     close() : any; 
     setupReadyHandler(handler : ReadyHandler) : void;
     extractApiStatuses() : ApiResourceStatus[];
