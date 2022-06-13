@@ -54,6 +54,8 @@ export class K8sApiSelector
 
         this._setupDeprecated();
 
+        this._setupKubeviousExclusions();
+
         if (process.env.KUBEVIOUS_API_SKIP_SECRET == 'true')
         {
             this._setupSecretExclusion();
@@ -69,6 +71,12 @@ export class K8sApiSelector
     private _setupSecretExclusion()
     {
         this._exclusion.add(null, null, 'Secret', true);
+    }
+
+    private _setupKubeviousExclusions()
+    {
+        this._exclusion.add('kubevious.io', null, 'ChangePackage', true);
+        this._exclusion.add('kubevious.io', null, 'ValidationState', true);
     }
 
     private _setupSanitizers()
