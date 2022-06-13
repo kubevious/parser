@@ -30,7 +30,7 @@
     "@kubevious/worldvious-client": "^1.0.9",
     "js-yaml": "^3.13.1",
     "k8s-super-client": "^2.0.26",
-    "moment": "^2.29.1",
+    "moment": "^2.29.2",
     "the-lodash": "^2.0.9",
     "the-logger": "^2.0.14",
     "the-promise": "^2.0.13"
