@@ -8,7 +8,7 @@ import * as yaml from 'js-yaml';
 import { ILoader, ReadyHandler } from '../../loaders/types';
 import { KubernetesObject } from 'k8s-super-client';
 import { extractK8sConfigId } from '@kubevious/agent-middleware';
-import { ApiResourceStatus } from '@kubevious/data-models';
+import { K8sApiResourceStatus } from '@kubevious/entity-meta';
 import { Context } from '../../context';
 
 export class K8sMockLoader implements ILoader
@@ -20,7 +20,7 @@ export class K8sMockLoader implements ILoader
 
     private _readyHandler? : ReadyHandler;
 
-    private _statuses : Record<string, ApiResourceStatus> = {}
+    private _statuses : Record<string, K8sApiResourceStatus> = {}
 
     private _context?: Context;
 
@@ -86,7 +86,7 @@ export class K8sMockLoader implements ILoader
     }
 
 
-    extractApiStatuses() : ApiResourceStatus[]
+    extractApiStatuses() : K8sApiResourceStatus[]
     {
         return _.values(this._statuses);
     }
@@ -133,9 +133,11 @@ export class K8sMockLoader implements ILoader
                 let status = this._statuses[key];
                 if (!status) {
                     status = { 
-                        apiName: id.api,
                         apiVersion: id.version,
-                        kindName: obj.kind
+                        apiName: id.api,
+                        version: id.version,
+                        kindName: obj.kind,
+                        isNamespaced: id.namespace ? true : false
                     }
                     this._statuses[key] = status;
                 }

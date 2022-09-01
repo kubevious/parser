@@ -105,9 +105,9 @@ export class ConcreteRegistry
 
         const itemId : ItemId = {
             infra: 'k8s',
-            api: apiGroup.api,
+            api: apiGroup.apiVersion,
             apiName: apiGroup.apiName,
-            version: apiGroup.apiVersion,
+            version: apiGroup.version,
             kind: apiGroup.kindName,
             name: ''
         }

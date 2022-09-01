@@ -7,7 +7,7 @@ import { KubernetesClient } from 'k8s-super-client';
 import { K8sApiLoader } from './k8s-api';
 import { ILoader, ReadyHandler } from './types';
 import { ApiGroupInfo } from 'k8s-super-client';
-import { ApiResourceStatus } from '@kubevious/data-models';
+import { K8sApiResourceStatus } from '@kubevious/entity-meta';
 import { Context } from '../context';
 
 export class K8sLoader implements ILoader
@@ -72,7 +72,7 @@ export class K8sLoader implements ILoader
             
             if (isPresent && apiGroup.isEnabled)
             {
-                if (context.apiSelector.isEnabled(apiGroup.apiName, apiGroup.apiVersion, apiGroup.kindName)) {
+                if (context.apiSelector.isEnabled(apiGroup.apiName, apiGroup.version, apiGroup.kindName)) {
                     this._apiLoaders[key] = new K8sApiLoader(key, this, context, apiGroup, client!);
                 }
             }
@@ -146,22 +146,27 @@ export class K8sLoader implements ILoader
         this._isReady = isFinalReady;
     }
 
-    extractApiStatuses() : ApiResourceStatus[]
+    extractApiStatuses() : K8sApiResourceStatus[]
     {
         if (!this._client.clusterInfo) {
             return [];
         }
+
+        const myApiGroups = _.orderBy(_.values(this._client.clusterInfo.apiGroups),
+            [x => x.apiName || '', x => x.version, x => x.kindName]);
         
-        const statuses : ApiResourceStatus[] = [];
-        for(const apiGroup of _.values(this._client.clusterInfo.apiGroups))
+        const statuses : K8sApiResourceStatus[] = [];
+        for(const apiGroup of myApiGroups)
         {
             const key = this._makeGroupKey(apiGroup);
             const loader = this._apiLoaders[key];
 
-            const status : ApiResourceStatus = {
-                apiName: apiGroup.apiName,
+            const status : K8sApiResourceStatus = {
                 apiVersion: apiGroup.apiVersion,
-                kindName: apiGroup.kindName
+                apiName: apiGroup.apiName,
+                version: apiGroup.version,
+                kindName: apiGroup.kindName,
+                isNamespaced: apiGroup.isNamespaced
             }
 
             if (!loader || !loader.isConnected)
@@ -191,7 +196,7 @@ export class K8sLoader implements ILoader
 
     private _makeGroupKey(apiGroup: ApiGroupInfo)
     {
-        const key = `${apiGroup.api}::${apiGroup.kindName}`;
+        const key = `${apiGroup.apiVersion}::${apiGroup.kindName}`;
         return key;
     }
 }

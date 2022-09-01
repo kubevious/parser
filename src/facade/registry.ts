@@ -5,7 +5,7 @@ import { Context } from '../context';
 
 import { JobDampener } from '@kubevious/helpers';
 import { ConcreteRegistry } from '../concrete/registry';
-import { ApiResourceStatus } from '@kubevious/data-models';
+import { K8sApiResourceStatus } from '@kubevious/entity-meta';
 import { ItemId, K8sConfig } from '@kubevious/agent-middleware';
 
 export class FacadeRegistry
@@ -64,7 +64,7 @@ export class FacadeRegistry
     {
         this._logger.info("[_extractApiStatuses]");
 
-        const statuses : ApiResourceStatus[] = _.flatten(this._context.loaders.map(x => x.extractApiStatuses()));
+        const statuses : K8sApiResourceStatus[] = _.flatten(this._context.loaders.map(x => x.extractApiStatuses()));
 
         for(const status of statuses)
         {
@@ -93,7 +93,7 @@ export class FacadeRegistry
 
         const obj : K8sConfig = {
             synthetic: true,
-            apiVersion: `${id.api}/${id.version}`,
+            apiVersion: id.api,
             kind: id.kind,
             metadata: {
                 name: id.name

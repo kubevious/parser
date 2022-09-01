@@ -85,7 +85,7 @@ export class K8sApiLoader
             this._logger.verbose("[_watch] %s ::: %s %s", this._id, action, obj.kind);
             this._logger.verbose("%s %s", action, obj.kind);
             this._logger.silly("%s %s :: ", action, obj.kind, obj);
-            let isPresent = this._parseAction(action);
+            const isPresent = this._parseAction(action);
 
             // this._debugSaveToMock(isPresent, obj);
             this._handle(isPresent, obj);
@@ -200,9 +200,9 @@ export class K8sApiLoader
 
 function getDiffInSeconds(date: Date) : number
 {
-    let now = moment();
-    let eventDate = moment(date);
-    let duration = moment.duration(now.diff(eventDate));
-    let seconds = duration.asSeconds();
+    const now = moment();
+    const eventDate = moment(date);
+    const duration = moment.duration(now.diff(eventDate));
+    const seconds = duration.asSeconds();
     return seconds;
 }

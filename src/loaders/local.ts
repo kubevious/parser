@@ -5,7 +5,7 @@ import { K8sLoader } from './k8s';
 
 import { connectFromPod  } from 'k8s-super-client';
 import { ILoader, ReadyHandler } from './types';
-import { ApiResourceStatus } from '@kubevious/data-models';
+import { K8sApiResourceStatus } from '@kubevious/entity-meta';
 import { Context } from '../context';
 
 export class LocalLoader implements ILoader
@@ -52,7 +52,7 @@ export class LocalLoader implements ILoader
             })
     }
 
-    extractApiStatuses() : ApiResourceStatus[]
+    extractApiStatuses() : K8sApiResourceStatus[]
     {
         if (!this._loader) {
             return [];
