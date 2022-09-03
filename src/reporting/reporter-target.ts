@@ -12,6 +12,7 @@ import { SnapshotReporter } from './snapshot-reporter';
 
 import { HandledError } from '@kubevious/helpers/dist/handled-error';
 import { CollectorConfig, Counter, ReporterAuthResponse } from './types';
+import { JobDampenerState } from '@kubevious/helpers/dist/job-dampener';
 
 export class ReporterTarget
 {
@@ -83,7 +84,13 @@ export class ReporterTarget
 
         this._httpClient = new HttpClient(this._baseUrl, options);
 
-        this._jobDampener = new JobDampener<Snapshot>(this._logger.sublogger("ReporterDampener"), this._reportSnapshot.bind(this));
+        this._jobDampener = new JobDampener<Snapshot>(
+            this._logger.sublogger("ReporterDampener"),
+            this._reportSnapshot.bind(this),
+            {
+                stateMonitorCb: this._monitorJobDampener.bind(this)
+            }
+            );
     }
 
     get logger() {
@@ -117,6 +124,11 @@ export class ReporterTarget
 
                 throw reason;
             })
+    }
+
+    private _monitorJobDampener(state : JobDampenerState)
+    {
+        this._logger.info("[_monitorJobDampener] State:", state);
     }
 
     private _reportSnapshot(snapshot : Snapshot) : Promise<any>

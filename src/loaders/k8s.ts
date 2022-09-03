@@ -18,11 +18,12 @@ export class K8sLoader implements ILoader
     private _info : any;
     private _readyHandler? : ReadyHandler;
 
-    private _apiLoaders : Record<string, K8sApiLoader> = {};
+    private _apiGroups : Record<string, ApiGroupWrapper> = {};
 
     private _readyTimer : NodeJS.Timeout | null = null;
 
     private _isReady : boolean = false;
+    private _isClosed : boolean = false;
 
     constructor(logger : ILogger, client : KubernetesClient, info : any)
     {
@@ -40,14 +41,20 @@ export class K8sLoader implements ILoader
 
     close()
     {
+        this._isClosed = true;
+
         if (this._readyTimer) {
             clearInterval(this._readyTimer);
             this._readyTimer = null;
         }
 
-        for(const apiLoader of _.values(this._apiLoaders))
+        for(const apiGroupWrapper of _.values(this._apiGroups))
         {
-            apiLoader.close();
+            if (apiGroupWrapper.loader)
+            {
+                apiGroupWrapper.loader.terminate();
+                apiGroupWrapper.loader.close();
+            }
         }
 
         this._client.close();
@@ -60,25 +67,56 @@ export class K8sLoader implements ILoader
     {
         this._client.watchClusterApi((isPresent, apiGroup, client) => {
 
-            const key = this._makeGroupKey(apiGroup);
-
-            const currLoader = this._apiLoaders[key];
-            if (currLoader) {
-                currLoader.terminate();
-                currLoader.close();
-                delete this._apiLoaders[key]
+            if (this._isClosed) {
+                return; // TODO: later on unsubscribe from watchClusterApi instead;
             }
 
-            
-            if (isPresent && apiGroup.isEnabled)
+            const key = this._makeGroupKey(apiGroup);
+
+            const currApiWrapper = this._apiGroups[key];
+            if (currApiWrapper) {
+                if (currApiWrapper.loader) {
+                    currApiWrapper.loader.terminate();
+                    currApiWrapper.loader.close();
+                }
+                delete this._apiGroups[key]
+            }
+
+            if (isPresent)
             {
-                if (context.apiSelector.isEnabled(apiGroup.apiName, apiGroup.version, apiGroup.kindName)) {
-                    this._apiLoaders[key] = new K8sApiLoader(key, this, context, apiGroup, client!);
+                const isEnabled = this._isInterestedApi(context, apiGroup);
+
+                this._logger.info("[_monitorApis] %s, isEnabled: %s", key, isEnabled);
+
+                this._apiGroups[key] = {
+                    apiGroup: apiGroup,
+                    isEnabled: isEnabled,
+                    loader: isEnabled ? new K8sApiLoader(key, this, context, apiGroup, client!) : undefined
                 }
             }
 
             context.concreteRegistry.triggerChange();
         })
+    }
+
+    private _isInterestedApi(context: Context, apiGroup: ApiGroupInfo)
+    {
+        // this._logger.info("[_isInterestedApi] apigroup:", apiGroup);
+
+        if (!apiGroup.isEnabled) {
+            return false;
+        }
+
+        const verbsDict = _.makeBoolDict(apiGroup.verbs);
+        if (!verbsDict["watch"]) {
+            return false;
+        }
+
+        if (!context.apiSelector.isEnabled(apiGroup.apiName, apiGroup.version, apiGroup.kindName)) {
+            return false;
+        }
+
+        return true;
     }
 
     setupReadyHandler(handler : ReadyHandler)
@@ -119,14 +157,15 @@ export class K8sLoader implements ILoader
 
     private _checkReady()
     {
-        if (_.keys(this._apiLoaders).length == 0) {
+        const enabledApiGroups = _.values(this._apiGroups).filter(x => x.isEnabled);
+        if (enabledApiGroups.length == 0) {
             this.logger.warn("[_checkReady] Not ready. No API services discovered yet.");
             this._isReady = false;
             return;
         }
 
         let isFinalReady = true;
-        for(const apiLoader of _.values(this._apiLoaders))
+        for(const apiLoader of enabledApiGroups.map(x => x.loader).map(x => x!))
         {
             const isReady = apiLoader.isTargetReady();
             if (isReady) {
@@ -148,44 +187,54 @@ export class K8sLoader implements ILoader
 
     extractApiStatuses() : K8sApiResourceStatus[]
     {
-        if (!this._client.clusterInfo) {
-            return [];
-        }
+        const myApiGroups = _.orderBy(_.values(this._apiGroups), 
+            [x => x.apiGroup.apiName || '', x => x.apiGroup.version, x => x.apiGroup.kindName]);
 
-        const myApiGroups = _.orderBy(_.values(this._client.clusterInfo.apiGroups),
-            [x => x.apiName || '', x => x.version, x => x.kindName]);
         
         const statuses : K8sApiResourceStatus[] = [];
-        for(const apiGroup of myApiGroups)
+        for(const apiGroupWrapper of myApiGroups)
         {
-            const key = this._makeGroupKey(apiGroup);
-            const loader = this._apiLoaders[key];
+            const apiGroup = apiGroupWrapper.apiGroup;
 
             const status : K8sApiResourceStatus = {
                 apiVersion: apiGroup.apiVersion,
                 apiName: apiGroup.apiName,
                 version: apiGroup.version,
                 kindName: apiGroup.kindName,
-                isNamespaced: apiGroup.isNamespaced
+                isNamespaced: apiGroup.isNamespaced,
+                verbs: apiGroup.verbs
             }
 
-            if (!loader || !loader.isConnected)
+            if (apiGroupWrapper.isEnabled)
             {
+                status.isDisabled = false;
+                status.isSkipped = false;
                 status.isDisconnected = true;
-            }
 
-            if (!apiGroup.isEnabled) {
-                status.isDisabled = true;
-            }
-
-            if (loader) {
-                if (loader.errorCode || loader.errorMessage)
+                const loader = apiGroupWrapper.loader;
+                if (loader)
                 {
-                    status.error = {
-                        code: loader.errorCode,
-                        message: loader.errorMessage
+                    if (loader.isConnected)
+                    {
+                        status.isDisconnected = false;
+                    }
+                    else
+                    {
+                        if (loader.errorCode || loader.errorMessage)
+                        {
+                            status.error = {
+                                code: loader.errorCode,
+                                message: loader.errorMessage
+                            }
+                        }
                     }
                 }
+            }
+            else
+            {
+                status.isDisabled = true;
+                status.isSkipped = true;
+                status.isDisconnected = true;
             }
 
             statuses.push(status);
@@ -199,4 +248,12 @@ export class K8sLoader implements ILoader
         const key = `${apiGroup.apiVersion}::${apiGroup.kindName}`;
         return key;
     }
+}
+
+
+interface ApiGroupWrapper
+{
+    apiGroup: ApiGroupInfo,
+    isEnabled: boolean,
+    loader?: K8sApiLoader,
 }

@@ -99,10 +99,10 @@
     the-logger "^2.0.14"
     the-promise "^2.0.13"
 
-"@kubevious/entity-meta@^1.0.69", "@kubevious/entity-meta@^1.0.71":
-  version "1.0.71"
-  resolved "https://registry.yarnpkg.com/@kubevious/entity-meta/-/entity-meta-1.0.71.tgz#6f87acba188878d3a9ec641722cb85fd16aa3579"
-  integrity sha512-762pLt0TBErebtiiKWPIqtZ4i+lSv0VdayfKz/ofba8hZ3l+P4maYUGgFF0EyicgFMwJwY0AxgMIVLy980x3Hw==
+"@kubevious/entity-meta@^1.0.69", "@kubevious/entity-meta@^1.0.72":
+  version "1.0.72"
+  resolved "https://registry.yarnpkg.com/@kubevious/entity-meta/-/entity-meta-1.0.72.tgz#52d1e9a67a41cace34b6f816afd877ba2b0dec2c"
+  integrity sha512-CkA6H0zSq4oP+giFU6iTHxOoEB4Pvudh+v/gCNQXso47TcuxVn/eolQPYxEnzXHCUviPiE794auUjepMLnxwog==
   dependencies:
     the-lodash "^2.0.9"
 
@@ -142,15 +142,15 @@
     the-logger "^2.0.9"
     the-promise "^2.0.13"
 
-"@kubevious/helpers@^1.0.65":
-  version "1.0.65"
-  resolved "https://registry.yarnpkg.com/@kubevious/helpers/-/helpers-1.0.65.tgz#befbe693889d87f56aef905103c9c149223cf72b"
-  integrity sha512-TNHnE6CwmvfakTN43eM+Y3DBf3WhnEBPTnlUFYn/W+18HWlKTZvdb5ISZARurV0XbpV2W9FBXECFweiFdranWw==
+"@kubevious/helpers@^1.0.66":
+  version "1.0.66"
+  resolved "https://registry.yarnpkg.com/@kubevious/helpers/-/helpers-1.0.66.tgz#af2974318e7eeaf9ad91f8ca5595f5d45e2f48cf"
+  integrity sha512-3T2tLGwS/OM8IkM17l6x9d9Xu2VpUx+lzJf3BWKrUX0ZjEk8yh2A6Agg8aYS1FiHNvRBfB1J/1YGibdPvxfyWg==
   dependencies:
     moment "^2.29.1"
     the-lodash "^2.0.9"
     the-logger "^2.0.14"
-    the-promise "^2.0.13"
+    the-promise "^2.0.15"
 
 "@kubevious/http-client@^1.0.19":
   version "1.0.19"
@@ -200,10 +200,10 @@
   resolved "https://registry.yarnpkg.com/@sideway/pinpoint/-/pinpoint-2.0.0.tgz#cff8ffadc372ad29fd3f78277aeb29e632cc70df"
   integrity sha512-RNiOoTPkptFtSVzQevY/yWtZwf/RxyVnPy/OcA9HBM3MlGDnBEYL5B41H0MTn0Uec8Hi+2qUtTfG2WWZBmMejQ==
 
-"@types/bluebird@3.5.35":
-  version "3.5.35"
-  resolved "https://registry.yarnpkg.com/@types/bluebird/-/bluebird-3.5.35.tgz#3964c48372bf62d60616d8673dd77a9719ebac9b"
-  integrity sha512-2WeeXK7BuQo7yPI4WGOBum90SzF/f8rqlvpaXx4rjeTmNssGRDHWf7fgDUH90xMB3sUOu716fUK5d+OVx0+ncQ==
+"@types/bluebird@3.5.36":
+  version "3.5.36"
+  resolved "https://registry.yarnpkg.com/@types/bluebird/-/bluebird-3.5.36.tgz#00d9301d4dc35c2f6465a8aec634bb533674c652"
+  integrity sha512-HBNx4lhkxN7bx6P0++W8E289foSu8kO8GCk2unhuVggO+cE7rh9DhZUyPhUxNRG9m+5B5BTKxZQ5ZP92x/mx9Q==
 
 "@types/eslint-visitor-keys@^1.0.0":
   version "1.0.0"
@@ -1407,10 +1407,10 @@ jws@^3.2.2:
     jwa "^1.4.1"
     safe-buffer "^5.0.1"
 
-k8s-super-client@^2.0.27:
-  version "2.0.27"
-  resolved "https://registry.yarnpkg.com/k8s-super-client/-/k8s-super-client-2.0.27.tgz#059ef62f9481c4885645a8ac9d2bb09a58aafc1d"
-  integrity sha512-4sLbqeGTQ+WCjsPOgd2LbV7cQhvPX61hxoShvuQ2r1BHuzwrbbGEwzA6N1vqPe07WE6O2HIkps5EF8nk77HPUw==
+k8s-super-client@^2.0.29:
+  version "2.0.29"
+  resolved "https://registry.yarnpkg.com/k8s-super-client/-/k8s-super-client-2.0.29.tgz#b6b87cab5df1fafefa3b637d19731c1855264211"
+  integrity sha512-jFW+HXLHRiLc0d7F+q2hgTADYFvA9MoDG/9P990K/yZlhsIVhWzcYYXXk406Elq4EC5dZ/W3j76PuAb30fM1Kw==
   dependencies:
     "@types/ndjson" "^2.0.0"
     "@types/uuid" "^8.3.0"
@@ -1615,6 +1615,11 @@ mocha@^8.1.1:
     yargs "16.2.0"
     yargs-parser "20.2.4"
     yargs-unparser "2.0.0"
+
+moment@2.29.4:
+  version "2.29.4"
+  resolved "https://registry.yarnpkg.com/moment/-/moment-2.29.4.tgz#3dbe052889fe7c1b2ed966fcb3a77328964ef108"
+  integrity sha512-5LC9SOxjSc2HF6vO2CyuTDNivEdoz2IvyJJGj6X8DJ0eFyfszE0QiEd+iXmBvUP3WHxSjFH/vIsA0EN00cgr8w==
 
 moment@^2.29.1:
   version "2.29.1"
@@ -2267,14 +2272,14 @@ the-logger@^2.0.14, the-logger@^2.0.9:
     the-lodash "^2.0.9"
     the-promise "^2.0.13"
 
-the-promise@^2.0.12, the-promise@^2.0.13:
-  version "2.0.13"
-  resolved "https://registry.yarnpkg.com/the-promise/-/the-promise-2.0.13.tgz#1e56f577091965b7945ba8f3938a31cce0889558"
-  integrity sha512-/ZzPENiqQvD9wFkiUMefcQavhnnwKU3rnwkKLsVroR1FiOZl6OvaoFkFDNIQUesqCkvTwRAz8UHdupbX/9kPMg==
+the-promise@^2.0.12, the-promise@^2.0.13, the-promise@^2.0.15:
+  version "2.0.15"
+  resolved "https://registry.yarnpkg.com/the-promise/-/the-promise-2.0.15.tgz#f3cfc57676b4e21aeefc32ec9d9eb4b534bfc616"
+  integrity sha512-5nWyNDjjPz76xHx3iTypQyr215+r2SOawKy4UJyTs7r+zjd8oBUNAPIVlW7TUKbvFqMPg4A+FsRPmdCp5vewFw==
   dependencies:
-    "@types/bluebird" "3.5.35"
+    "@types/bluebird" "3.5.36"
     bluebird "3.7.2"
-    moment "^2.29.1"
+    moment "2.29.4"
     the-lodash "^2.0.9"
 
 thread-stream@^0.12.0:

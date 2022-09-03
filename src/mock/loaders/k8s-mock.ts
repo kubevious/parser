@@ -137,7 +137,8 @@ export class K8sMockLoader implements ILoader
                         apiName: id.api,
                         version: id.version,
                         kindName: obj.kind,
-                        isNamespaced: id.namespace ? true : false
+                        isNamespaced: id.namespace ? true : false,
+                        verbs: ['watch', 'get', 'list']
                     }
                     this._statuses[key] = status;
                 }
