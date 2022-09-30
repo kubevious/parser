@@ -29,18 +29,20 @@ export class FacadeRegistry
         return this._logger;
     }
 
-    private _processConcreteRegistry(data: ConcreteRegistry, date: Date)
+    private _processConcreteRegistry(concreteRegistry: ConcreteRegistry, date: Date)
     {
-        this._logger.info("[_processConcreteRegistry] Date: %s. item count: %s", date.toISOString(), data.allItems.length);
+        this._logger.info("[_processConcreteRegistry] Date: %s. item count: %s", date.toISOString(), concreteRegistry.allItems.length);
 
         this._extractApiStatuses();
 
         this._context.k8sParser.debugOutputSummary();
 
-        const capacity = data.outputAndExtractCapacity();
+        const capacity = concreteRegistry.outputAndExtractCapacity();
         this._context.worldvious.acceptCounters(capacity);
 
-        return this._context.reporter.process(data, date);
+        concreteRegistry.detectIssues();
+
+        return this._context.reporter.process(concreteRegistry, date);
     }
 
     private _handleConcreteRegistryChange()

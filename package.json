@@ -23,7 +23,7 @@
   "dependencies": {
     "@kubevious/agent-middleware": "^1.0.82",
     "@kubevious/data-models": "^1.0.36",
-    "@kubevious/entity-meta": "^1.0.72",
+    "@kubevious/entity-meta": "^1.0.74",
     "@kubevious/helper-backend": "^1.0.38",
     "@kubevious/helpers": "^1.0.66",
     "@kubevious/http-client": "^1.0.19",
@@ -65,6 +65,6 @@
     "@kubevious/data-models": "^1.0.36",
     "@kubevious/ui-middleware": "^1.0.75",
     "@kubevious/agent-middleware": "^1.0.82",
-    "@kubevious/entity-meta": "^1.0.72"
+    "@kubevious/entity-meta": "^1.0.74"
   }
 }

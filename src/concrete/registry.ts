@@ -221,6 +221,32 @@ export class ConcreteRegistry
         }
         return result;
     }
+
+    detectIssues()
+    {
+        const counters = this._extractCapacity();
+
+        // this.logger.error("[detectIssues] counters:", counters);
+
+        const groupCount = _.sumBy(counters, x => x.count);
+        const flatCount = _.keys(this._flatItemsDict).length;
+        this.logger.info("[detectIssues] Count Group: %s", groupCount);
+        this.logger.info("[detectIssues] Count Flat: %s", flatCount);
+        if (groupCount != flatCount) {
+            this.logger.error("[detectIssues] Inconsistent item count. Flat: %s. Group: %s.", flatCount, groupCount);
+        } 
+
+        // for(const item of _.values(this._flatItemsDict))
+        // {
+        //     if (!this._itemsKindDict[item.groupKey]) {
+        //         this.logger.error("[detectIssues] Missing Group Key: %s", item.groupKey);
+        //     } else {
+        //         if (!this._itemsKindDict[item.groupKey][item.rawId]) {
+        //             this.logger.error("[detectIssues] Missing ID: %s", item.rawId);
+        //         }
+        //     }
+        // }
+    }
 }
 
 

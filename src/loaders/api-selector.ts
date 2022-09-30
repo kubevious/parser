@@ -8,14 +8,18 @@ export class K8sApiSelector
     private _logger : ILogger;
 
     private _useIncludeFilter = false;
-    private _inclusion : ApiGroupMatcher<boolean> = new ApiGroupMatcher<boolean>(false);
-    private _exclusion : ApiGroupMatcher<boolean> = new ApiGroupMatcher<boolean>(false);
-    private _sanitizers : ApiGroupMatcher<SanitizerCb | null> = new ApiGroupMatcher<SanitizerCb | null>(null);
+    private _inclusion : ApiGroupMatcher<boolean>;
+    private _exclusion : ApiGroupMatcher<boolean>;
+    private _sanitizers : ApiGroupMatcher<SanitizerCb | null>;
 
     constructor(logger: ILogger)
     {
         this._logger = logger;
 
+        this._inclusion = new ApiGroupMatcher<boolean>(logger, "Inclusion", false);
+        this._exclusion = new ApiGroupMatcher<boolean>(logger, "Exclusion", false);
+        this._sanitizers = new ApiGroupMatcher<SanitizerCb | null>(logger, "Sanitizers", null);
+    
         this._setup();
     }
 
@@ -60,17 +64,51 @@ export class K8sApiSelector
         {
             this._setupSecretExclusion();
         }
+
+        if (process.env.KUBEVIOUS_API_SKIP_EVENTS == 'true')
+        {
+            this._setupEventExclusion();
+        }
+
+        if (process.env.KUBEVIOUS_API_SKIP)
+        {
+            const items = process.env.KUBEVIOUS_API_SKIP.split(',');
+            for(const item of items)
+            {
+                const kindSplit = item.split(':');
+                if (kindSplit.length == 2)
+                {
+                    const apiSplit = kindSplit[0].split('/');
+                    if (apiSplit.length == 2)
+                    {
+                        this._exclusion.add(apiSplit[0], apiSplit[1], kindSplit[1], true);
+                    }
+                    else if (apiSplit.length == 1)
+                    {
+                        this._exclusion.add(null, apiSplit[0], kindSplit[1], true);
+                    }
+                }
+            }
+        }
+
+        // throw new Error("XXX")
     }
 
     private _setupDeprecated()
     {
         this._exclusion.add(null, 'v1', 'Binding', true);
         this._exclusion.add(null, 'v1', 'ComponentStatus', true);
+        this._exclusion.add(null, 'v1', 'Event', true);
     }
 
     private _setupSecretExclusion()
     {
         this._exclusion.add(null, null, 'Secret', true);
+    }
+
+    private _setupEventExclusion()
+    {
+        this._exclusion.add('events.k8s.io', null, 'Event', true);
     }
 
     private _setupKubeviousExclusions()
@@ -97,11 +135,15 @@ export class K8sApiSelector
 
 export class ApiGroupMatcher<T>
 {
+    private _logger: ILogger;
+    private _name: string;
     private _defaultValue: T;
     private _dict: Record<string, Record<string, Record<string, T>>> = {};
 
-    constructor(defaultValue: T)
+    constructor(logger: ILogger, name: string, defaultValue: T)
     {
+        this._logger = logger;
+        this._name = name;
         this._defaultValue = defaultValue;
     }
 
@@ -116,6 +158,8 @@ export class ApiGroupMatcher<T>
             this._dict[apiName][version] = {};
         }
         this._dict[apiName][version][kind] = value;
+
+        this._logger.info("[K8sApiSelector] Added to %s. Api: %s, Version: %s, Kind: %s", this._name, apiName, version, kind);
     }
 
     matches(apiName: string | null, version: string, kind: string)
