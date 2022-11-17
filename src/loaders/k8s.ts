@@ -177,7 +177,7 @@ export class K8sLoader implements ILoader
         }
 
         if (isFinalReady) {
-            this.logger.warn("[_checkReady] Is ready");
+            this.logger.info("[_checkReady] Is ready");
         } else {
             this.logger.warn("[_checkReady] Not ready");
         }
