@@ -1,4 +1,3 @@
-import { Promise } from 'the-promise';
 import { ILogger } from 'the-logger';
 
 import { K8sLoader } from './k8s';

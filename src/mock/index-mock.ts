@@ -1,4 +1,3 @@
-import { Promise } from 'the-promise';
 import { Backend } from '@kubevious/helper-backend'
 import { Context } from '../context'
 import { K8sMockLoader } from './loaders/k8s-mock'

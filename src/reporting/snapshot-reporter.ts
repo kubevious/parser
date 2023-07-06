@@ -1,5 +1,4 @@
 import _ from 'the-lodash';
-import { Promise } from 'the-promise';
 import { ILogger } from 'the-logger';
 
 import { RequestReportSnapshot, ResponseReportSnapshot, ReportableSnapshotItem } from '@kubevious/agent-middleware';
@@ -14,6 +13,7 @@ import { ReporterTarget } from './reporter-target';
 import { HandledError } from '@kubevious/helpers/dist/handled-error';
 import * as ZipUtils from '@kubevious/helpers/dist/zip-utils';
 import { SnapshotItem } from './snapshot-item';
+import { MyPromise } from 'the-promise';
 
 export class SnapshotReporter
 {
@@ -93,7 +93,7 @@ export class SnapshotReporter
                 {
                     const timeout = result.delaySeconds! || 5;
                     this.logger.info("[_createSnapshot] postponing reporting for %s seconds.", timeout);
-                    return Promise.timeout(timeout * 1000)
+                    return MyPromise.delay(timeout * 1000)
                         .then(() => {
                             throw new HandledError('Delaying snapshot reporting');
                         })
@@ -138,7 +138,7 @@ export class SnapshotReporter
         const reportableItems = this._snapshot.extractDiff(this._latestSnapshot!);
         const itemChunks = _.chunk(reportableItems, this._itemBulkSize);
 
-        return Promise.serial(itemChunks, this._publishSnapshotChunks.bind(this));
+        return MyPromise.serial(itemChunks, this._publishSnapshotChunks.bind(this));
     }
 
     private _publishSnapshotChunks(items : ReportableSnapshotItem[]) : Promise<any> | void
@@ -216,13 +216,13 @@ export class SnapshotReporter
 
         if (this._config_reporter_compression)
         {
-            let currentCount : number = 0;
-            let currentSize : number = 0;
+            let currentCount = 0;
+            let currentSize = 0;
 
             const chunks : ReportableDataChunk[] = [];
             let currentChunk : ReportableDataChunk | null = null;
 
-            return Promise.serial(items, item => {
+            return MyPromise.serial(items, item => {
                 return ZipUtils.compressObj(item.config)
                     .then(dataStr => {
                         if (!currentChunk ||
@@ -244,7 +244,7 @@ export class SnapshotReporter
                     });
             })
             .then(() => {
-                return Promise.serial(chunks, chunk => {
+                return MyPromise.serial(chunks, chunk => {
                     const data = {
                         chunks: chunk
                     }
@@ -255,7 +255,7 @@ export class SnapshotReporter
         }
         else
         {
-            return Promise.serial(items, item => {
+            return MyPromise.serial(items, item => {
                 this._publishSingleObject(item.configHash, item.config);
             });
         }

@@ -1,5 +1,4 @@
 import _ from 'the-lodash';
-import { Promise } from 'the-promise';
 import { ILogger } from 'the-logger';
 
 import { KubernetesClient } from 'k8s-super-client';
@@ -22,8 +21,8 @@ export class K8sLoader implements ILoader
 
     private _readyTimer : NodeJS.Timeout | null = null;
 
-    private _isReady : boolean = false;
-    private _isClosed : boolean = false;
+    private _isReady  = false;
+    private _isClosed = false;
 
     constructor(logger : ILogger, client : KubernetesClient, info : any)
     {

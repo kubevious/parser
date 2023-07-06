@@ -1,5 +1,4 @@
 import { Backend } from '@kubevious/helper-backend'
-import { Promise } from 'the-promise';
 import { Context } from './context'
 import { LocalLoader } from './loaders/local'
 

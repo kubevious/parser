@@ -1,8 +1,7 @@
 import _ from 'the-lodash';
-import { Promise } from 'the-promise';
 import { ILogger } from 'the-logger';
 
-const fs = require('fs').promises;
+import { promises as fs } from 'fs';
 
 import { JobDampener } from '@kubevious/helpers';
 import { HttpClient, HttpClientOptions } from '@kubevious/http-client';
@@ -105,7 +104,7 @@ export class ReporterTarget
 
     request<TRequest, TResponse>(url : string, data : TRequest) : Promise<TResponse | null>
     {
-        return this._httpClient.post<TResponse>(url, {}, data)
+        return this._httpClient.post<TResponse>(url, {}, data as Record<string, any>)
             .then(result => {
                 return result.data;
             })
@@ -189,8 +188,11 @@ export class ReporterTarget
             })
     }
 
-    private _getApiKey() : Promise<any>
+    private async _getApiKey()
     {
+        if (!this._config.keyPath) {
+            return {};
+        }
         return fs.readFile(this._config.keyPath, { encoding: 'utf8' })
             .then((data : any) => {
                 const strData = Buffer.from(data, 'base64').toString()

@@ -1,5 +1,3 @@
-import { Promise } from 'the-promise';
-
 import _ from 'the-lodash';
 
 import { Backend } from '@kubevious/helper-backend'

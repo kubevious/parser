@@ -1,5 +1,4 @@
 import { ILogger } from 'the-logger';
-import { Promise } from 'the-promise';
 
 import { Backend } from '@kubevious/helper-backend'
 
@@ -18,6 +17,7 @@ import { K8sApiSelector } from './loaders/api-selector';
 import { BackendMetrics } from './apps/backend-metrics';
 
 import VERSION from './version'
+import { MyPromise } from 'the-promise';
 
 
 export type LoaderFetcherCb = () => Promise<ILoader>;
@@ -170,7 +170,7 @@ export class Context
     {
         this._checkLoadersReady();
 
-        return Promise.serial(this._loaders, x => {
+        return MyPromise.serial(this._loaders, x => {
             return x.loader.run(this);
         });
     }
