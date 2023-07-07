@@ -1,6 +1,6 @@
 {
   "name": "kubevious-parser",
-  "version": "1.1.2",
+  "version": "1.2.0",
   "description": "Kubevious Parser",
   "main": "dist/index.js",
   "types": "dist",
